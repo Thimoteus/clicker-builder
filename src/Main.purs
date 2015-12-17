@@ -2,13 +2,17 @@ module Main where
 
 import Prelude
 
+import Control.Monad.Eff (Eff())
+
+import Data.Maybe (Maybe(..))
 import Data.Maybe.Unsafe (fromJust)
 import Data.Nullable (toMaybe)
 
-import Signal as S
-import Signal.Time as S
-import Signal.Channel as C
+import Signal (Signal(), constant, foldp, runSignal, sampleOn)
+import Signal.Time (every, second)
+import Signal.Channel (Chan(), Channel(), channel, send, subscribe)
 
+import DOM (DOM())
 import DOM.HTML (window)
 import DOM.HTML.Document (body)
 import DOM.HTML.Types (htmlElementToElement)
@@ -21,33 +25,51 @@ import React.DOM.Props as P
 type State a = { clicks :: Number
                , cps :: Number
                , clickBurst :: Number
+               , upgradesBought :: Array Upgrade
                | a }
 type GameState = State ()
-type Environment = State ( channel :: C.Channel Action )
+type Environment = State ( channel :: Channel Action )
 
-data Action = Click
-            | CPS
-            | Reset
-            | Buy Upgrade
-
-data Upgrade = UpCPS Number
-             | UpClick Number
-
-mkEnv :: C.Channel Action -> GameState -> Environment
+mkEnv :: Channel Action -> GameState -> Environment
 mkEnv channel state = { clicks: state.clicks
                       , channel: channel
                       , clickBurst: state.clickBurst
+                      , upgradesBought: state.upgradesBought
                       , cps: state.cps }
 
+initialState :: GameState
+initialState = { clicks: 0.0
+               , cps: 0.0
+               , upgradesBought: []
+               , clickBurst: 1.0 }
+
+data Action = Click
+            | AutoClick
+            | Reset
+            | Buy Upgrade
+
+data Upgrade = CPS Number
+             | Burst Number
+
+instance showUpgrade :: Show Upgrade where
+  show (CPS n) = "buy CPS upgrade +" ++ show n
+  show (Burst n) = "buy click upgrade +" ++ show n
+
+genericButtonWithText :: Action -> String -> Environment -> ReactElement
+genericButtonWithText act str env =
+  D.button [P.onClick \ _ -> send env.channel act] [D.text str]
+
 clicker :: Environment -> ReactElement
-clicker env = D.button [P.onClick \ _ -> C.send env.channel Click] [D.text "click me!"]
+clicker = genericButtonWithText Click "click me!"
 
 resetter :: Environment -> ReactElement
-resetter env = D.button [P.onClick \ _ -> C.send env.channel Reset] [D.text "reset"]
+resetter = genericButtonWithText Reset "reset"
 
 buyer :: Environment -> ReactElement
-buyer env = D.div' [ D.button [P.onClick \ _ -> C.send env.channel (Buy (UpCPS 1.0))] [D.text "buy cps 1.0"]
-                   , D.button [P.onClick \ _ -> C.send env.channel (Buy (UpClick 1.0))] [D.text "buy upclick 1.0"] ]
+buyer env = D.div' $ [ upgrade (CPS 1.0), upgrade (Burst 1.0)] <*> [env]
+
+upgrade :: Upgrade -> Environment -> ReactElement
+upgrade up = genericButtonWithText (Buy up) (show up)
 
 controls :: Environment -> ReactElement
 controls env = D.div' $ [clicker, resetter, buyer] <*> [env]
@@ -58,32 +80,30 @@ currentClicks env = D.text (show env.clicks)
 view :: Environment -> ReactElement
 view env = D.div' $ [controls, currentClicks] <*> [env]
 
-initialState :: GameState
-initialState = { clicks: 0.0, cps: 0.0, clickBurst: 1.0 }
-
 component :: Environment -> ReactClass Unit
 component env = createClass (spec unit \ _ -> pure (view env))
 
 step :: Action -> GameState -> GameState
 step Click state = state { clicks = state.clicks + state.clickBurst }
-step CPS state = state { clicks = state.clicks + state.cps }
-step (Buy (UpCPS n)) state = state { cps = state.cps + n }
-step (Buy (UpClick n)) state = state { clickBurst = state.clickBurst + n }
+step AutoClick state = state { clicks = state.clicks + state.cps }
+step (Buy (CPS n)) state = state { cps = state.cps + n }
+step (Buy (Burst n)) state = state { clickBurst = state.clickBurst + n }
 step Reset _ = initialState
 
-updateRate :: S.Signal Number
-updateRate = S.every S.second
+updateRate :: Signal Number
+updateRate = every second
 
-cps :: S.Signal Action
-cps = S.sampleOn updateRate (S.constant CPS)
+cps :: Signal Action
+cps = sampleOn updateRate (constant AutoClick)
 
+main :: forall eff. Eff ( chan :: Chan, dom :: DOM | eff ) Unit
 main = do
   body' <- getBody
-  channel <- C.channel Reset
-  let actions = C.subscribe channel
-      gameState = S.foldp step initialState (cps <> actions)
+  channel <- channel Reset
+  let actions = subscribe channel
+      gameState = foldp step initialState (cps <> actions)
       game = gameState <#> mkEnv channel >>> (\ env -> render (ui env) body') >>> void
-  S.runSignal game
+  runSignal game
   where
     ui env = D.div' [createFactory (component env) unit]
     getBody = do
