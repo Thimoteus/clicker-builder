@@ -1,0 +1,19 @@
+{
+  "name": "clicker-builder",
+  "version": "1.0.0",
+  "moduleType": [
+    "node"
+  ],
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "output"
+  ],
+  "dependencies": {
+    "purescript-console": "^0.1.0",
+    "purescript-signal": "~4.2.0",
+    "purescript-react": "~0.5.0",
+    "purescript-integers": "~0.2.1"
+  }
+}
