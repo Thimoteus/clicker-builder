@@ -7,6 +7,7 @@ import Control.Monad.Eff (Eff())
 import Data.Maybe (Maybe(..))
 import Data.Maybe.Unsafe (fromJust)
 import Data.Nullable (toMaybe)
+import Data.List (List(..), (:))
 
 import Signal (Signal(), constant, foldp, runSignal, sampleOn)
 import Signal.Time (every, second)
@@ -25,10 +26,11 @@ import React.DOM.Props as P
 type State a = { clicks :: Number
                , cps :: Number
                , clickBurst :: Number
-               , upgradesBought :: Array Upgrade
+               , upgradesBought :: List Upgrade
                | a }
 type GameState = State ()
 type Environment = State ( channel :: Channel Action )
+type Component = Environment -> ReactElement
 
 mkEnv :: Channel Action -> GameState -> Environment
 mkEnv channel state = { clicks: state.clicks
@@ -40,13 +42,13 @@ mkEnv channel state = { clicks: state.clicks
 initialState :: GameState
 initialState = { clicks: 0.0
                , cps: 0.0
-               , upgradesBought: []
+               , upgradesBought: Nil
                , clickBurst: 1.0 }
 
 data Action = Click
             | AutoClick
-            | Reset
             | Buy Upgrade
+            | Reset
 
 data Upgrade = CPS Number
              | Burst Number
@@ -59,26 +61,28 @@ genericButtonWithText :: Action -> String -> Environment -> ReactElement
 genericButtonWithText act str env =
   D.button [P.onClick \ _ -> send env.channel act] [D.text str]
 
-clicker :: Environment -> ReactElement
-clicker = genericButtonWithText Click "click me!"
+clickButton :: Component
+clickButton = genericButtonWithText Click "click me!"
 
-resetter :: Environment -> ReactElement
-resetter = genericButtonWithText Reset "reset"
+resetButton :: Component
+resetButton = genericButtonWithText Reset "reset"
 
-buyer :: Environment -> ReactElement
-buyer env = D.div' $ [ upgrade (CPS 1.0), upgrade (Burst 1.0)] <*> [env]
+buyButton :: Component
+buyButton env = D.div' $ flip apply [env] [ upgrade (CPS 1.0)
+                                          , upgrade (Burst 1.0)
+                                          ]
 
-upgrade :: Upgrade -> Environment -> ReactElement
+upgrade :: Upgrade -> Component
 upgrade up = genericButtonWithText (Buy up) (show up)
 
-controls :: Environment -> ReactElement
-controls env = D.div' $ [clicker, resetter, buyer] <*> [env]
+controls :: Component
+controls env = D.div' $ flip apply [env] [clickButton, resetButton, buyButton]
 
-currentClicks :: Environment -> ReactElement
+currentClicks :: Component
 currentClicks env = D.text (show env.clicks)
 
-view :: Environment -> ReactElement
-view env = D.div' $ [controls, currentClicks] <*> [env]
+view :: Component
+view env = D.div' $ flip apply [env] [controls, currentClicks]
 
 component :: Environment -> ReactClass Unit
 component env = createClass (spec unit \ _ -> pure (view env))
@@ -86,8 +90,8 @@ component env = createClass (spec unit \ _ -> pure (view env))
 step :: Action -> GameState -> GameState
 step Click state = state { clicks = state.clicks + state.clickBurst }
 step AutoClick state = state { clicks = state.clicks + state.cps }
-step (Buy (CPS n)) state = state { cps = state.cps + n }
-step (Buy (Burst n)) state = state { clickBurst = state.clickBurst + n }
+step (Buy (CPS n)) state = state { cps = state.cps + n, upgradesBought = (CPS n) : state.upgradesBought }
+step (Buy (Burst n)) state = state { clickBurst = state.clickBurst + n, upgradesBought = (Burst n) : state.upgradesBought }
 step Reset _ = initialState
 
 updateRate :: Signal Number
