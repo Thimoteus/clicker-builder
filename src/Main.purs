@@ -3,10 +3,12 @@ module Main where
 import Prelude
 
 import Control.Monad.Eff (Eff())
+import Text.Browser.Base64 (decode64, encode64)
 
 import Data.Maybe.Unsafe (fromJust)
 import Data.Nullable (toMaybe)
 import Data.List (List(..), (:))
+import Data.Foldable (intercalate)
 
 import Signal (Signal(), constant, foldp, runSignal, sampleOn)
 import Signal.Time (every, second)
@@ -27,6 +29,7 @@ type State a = { clicks :: Number
                , clickBurst :: Number
                , upgradesBought :: List Upgrade
                , screen :: Screen
+               , saveState :: String
                | a }
 type GameState = State ()
 type Environment = State ( channel :: Channel Action )
@@ -38,6 +41,7 @@ mkEnv channel state = { clicks: state.clicks
                       , clickBurst: state.clickBurst
                       , upgradesBought: state.upgradesBought
                       , screen: state.screen
+                      , saveState: state.saveState
                       , cps: state.cps }
 
 initialState :: GameState
@@ -45,12 +49,14 @@ initialState = { clicks: 0.0
                , cps: 0.0
                , upgradesBought: Nil
                , screen: Game
+               , saveState: ""
                , clickBurst: 1.0 }
 
 data Action = Click
             | AutoClick
             | Buy Upgrade
-            | Switch Screen
+            | View Screen
+            | Save
             | Reset
 
 data Upgrade = CPS Number
@@ -90,10 +96,10 @@ currentClicks :: Component
 currentClicks env = D.text (show env.clicks)
 
 view :: Component
-view env = case env.screen of
-                Game -> showGame env
-                Settings -> showSettings env
-                SaveLoad -> showSaveLoad env
+view env = env # case env.screen of
+                      Game -> showGame
+                      Settings -> showSettings
+                      SaveLoad -> showSaveLoad
 
 showGame :: Component
 showGame = foldComponent [changeView, controls, currentClicks]
@@ -104,17 +110,21 @@ showSettings = foldComponent [changeView, settingsText]
     settingsText _ = D.text "Settings"
 
 showSaveLoad :: Component
-showSaveLoad = foldComponent [changeView, saveLoadText]
+showSaveLoad = foldComponent [changeView, saveGame]
   where
-    saveLoadText _ = D.text "Save/Load game"
+    saveGame env = D.div' [ genericButtonWithText Save "Save game" env
+                          , D.text env.saveState ]
 
 changeView :: Component
-changeView env = D.div' [ genericButtonWithText (Switch Game) "Game" env
-                        , genericButtonWithText (Switch Settings) "Settings" env
-                        , genericButtonWithText (Switch SaveLoad) "Save/Load" env ]
+changeView env = D.div' [ genericButtonWithText (View Game) "Game" env
+                        , genericButtonWithText (View Settings) "Settings" env
+                        , genericButtonWithText (View SaveLoad) "Save/Load" env ]
 
-component :: Environment -> ReactClass Unit
-component env = createClass (spec unit \ _ -> pure (view env))
+updateRate :: Signal Number
+updateRate = every second
+
+cps :: Signal Action
+cps = sampleOn updateRate (constant AutoClick)
 
 step :: Action -> GameState -> GameState
 step Click state = state { clicks = state.clicks + state.clickBurst }
@@ -125,14 +135,21 @@ step (Buy (CPS n)) state =
 step (Buy (Burst n)) state =
   state { clickBurst = state.clickBurst + n
         , upgradesBought = (Burst n) : state.upgradesBought }
-step (Switch screen) state = state { screen = screen }
+step (View screen) state = state { screen = screen }
+step Save state = state { saveState = serialize state }
 step Reset _ = initialState
 
-updateRate :: Signal Number
-updateRate = every second
+serialize :: GameState -> String
+serialize state =
+  let theCPS = "cps:" ++ show state.cps
+      theClicks = "clicks:" ++ show state.clicks
+      theClickBurst = "cburst:" ++ show state.clickBurst
+      theUpgrades = "upgrades:[" ++ go state.upgradesBought ++ "]"
+      go Nil = ""
+      go (Cons x Nil) = show x
+      go (Cons x xs) = show x ++ "," ++ go xs
+   in encode64 $ intercalate "," [theCPS, theClicks, theClickBurst, theUpgrades]
 
-cps :: Signal Action
-cps = sampleOn updateRate (constant AutoClick)
 
 main :: forall eff. Eff ( chan :: Chan, dom :: DOM | eff ) Unit
 main = do
@@ -143,7 +160,7 @@ main = do
       game = gameState <#> mkEnv channel >>> (\ env -> render (ui env) body') >>> void
   runSignal game
   where
-    ui env = D.div' [createFactory (component env) unit]
+    ui env = D.div' [createFactory (createClass (spec unit \ _ -> pure (view env))) unit]
     getBody = do
       win <- window
       doc <- document win

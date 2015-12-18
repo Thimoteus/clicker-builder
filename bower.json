@@ -15,6 +15,7 @@
     "purescript-signal": "~4.2.0",
     "purescript-react": "~0.5.0",
     "purescript-integers": "~0.2.1",
-    "purescript-lists": "~0.7.7"
+    "purescript-lists": "~0.7.7",
+    "purescript-base64": "thimoteus/purescript-base64"
   }
 }
