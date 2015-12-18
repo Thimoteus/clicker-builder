@@ -66,7 +66,7 @@ instance showUpgrade :: Show Upgrade where
 
 genericButtonWithText :: Action -> String -> Component
 genericButtonWithText act str env =
-  D.button [P.onClick \ _ -> send env.channel act] [D.text str]
+  D.button [P.onMouseDown \ _ -> send env.channel act] [D.text str]
 
 foldComponent :: Array Component -> Component
 foldComponent arr = \ env -> D.div' $ arr <*> [env]
@@ -84,7 +84,7 @@ upgrade :: Upgrade -> Component
 upgrade up = genericButtonWithText (Buy up) (show up)
 
 controls :: Component
-controls env = D.div' $ flip apply [env] [clickButton, resetButton, buyButton]
+controls = foldComponent [clickButton, resetButton, buyButton]
 
 currentClicks :: Component
 currentClicks env = D.text (show env.clicks)
@@ -139,7 +139,7 @@ main = do
   body' <- getBody
   channel <- channel Reset
   let actions = subscribe channel
-      gameState = foldp step initialState (cps <> actions)
+      gameState = foldp step initialState $ actions <> cps
       game = gameState <#> mkEnv channel >>> (\ env -> render (ui env) body') >>> void
   runSignal game
   where
