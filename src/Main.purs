@@ -5,14 +5,14 @@ import Prelude hiding (div)
 import Control.Monad.Eff (Eff())
 import Control.Monad.Eff.Console (CONSOLE(), log)
 
-import Browser.WebStorage (WebStorage(), getItem, setItem, localStorage)
+import Browser.WebStorage (WebStorage())
 
 import Data.Array (catMaybes, zip)
 import Data.Maybe (maybe)
 import Data.List (List(..), (:))
 import Data.Foldable (traverse_)
 import Data.Traversable (sequence)
-import Data.Tuple(Tuple(..), uncurry, lookup)
+import Data.Tuple(Tuple(..))
 import Data.Foreign.Lens (json, number, get)
 
 import Signal (Signal(), constant, foldp, runSignal, sampleOn)
@@ -68,15 +68,7 @@ availableUpgrades { cps = cps, clickBurst = clickBurst, clicks = clicks }
 
 saveButton :: Component
 saveButton env =
-  button [onMouseDown \ _ -> traverse_ saveState stateTuples] [text "Save"]
-  where
-    saveState :: forall eff. Tuple String String -> Eff ( webStorage :: WebStorage | eff ) Unit
-    saveState = uncurry $ setItem localStorage
-    stateTuples :: Array (Tuple String String)
-    stateTuples = [ Tuple (scramble "clicks") $ scramble $ show env.clicks
-                  , Tuple (scramble "cps") $ scramble $ show env.cps
-                  , Tuple (scramble "upgradesBought") $ scramble $ show env.upgradesBought
-                  , Tuple (scramble "clickBurst") $ scramble $ show env.clickBurst ]
+  button [onMouseDown \ _ -> traverse_ saveState $ stateTuples env] [text "Save"]
 
 upgrade :: Upgrade -> Component
 upgrade up = actionButton (Buy up) (show up)

@@ -5,13 +5,13 @@ import Prelude
 import Control.Monad.Eff (Eff())
 import Control.Monad.Eff.Console (CONSOLE())
 
-import Browser.WebStorage (WebStorage(), getItem, localStorage)
+import Browser.WebStorage (WebStorage(), getItem, localStorage, setItem)
 
 import Data.Array (catMaybes, zip)
 import Data.Maybe (maybe)
+import Data.Tuple (Tuple(..), uncurry, lookup)
 import Data.List (List(..))
 import Data.Traversable (sequence)
-import Data.Tuple(lookup)
 import Data.Foreign.Lens (json, number, get)
 
 import Util
@@ -38,3 +38,12 @@ getSavedState = do
     parseClickBurst = getNumber initialState.clickBurst
     getNumber :: Number -> String -> Number
     getNumber default = maybe default id <<< get (json <<< number) <<< unscramble
+
+saveState :: forall eff. Tuple String String -> Eff ( webStorage :: WebStorage | eff ) Unit
+saveState = uncurry $ setItem localStorage
+
+stateTuples :: Environment -> Array (Tuple String String)
+stateTuples env = [ Tuple (scramble "clicks") $ scramble $ show env.clicks
+                  , Tuple (scramble "cps") $ scramble $ show env.cps
+                  , Tuple (scramble "upgradesBought") $ scramble $ show env.upgradesBought
+                  , Tuple (scramble "clickBurst") $ scramble $ show env.clickBurst ]
