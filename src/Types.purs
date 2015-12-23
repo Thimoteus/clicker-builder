@@ -15,6 +15,13 @@ type GameState = State ()
 type Environment = State ( channel :: Channel Action )
 type Component = Environment -> ReactElement
 
+mkEnv :: Channel Action -> GameState -> Environment
+mkEnv channel state = { clicks: state.clicks
+                      , channel: channel
+                      , clickBurst: state.clickBurst
+                      , upgradesBought: state.upgradesBought
+                      , cps: state.cps }
+
 data Action = Click
             | AutoClick
             | Buy Upgrade

@@ -7,44 +7,24 @@ import Control.Monad.Eff.Console (CONSOLE(), log)
 
 import Browser.WebStorage (WebStorage())
 
-import Data.Array (catMaybes, zip)
-import Data.Maybe (maybe)
-import Data.List (List(..), (:))
+import Data.List ((:))
 import Data.Foldable (traverse_)
-import Data.Traversable (sequence)
-import Data.Tuple(Tuple(..))
-import Data.Foreign.Lens (json, number, get)
 
 import Signal (Signal(), constant, foldp, runSignal, sampleOn)
 import Signal.Time (every, second)
-import Signal.Channel (Chan(), Channel(), channel, send, subscribe)
+import Signal.Channel (Chan(), channel, subscribe)
 
 import DOM (DOM())
 
 import React (render, createFactory, createClass, spec)
-import React.DOM (div, div', text, button)
-import React.DOM.Props (onMouseDown, _id)
+import React.DOM (div', text, button)
+import React.DOM.Props (onMouseDown)
 
 import Types
 import Save
+import Upgrades
+import Blocks
 import Util
-
-mkEnv :: Channel Action -> GameState -> Environment
-mkEnv channel state = { clicks: state.clicks
-                      , channel: channel
-                      , clickBurst: state.clickBurst
-                      , upgradesBought: state.upgradesBought
-                      , cps: state.cps }
-
-actionButton :: Action -> String -> Component
-actionButton act str env =
-  button [onMouseDown \ _ -> send env.channel act] [text str]
-
-foldComponent :: String -> Array Component -> Component
-foldComponent name arr = \ env -> div [_id name] $ arr <*> [env]
-
-foldComponent' :: Array Component -> Component
-foldComponent' arr = \ env -> div' $ arr <*> [env]
 
 clickButton :: Component
 clickButton = actionButton Click "click me!"
@@ -52,29 +32,15 @@ clickButton = actionButton Click "click me!"
 resetButton :: Component
 resetButton = actionButton Reset "reset"
 
-buyButton :: Component
-buyButton env = (foldComponent' <<< map upgrade $ availableUpgrades env) env
-
-availableUpgrades :: Environment -> Array Upgrade
-availableUpgrades { cps = cps, clickBurst = clickBurst, clicks = clicks }
-  = availableBurst clickBurst clicks ++ availableCPS cps clicks
-    where
-      availableBurst curr total
-        | total >= 2.0 * curr ^ 2 + 50.0 = [Burst (curr * 2.0)]
-        | otherwise = []
-      availableCPS curr total
-        | total >= 2.0 * curr ^ 2 + 50.0 = [CPS (curr * 1.3 + 1.0)]
-        | otherwise = []
+buyButtons :: Component
+buyButtons env = (foldComponent' <<< map upgrade $ availableUpgrades env) env
 
 saveButton :: Component
 saveButton env =
   button [onMouseDown \ _ -> traverse_ saveState $ stateTuples env] [text "Save"]
 
-upgrade :: Upgrade -> Component
-upgrade up = actionButton (Buy up) (show up)
-
 controls :: Component
-controls = foldComponent' [clickButton, resetButton, buyButton, saveButton]
+controls = foldComponent' [clickButton, resetButton, buyButtons, saveButton]
 
 currentClicks :: Component
 currentClicks env = text (show env.clicks)

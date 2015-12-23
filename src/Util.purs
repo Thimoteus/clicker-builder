@@ -38,9 +38,10 @@ eitherToMaybe (Left _) = Nothing
 eitherToMaybe (Right x) = Just x
 
 infixr 8 ^
+(^) :: Int -> Number -> Number
 (^) = expImpl
 
-foreign import expImpl :: Number -> Int -> Number
+foreign import expImpl :: forall a b c. a -> b -> c
 
 scramble :: String -> String
 scramble = rot13 <<< encode64 <<< rot13
