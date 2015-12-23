@@ -54,6 +54,6 @@ rot13 = fromCharArray <<< map rotate <<< toCharArray
   where
     rotate :: Char -> Char
     rotate c
-      | toCharCode c <= 90 && toCharCode c >= 65 = fromCharCode $ (((toCharCode c - 65) + 13) `mod` 26) + 65
-      | toCharCode c <= 122 && toCharCode c >= 97 = fromCharCode $ (((toCharCode c - 97) + 13) `mod` 26) + 97
+      | toCharCode c <= 90 && toCharCode c >= 65 = fromCharCode $ 65 + ((toCharCode c - 52) `mod` 26)
+      | toCharCode c <= 122 && toCharCode c >= 97 = fromCharCode $ 97 + ((toCharCode c - 84) `mod` 26)
       | otherwise = c

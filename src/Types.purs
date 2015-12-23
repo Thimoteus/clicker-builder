@@ -3,8 +3,10 @@ module Types where
 import Prelude
 
 import Data.List (List())
-import Signal.Channel (Chan(), Channel())
-import React (ReactElement(..))
+import Data.Array (span, take, drop)
+import Data.String (toCharArray, fromCharArray)
+import Signal.Channel (Channel())
+import React (ReactElement())
 
 type State a = { clicks :: Number
                , cps :: Number
@@ -32,8 +34,17 @@ data Upgrade = CPS Number
              | Burst Number
 
 instance showUpgrade :: Show Upgrade where
-  show (CPS n) = "buy CPS upgrade +" ++ show n
-  show (Burst n) = "buy click upgrade +" ++ show n
+  show (CPS n) = "buy CPS upgrade +" ++ prettify n
+  show (Burst n) = "buy click upgrade +" ++ prettify n
 
 class Pretty a where
   prettify :: a -> String
+
+instance prettyNumber :: Pretty Number where
+  prettify = show >>> toCharArray >>> chopDigits >>> fromCharArray
+    where
+      chopDigits :: Array Char -> Array Char
+      chopDigits arr = let split = span (/= '.') arr
+                           large = split.init
+                           small = take 2 $ split.rest
+                        in large ++ small

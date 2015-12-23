@@ -13,8 +13,8 @@ availableUpgrades { cps = cps, clickBurst = clickBurst, clicks = clicks }
   = availableBurst clickBurst clicks ++ availableCPS cps clicks
     where
       availableBurst curr total
-        | total >= 50.0 * 2 ^ curr = [Burst (curr * 1.5)]
+        | total >= 10.0 * 2 ^ curr = [Burst (curr * 1.5)]
         | otherwise = []
       availableCPS curr total
-        | total >= 50.0 * 2 ^ curr = [CPS (curr * 1.3 + 1.0)]
+        | total >= 10.0 * 2 ^ curr = [CPS (curr * 1.3 + 1.0)]
         | otherwise = []
