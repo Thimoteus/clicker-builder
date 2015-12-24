@@ -9,6 +9,7 @@ import Browser.WebStorage (WebStorage())
 
 import Data.List ((:))
 import Data.Foldable (traverse_)
+import Data.Lens ((^.), (%~), (.~), (+~), (-~))
 
 import Signal (Signal(), constant, foldp, runSignal, sampleOn)
 import Signal.Time (every, second)
@@ -45,21 +46,23 @@ controls = foldComponent' [clickButton, resetButton, buyButtons, saveButton]
 currentClicks :: Component
 currentClicks env = text (prettify env.clicks)
 
-showGame :: Component
-showGame = foldComponent' [controls, currentClicks]
+currentUpgrades :: Component
+currentUpgrades = foldComponent' [currentCPS, currentBurst]
+  where
+    currentCPS env = text $ "CPS: " ++ prettify env.cps
+    currentBurst env = text $ "Click: " ++ prettify env.clickBurst
 
-cps :: Signal Action
-cps = sampleOn (every second) (constant AutoClick)
+showGame :: Component
+showGame = foldComponent' [controls, currentClicks, currentUpgrades]
+
+computerActions :: Signal Action
+computerActions = sampleOn (every second) (constant AutoClick)
 
 step :: Action -> GameState -> GameState
-step Click state = state { clicks = state.clicks + state.clickBurst }
-step AutoClick state = state { clicks = state.clicks + state.cps }
-step (Buy (CPS n)) state =
-  state { cps = state.cps + n
-        , upgradesBought = (CPS n) : state.upgradesBought }
-step (Buy (Burst n)) state =
-  state { clickBurst = state.clickBurst + n
-        , upgradesBought = (Burst n) : state.upgradesBought }
+step Click state = (clicks +~ state.clickBurst) state
+step AutoClick state = (clicks +~ state.cps) state
+step (Buy (CPS n)) state = (upgradesBought %~ ((CPS n) :)) <<< (cps +~ n) $ state
+step (Buy (Burst n)) state = (upgradesBought %~ ((Burst n) :)) <<< (clickBurst +~ n) $ state
 step Nothing s = s
 step Reset _ = initialState
 
@@ -68,8 +71,8 @@ main = do
   body' <- getBody
   gameChan <- channel Nothing
   savedState <- getSavedState
-  let actions = subscribe gameChan
-      gameState = foldp step savedState $ actions <> cps
+  let humanActions = subscribe gameChan
+      gameState = foldp step savedState $ humanActions <> computerActions
       game = gameState <#> mkEnv gameChan >>> (\ env -> render (gameUI env) body') >>> void
   runSignal game
 
