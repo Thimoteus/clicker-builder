@@ -1,26 +1,22 @@
-module Upgrades where
+module Upgrades
+  ( upgradeToNumber
+  ) where
 
 import Prelude
-
-import Data.Foldable (fold)
-
+import Data.Int (toNumber)
 import Types
 import Util
-import Blocks
 
-upgrade :: Upgrade -> Component
-upgrade up = actionButton (Buy up) (show up)
+upgradeToNumber :: Upgrade -> Number
+upgradeToNumber (CPS1 n _) = makeUpgrade 50 n
+upgradeToNumber (CPS2 n _) = makeUpgrade 100 n
+upgradeToNumber (CPS3 n _) = makeUpgrade 500 n
+upgradeToNumber (CPS4 n _) = makeUpgrade 1000 n
+upgradeToNumber (CPS5 n _) = makeUpgrade 10000 n
+upgradeToNumber _ = 0.0
 
-availableUpgrades :: Environment -> Array Upgrade
-availableUpgrades { cps = cps, clickBurst = clickBurst, clicks = clicks }
-  = fold $ [availableBurst clickBurst, availableCPS cps] <*> [clicks]
-    where
-      availableBurst curr total
-        | total >= 10.0 * 2.0^ curr = [Burst (curr * 1.5)]
-        | otherwise = []
-      availableCPS curr total
-        | total >= 10.0 * 2.0 ^ curr = [CPS (curr * 1.3 + 1.0)]
-        | otherwise = []
+makeUpgrade :: Int -> Int -> Number
+makeUpgrade coeff total = upgradePolynomial (toNumber coeff) $ toNumber total
 
---nextUpgrade :: Number -> Upgrade
---nextUpgrade clicks = 10.0 * 1.3 
+upgradePolynomial :: Number -> Number -> Number
+upgradePolynomial coeff total = coeff + coeff * 0.1 * total ^ 2.0 + 10.0 * total + 13.0

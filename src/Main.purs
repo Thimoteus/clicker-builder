@@ -2,79 +2,88 @@ module Main where
 
 import Prelude
 
+import Data.Lens (LensP(), (-~), (+~), (.~))
+
+import Control.Monad.Aff (Aff(), runAff, later')
 import Control.Monad.Eff (Eff())
-import Control.Monad.Eff.Console (CONSOLE(), log)
+import Control.Monad.Eff.Class (liftEff)
+import Control.Monad.Eff.Exception (throwException)
+import Control.Monad.Rec.Class (forever)
 
-import Browser.WebStorage (WebStorage())
-
-import Data.List ((:))
-import Data.Foldable (traverse_)
-import Data.Lens ((^.), (%~), (.~), (+~), (-~))
-
-import Signal (Signal(), constant, foldp, runSignal, sampleOn)
-import Signal.Time (every, second)
-import Signal.Channel (Chan(), channel, subscribe)
-
-import DOM (DOM())
-
-import React (render, createFactory, createClass, spec)
-import React.DOM (div', text, button)
-import React.DOM.Props (onMouseDown)
+import Halogen
+  ( Component(), component
+  , Eval(), Render()
+  , runUI, modify, action, get, liftEff'
+  )
+import Halogen.Util (appendToBody, onLoad)
+import Halogen.HTML.Indexed (div_, h1_, text, button)
+import Halogen.HTML.Events.Indexed (onMouseDown, input_)
 
 import Types
 import Save
 import Upgrades
-import Blocks
-import Util
 
-clickButton :: Component
-clickButton = actionButton Click "click me!"
-
-resetButton :: Component
-resetButton = actionButton Reset "reset"
-
-buyButtons :: Component
-buyButtons env = (foldComponent' <<< map upgrade $ availableUpgrades env) env
-
-saveButton :: Component
-saveButton env =
-  button [onMouseDown \ _ -> traverse_ saveState $ stateTuples env] [text "Save"]
-
-controls :: Component
-controls = foldComponent' [clickButton, resetButton, buyButtons, saveButton]
-
-currentClicks :: Component
-currentClicks env = text (prettify env.clicks)
-
-currentUpgrades :: Component
-currentUpgrades = foldComponent' [currentCPS, currentBurst]
+interface :: Component State Action (Aff AppEffects)
+interface = component render eval
   where
-    currentCPS env = text $ "CPS: " ++ prettify env.cps
-    currentBurst env = text $ "Click: " ++ prettify env.clickBurst
+    render :: Render State Action
+    render state =
+      div_
+        [ h1_
+          [ text "The world's simplest incremental game" ]
+        , button
+          [ onMouseDown (input_ Click) ]
+          [ text "Click me!" ]
+        , div_
+          [ text (prettify state.clicks) ]
+        , button
+          [ onMouseDown (input_ Save) ]
+          [ text "Save" ]
+        ]
 
-showGame :: Component
-showGame = foldComponent' [controls, currentClicks, currentUpgrades]
+    eval :: Eval Action State Action (Aff AppEffects)
+    eval (Click next) = do
+      modify $ (clicks +~ 1.0) <<< (total +~ 1.0)
+      pure next
+    eval (Autoclick next) = do
+      modify $ (\ state -> (clicks +~ (state.cps / 10.0)) state)
+           <<< (\ state -> (total +~ (state.cps / 10.0)) state)
+      pure next
+    eval (Reset next) = do
+      modify $ const initialState
+      pure next
+    eval (Save next) = do
+      currentState <- get
+      liftEff' $ saveState currentState
+      pure next
+    eval (Buy upgrade next) = do
+      modify $ buyUpgrade upgrade
+      pure next
 
-computerActions :: Signal Action
-computerActions = sampleOn (every second) (constant AutoClick)
+    buyUpgrade :: Upgrade -> State -> State
+    buyUpgrade up@(CPS1 _ _) = recordPurchase up cps1
+    buyUpgrade up@(CPS2 _ _) = recordPurchase up cps2
+    buyUpgrade up@(CPS3 _ _) = recordPurchase up cps3
+    buyUpgrade up@(CPS4 _ _) = recordPurchase up cps4
+    buyUpgrade up@(CPS5 _ _) = recordPurchase up cps5
+    buyUpgrade up@(Burst1 _ _) = recordPurchase up burst1
+    buyUpgrade up@(Burst2 _ _) = recordPurchase up burst2
+    buyUpgrade up@(Burst3 _ _) = recordPurchase up burst3
+    buyUpgrade up@(Burst4 _ _) = recordPurchase up burst4
+    buyUpgrade up@(Burst5 _ _) = recordPurchase up burst5
 
-step :: Action -> GameState -> GameState
-step Click state = (clicks +~ state.clickBurst) state
-step AutoClick state = (clicks +~ state.cps) state
-step (Buy (CPS n)) state = (upgradesBought %~ ((CPS n) :)) <<< (cps +~ n) $ state
-step (Buy (Burst n)) state = (upgradesBought %~ ((Burst n) :)) <<< (clickBurst +~ n) $ state
-step Nothing s = s
-step Reset _ = initialState
+    recordPurchase :: Upgrade -> LensP Upgrades Upgrade -> State -> State
+    recordPurchase up optic = (clicks -~ upgradeToNumber up)
+                          <<< (upgrades <<< optic .~ up)
 
-main :: forall eff. Eff ( console :: CONSOLE, webStorage :: WebStorage, chan :: Chan, dom :: DOM | eff ) Unit
-main = do
-  body' <- getBody
-  gameChan <- channel Nothing
-  savedState <- getSavedState
-  let humanActions = subscribe gameChan
-      gameState = foldp step savedState $ humanActions <> computerActions
-      game = gameState <#> mkEnv gameChan >>> (\ env -> render (gameUI env) body') >>> void
-  runSignal game
-
-gameUI :: Component
-gameUI env = div' [createFactory (createClass (spec unit \ _ -> pure (showGame env))) unit]
+main :: Eff AppEffects Unit
+main = runAff throwException (const (pure unit)) do
+  savedState <- liftEff getSavedState
+  app <- runUI interface savedState
+  onLoad $ appendToBody app.node
+  --forever do
+    --app.driver $ action Save
+    --later' 15000 $ pure unit
+  forever do
+    app.driver $ action Autoclick
+    later' 100 $ pure unit

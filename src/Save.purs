@@ -1,4 +1,8 @@
-module Save where
+module Save (
+  initialState,
+  getSavedState,
+  saveState
+  ) where
 
 import Prelude
 
@@ -7,51 +11,75 @@ import Control.Monad.Eff.Console (CONSOLE())
 
 import Browser.WebStorage (WebStorage(), getItem, localStorage, setItem)
 
+import Data.Bifunctor (bimap)
 import Data.Array (catMaybes, zip)
 import Data.Maybe (maybe)
 import Data.Either (Either(..))
 import Data.Tuple (Tuple(..), uncurry, lookup)
-import Data.List (List(..))
 import Data.Traversable (sequence)
-import Data.Foreign.Lens (json, number, get, getter)
+import Data.Foldable (traverse_)
+import Data.Foreign (Foreign())
+import Data.Foreign.Class (read)
+import Data.Foreign.Lens (PartialGetter(), json, number, get, getter)
+import Data.Lens (view)
 
 import Util
 import Types
 
-initialState :: GameState
+initialState :: State
 initialState = { clicks: 0.0
+               , total: 0.0
                , cps: 0.0
-               , upgradesBought: Nil
                , age: Stone
-               , clickBurst: 1.0 }
+               , burst: 1.0
+               , upgrades: Upgrades { cps1: CPS1 0 tagCPS1
+                                    , cps2: CPS2 0 tagCPS2
+                                    , cps3: CPS3 0 tagCPS3
+                                    , cps4: CPS4 0 tagCPS4
+                                    , cps5: CPS5 0 tagCPS5
+                                    , burst1: Burst1 0 tagBurst1
+                                    , burst2: Burst2 0 tagBurst2
+                                    , burst3: Burst3 0 tagBurst3
+                                    , burst4: Burst4 0 tagBurst4
+                                    , burst5: Burst5 0 tagBurst5
+                                    }
+               }
 
-getSavedState :: forall eff. Eff ( console :: CONSOLE, webStorage :: WebStorage | eff ) GameState
+getSavedState :: forall eff. Eff ( console :: CONSOLE, webStorage :: WebStorage | eff ) State
 getSavedState = do
   arr <- zip storageKeys <<< catMaybes <$> sequence (getItem localStorage <$> storageKeys)
   pure $ { clicks: stateValueMaker _.clicks parseClicks "clicks" arr
+         , total: stateValueMaker _.total parseTotal "total" arr
          , cps: stateValueMaker _.cps parseCPS "cps" arr
-         , upgradesBought: stateValueMaker _.upgradesBought parseUpgrades "upgradesBought" arr
+         , upgrades: stateValueMaker (view upgrades) parseUpgrades "upgrades" arr
          , age: stateValueMaker _.age parseAge "age" arr
-         , clickBurst: stateValueMaker _.clickBurst parseClickBurst "clickBurst" arr }
+         , burst: stateValueMaker _.burst parseBurst "burst" arr
+         }
 
-stateValueMaker :: forall a. (GameState -> a) -> (String -> a) -> String -> Array (Tuple String String) -> a
+stateValueMaker :: forall a. (State -> a) -> (String -> a) -> String -> Array (Tuple String String) -> a
 stateValueMaker default parser key arr =
   maybe (default initialState) parser $ lookup (scramble key) arr
 
 storageKeys :: Array String
-storageKeys = map scramble ["clicks", "cps", "upgradesBought", "clickBurst", "age"]
+storageKeys = map scramble ["clicks", "cps", "burst", "age", "upgrades"]
 
 parseClicks :: String -> Number
 parseClicks = getNumber initialState.clicks
 
+parseTotal :: String -> Number
+parseTotal = getNumber initialState.total
+
 parseCPS :: String -> Number
 parseCPS = getNumber initialState.cps
 
-parseUpgrades :: String -> List Upgrade
-parseUpgrades _ = Nil
+parseUpgrades :: String -> Upgrades
+parseUpgrades = maybe initialState.upgrades id <<< get (json <<< ups) <<< unscramble
+  where
+    ups :: PartialGetter Upgrades Foreign
+    ups = getter read
 
-parseClickBurst :: String -> Number
-parseClickBurst = getNumber initialState.clickBurst
+parseBurst :: String -> Number
+parseBurst = getNumber initialState.burst
 
 getNumber :: Number -> String -> Number
 getNumber default = maybe default id <<< get (json <<< number) <<< unscramble
@@ -60,6 +88,7 @@ parseAge :: String -> Age
 parseAge = maybe initialState.age id <<< get (getter age) <<< unscramble
   where
     age :: String -> Either Unit Age
+    age "Stone" = Right Stone
     age "Bronze" = Right Bronze
     age "Iron" = Right Iron
     age "Classical" = Right Classical
@@ -75,12 +104,20 @@ parseAge = maybe initialState.age id <<< get (getter age) <<< unscramble
     age "Solar" = Right Solar
     age _ = Left unit
 
-saveState :: forall eff. Tuple String String -> Eff ( webStorage :: WebStorage | eff ) Unit
-saveState = uncurry $ setItem localStorage
+saveState :: forall eff. State -> Eff ( webStorage :: WebStorage | eff ) Unit
+saveState = traverse_ saveSingleState <<< stateTuples
 
-stateTuples :: Environment -> Array (Tuple String String)
-stateTuples env = [ Tuple (scramble "clicks") $ scramble $ show env.clicks
-                  , Tuple (scramble "cps") $ scramble $ show env.cps
-                  , Tuple (scramble "upgradesBought") $ scramble $ show env.upgradesBought
-                  , Tuple (scramble "age") $ scramble $ show env.age
-                  , Tuple (scramble "clickBurst") $ scramble $ show env.clickBurst ]
+saveSingleState :: forall eff. Tuple String String -> Eff ( webStorage :: WebStorage | eff ) Unit
+saveSingleState = uncurry $ setItem localStorage
+
+stateTuples :: State -> Array (Tuple String String)
+stateTuples state = [ makeTuple "clicks" state.clicks
+                    , makeTuple "total" state.total
+                    , makeTuple "cps" state.cps
+                    , makeTuple "upgrades" state.upgrades
+                    , makeTuple "age" state.age
+                    , makeTuple "burst" state.burst
+                    ]
+  where
+    makeTuple :: forall a. (Pretty a) => String -> a -> Tuple String String
+    makeTuple key = bimap scramble (scramble <<< prettify) <<< Tuple key
