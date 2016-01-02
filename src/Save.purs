@@ -25,6 +25,7 @@ import Data.Lens (view, (^.))
 
 import Util
 import Types
+import Lenses
 
 initialState :: State
 initialState = { currentClicks: Clicks 0.0
@@ -124,5 +125,3 @@ stateTuples state = [ makeTuple "currentClicks" state.currentClicks
   where
     makeTuple :: forall a. (Serialize a) => String -> a -> Tuple String String
     makeTuple key = bimap scramble (scramble <<< serialize) <<< Tuple key
-
---"{ cps1: 3, cps2: 0, cps3: 0, cps4: 0, cps5: 0, burst1: 0, burst2: 0, burst3: 0, burst4: 0, burst5: 0}"

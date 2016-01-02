@@ -9,8 +9,10 @@ module Upgrades
 import Prelude
 import Data.Int (toNumber)
 import Data.Lens ((^.))
+
 import Types
 import Util
+import Lenses
 
 upgradeCost :: Upgrade -> Number
 upgradeCost (CPS1 n _) = makeUpgrade 50 n
@@ -43,7 +45,7 @@ nextUpgrade (Burst5 n t) = Burst5 (n + 1) t
 
 canBuyUpgrade :: State -> Boolean
 canBuyUpgrade state =
-  let currClicks = state ^. currentClicks <<< clicks
+  let currClicks = state ^. currentClicksNumber
       currUpgrade = state ^. upgrades <<< cps1
       next = nextUpgrade currUpgrade
       nextCost = upgradeCost next

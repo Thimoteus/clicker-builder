@@ -22,6 +22,7 @@ import Halogen.HTML.Events.Indexed (onMouseDown, input_)
 import Halogen.HTML.Properties.Indexed (disabled)
 
 import Types
+import Lenses
 import Save
 import Upgrades
 
@@ -74,7 +75,7 @@ eval :: Eval Action State Action (Aff AppEffects)
 eval (Click next) = do
   modify $ (currentClicksNumber +~ 1.0) <<< (totalClicksNumber +~ 1.0)
   pure next
-eval (Autoclick next) = do -- state ^. cpsNumber / 10.0
+eval (Autoclick next) = do
   modify $ (\ state -> (currentClicksNumber +~ (state ^. cpsNumber / 10.0)) state)
        <<< (\ state -> (totalClicksNumber +~ (state ^. cpsNumber / 10.0)) state)
   pure next
