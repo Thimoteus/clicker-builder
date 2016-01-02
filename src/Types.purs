@@ -14,28 +14,46 @@ import Browser.WebStorage (WebStorage())
 import Halogen (HalogenEffects())
 import Unsafe.Coerce (unsafeCoerce)
 
-type State = { clicks :: Clicks
-             , total :: Clicks
+type State = { currentClicks :: Clicks
+             , totalClicks :: Clicks
              , cps :: ClicksPerSecond
              , burst :: Clicks
              , age :: Age
              , upgrades :: Upgrades
              }
 
-type Clicks = Number
-type ClicksPerSecond = Number
+newtype Clicks = Clicks Number
+newtype ClicksPerSecond = ClicksPerSecond Number
 
-clicks :: LensP State Clicks
-clicks = lens _.clicks (_ { clicks = _ })
+clicks :: LensP Clicks Number
+clicks = lens (\ (Clicks n) -> n) (\ _ m -> Clicks m)
 
-total :: LensP State Clicks
-total = lens _.total (_ { total = _ })
+clicksPerSecond :: LensP ClicksPerSecond Number
+clicksPerSecond = lens (\ (ClicksPerSecond n) -> n) (\ _ m -> ClicksPerSecond m)
+
+currentClicks :: LensP State Clicks
+currentClicks = lens _.currentClicks (_ { currentClicks = _ })
+
+currentClicksNumber :: LensP State Number
+currentClicksNumber = currentClicks <<< clicks
+
+totalClicks :: LensP State Clicks
+totalClicks = lens _.totalClicks (_ { totalClicks = _ })
+
+totalClicksNumber :: LensP State Number
+totalClicksNumber = totalClicks <<< clicks
 
 cps :: LensP State ClicksPerSecond
 cps = lens _.cps (_ { cps = _ })
 
+cpsNumber :: LensP State Number
+cpsNumber = cps <<< clicksPerSecond
+
 burst :: LensP State Clicks
 burst = lens _.burst (_ { burst = _ })
+
+burstNumber :: LensP State Number
+burstNumber = burst <<< clicks
 
 age :: LensP State Age
 age = lens _.age (_ { age = _ })
@@ -192,6 +210,9 @@ derive instance genericAge :: Generic Age
 instance ageShow :: Show Age where
   show = gShow
 
+class Pretty a where
+  prettify :: a -> String
+
 instance prettifyUpgrade :: Pretty Upgrade where
   prettify (CPS1 n _) = prettify n
   prettify (CPS2 n _) = prettify n
@@ -204,9 +225,6 @@ instance prettifyUpgrade :: Pretty Upgrade where
   prettify (Burst4 n _) = prettify n
   prettify (Burst5 n _) = prettify n
 
-class Pretty a where
-  prettify :: a -> String
-
 instance prettyNumber :: Pretty Number where
   prettify = show >>> toCharArray >>> chopDigits >>> fromCharArray
     where
@@ -216,21 +234,60 @@ instance prettyNumber :: Pretty Number where
                            small = take 2 $ split.rest
                         in large ++ small
 
+instance prettyClicks :: Pretty Clicks where
+  prettify (Clicks n) = "Clicks: " ++ prettify n
+
+instance prettyClicksPerSecond :: Pretty ClicksPerSecond where
+  prettify (ClicksPerSecond n) = "CPS: " ++ prettify n
+
 instance prettyInt :: Pretty Int where
   prettify = show
 
 instance prettyAge :: Pretty Age where
   prettify = show
 
-instance prettyUpgrades :: Pretty Upgrades where
-  prettify (Upgrades u) = "{ cps1: "
-                       ++ prettify u.cps1 ++ ", cps2: "
-                       ++ prettify u.cps2 ++ ", cps3: "
-                       ++ prettify u.cps3 ++ ", cps4: "
-                       ++ prettify u.cps4 ++ ", cps5: "
-                       ++ prettify u.cps5 ++ ", burst1: "
-                       ++ prettify u.burst1 ++ ", burst2: "
-                       ++ prettify u.burst2 ++ ", burst3: "
-                       ++ prettify u.burst3 ++ ", burst4: "
-                       ++ prettify u.burst4 ++ ", burst5: "
-                       ++ prettify u.burst5 ++ "}"
+class Serialize a where
+  serialize :: a -> String
+
+instance serializeString :: Serialize String where
+  serialize = id
+
+instance serializeInt :: Serialize Int where
+  serialize = show
+
+instance serializeNumber :: Serialize Number where
+  serialize = prettify
+
+instance serializeClicks :: Serialize Clicks where
+  serialize (Clicks n) = prettify n
+
+instance serializeClicksPerSecond :: Serialize ClicksPerSecond where
+  serialize (ClicksPerSecond n) = prettify n
+
+instance serializeAge :: Serialize Age where
+  serialize = prettify
+
+instance serializeUpgrade :: Serialize Upgrade where
+  serialize (CPS1 n _) = serialize n
+  serialize (CPS2 n _) = serialize n
+  serialize (CPS3 n _) = serialize n
+  serialize (CPS4 n _) = serialize n
+  serialize (CPS5 n _) = serialize n
+  serialize (Burst1 n _) = serialize n
+  serialize (Burst2 n _) = serialize n
+  serialize (Burst3 n _) = serialize n
+  serialize (Burst4 n _) = serialize n
+  serialize (Burst5 n _) = serialize n
+
+instance serializeUpgrades :: Serialize Upgrades where
+  serialize (Upgrades u) = "{ cps1: "
+                        ++ serialize u.cps1 ++ ", cps2: "
+                        ++ serialize u.cps2 ++ ", cps3: "
+                        ++ serialize u.cps3 ++ ", cps4: "
+                        ++ serialize u.cps4 ++ ", cps5: "
+                        ++ serialize u.cps5 ++ ", burst1: "
+                        ++ serialize u.burst1 ++ ", burst2: "
+                        ++ serialize u.burst2 ++ ", burst3: "
+                        ++ serialize u.burst3 ++ ", burst4: "
+                        ++ serialize u.burst4 ++ ", burst5: "
+                        ++ serialize u.burst5 ++ "}"
