@@ -67,13 +67,13 @@ storageKeys :: Array String
 storageKeys = map scramble ["totalClicks", "currentClicks", "cps", "burst", "age", "upgrades"]
 
 parseCurrentClicks :: String -> Clicks
-parseCurrentClicks = Clicks <<< getNumber (initialState ^. currentClicks <<< clicks)
+parseCurrentClicks = Clicks <<< getNumber (initialState ^. currentClicksNumber)
 
 parseTotalClicks :: String -> Clicks
-parseTotalClicks = Clicks <<< getNumber (initialState ^. totalClicks <<< clicks)
+parseTotalClicks = Clicks <<< getNumber (initialState ^. totalClicksNumber)
 
 parseCPS :: String -> ClicksPerSecond
-parseCPS = ClicksPerSecond <<< getNumber (initialState ^. cps <<< clicksPerSecond)
+parseCPS = ClicksPerSecond <<< getNumber (initialState ^. cpsNumber)
 
 parseUpgrades :: String -> Upgrades
 parseUpgrades = maybe initialState.upgrades id <<< get (json <<< ups) <<< unscramble
@@ -124,3 +124,5 @@ stateTuples state = [ makeTuple "currentClicks" state.currentClicks
   where
     makeTuple :: forall a. (Serialize a) => String -> a -> Tuple String String
     makeTuple key = bimap scramble (scramble <<< serialize) <<< Tuple key
+
+--"{ cps1: 3, cps2: 0, cps3: 0, cps4: 0, cps5: 0, burst1: 0, burst2: 0, burst3: 0, burst4: 0, burst5: 0}"

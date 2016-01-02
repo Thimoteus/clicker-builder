@@ -26,7 +26,7 @@ makeUpgrade coeff total = upgradePolynomial (toNumber coeff) $ toNumber total
 upgradePolynomial :: Number -> Number -> Number
 upgradePolynomial coeff total = coeff + coeff * 0.1 * total ^ 2.0 + 10.0 * total + 13.0
 
-upgradeFromAge :: forall a. Upgrade -> Age -> String
+upgradeFromAge :: Upgrade -> Age -> String
 upgradeFromAge (CPS1 _ _) Stone = "cave art"
 
 nextUpgrade :: Upgrade -> Upgrade
