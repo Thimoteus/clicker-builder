@@ -1,11 +1,13 @@
 @text-color: #ff3e45; // yellow
 @fg-color: #e8df28; // red
-@bg-color: #001414; // black
+@bg-color: #242424; // black
 
 body {
   font-family: sans-serif;
   max-width: 800px;
   margin: auto;
+  background: @bg-color;
+  color: @text-color;
 }
 
 #side {
@@ -53,6 +55,32 @@ body {
 }
 
 .upgrades {
-  max-width: 200px;
+  width: 300px;
+  float: left;
   overflow: hidden;
+}
+
+.upgrade {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: pointer;
+  color: @text-color;
+  background: @bg-color;
+  .upgrade-name {
+    font-size: 1.5em;
+  }
+}
+
+.upgrade.disabled {
+  cursor: default;
+  color: lighten(@bg-color, 20%);
+}
+
+#bottom {
+  padding-top: 20px;
+  float: left;
 }
