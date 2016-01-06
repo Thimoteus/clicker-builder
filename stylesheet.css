@@ -2,6 +2,8 @@ body {
   font-family: sans-serif;
   max-width: 800px;
   margin: auto;
+  background: #242424;
+  color: #ff3e45;
 }
 #side {
   min-width: 200px;
@@ -20,11 +22,11 @@ body {
   border-radius: 50%;
   border: 4px solid #e8df28;
   overflow: hidden;
-  background: #001414;
+  background: #242424;
   box-shadow: 0 0 3px gray;
 }
 #the-button:hover {
-  background: #004747;
+  background: #3e3e3e;
 }
 #the-button a {
   display: block;
@@ -42,6 +44,29 @@ body {
   text-decoration: none;
 }
 .upgrades {
-  max-width: 200px;
+  width: 300px;
+  float: left;
   overflow: hidden;
+}
+.upgrade {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: pointer;
+  color: #ff3e45;
+  background: #242424;
+}
+.upgrade .upgrade-name {
+  font-size: 1.5em;
+}
+.upgrade.disabled {
+  cursor: default;
+  color: #575757;
+}
+#bottom {
+  padding-top: 20px;
+  float: left;
 }
