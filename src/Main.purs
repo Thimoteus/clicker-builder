@@ -120,8 +120,7 @@ upgradeProps cpsn state =
         onMouseDown $ input_ $ Buy $ nextUpgrade $ state ^. upgrades <<< cpsn
       hoverText state cpsn =
         [ title $ upgradeDescription (state ^. upgrades <<< cpsn) state.age ]
-   in --[disabled $ not $ canBuyUpgrade state cpsn] ++
-      hoverText state cpsn ++
+   in hoverText state cpsn ++
       if canBuyUpgrade state cpsn
          then [ clickAction, class_ (className "upgrade") ]
          else [ class_ (className "upgrade disabled") ]
