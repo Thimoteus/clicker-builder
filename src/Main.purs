@@ -1,6 +1,6 @@
 module Main where
 
-import Prelude
+import Prelude hiding (div, top)
 
 import Data.Lens (LensP(), (-~), (+~), (.~), (^.))
 import Data.Foldable (fold)
@@ -17,9 +17,9 @@ import Halogen
   , runUI, modify, action, get, liftEff'
   )
 import Halogen.Util (appendToBody, onLoad)
-import Halogen.HTML.Indexed (div_, h1_, text, button)
+import Halogen.HTML.Indexed (div, div_, h1_, text, button, br_, a, i, className)
 import Halogen.HTML.Events.Indexed (onMouseDown, input_)
-import Halogen.HTML.Properties.Indexed (disabled)
+import Halogen.HTML.Properties.Indexed (disabled, id_, href, class_, title)
 
 import Types
 import Lenses
@@ -32,52 +32,97 @@ interface = component render eval
 render :: Render State Action
 render state =
   div_
-    [ h1_
-      [ text "The world's simplest incremental game" ]
-    , button
-      [ onMouseDown (input_ Click) ]
-      [ text "Click me!" ]
-    , div_
-      [ text (prettify state.currentClicks) ]
-    , div_
-      [ text $ "cps: " ++ (prettify state.cps) ]
-    , div_
-      [ text $ "burst: " ++ (prettify state.burst) ]
-    , button
-      [ onMouseDown (input_ Save) ]
-      [ text "Save" ]
-    , button
-      [ onMouseDown (input_ Reset) ]
-      [ text "Reset" ]
-    , upgradesComponent state
+    [ top
+    , side
+    , main'
     ]
-
-upgradesComponent :: Render State Action
-upgradesComponent state = div_
-      [ text "Upgrades"
-      , button (upgradeProps state)
-        [ text $
-          fold [upgradeFromAge (state ^. upgrades <<< cps1) state.age
-               , " "
-               , prettify (upgradeCost $ nextUpgrade $ state ^. upgrades <<< cps1)
-               ]
+  where
+    top = h1_ [ text "clicker builder" ]
+    side = div [ id_ "side" ]
+      [ div_
+        [ text "Current clicks:"
+        , br_
+        , text (prettify state.currentClicks)
+        , br_
+        , text "Burst:"
+        , br_
+        , text (prettify state.burst)
+        , br_
+        , text "CPS:"
+        , br_
+        , text (prettify state.cps)
+        ]
+      , div
+        [ id_ "clicker-wrapper" ]
+        [ div
+          [ onMouseDown (input_ Click)
+          , id_ "the-button"
+          ]
+          [ a
+            [ href "#" ]
+            [ i [ class_ $ className "fa fa-hand-pointer-o" ] [] ]
+          ]
         ]
       ]
+    main' = div [ id_ "main" ]
+      [ button
+        [ onMouseDown (input_ Save) ]
+        [ text "Save" ]
+      , button
+        [ onMouseDown (input_ Reset) ]
+        [ text "Reset" ]
+      , div
+        [ id_ "upgrades" ]
+        [ upgradesComponent state ]
+      ]
+
+upgradesComponent :: Render State Action
+upgradesComponent state =
+  div_
+    [ div [ class_ $ className "upgrades cps" ]
+      [ upgradeButton state cps1
+      , upgradeButton state cps2
+      , upgradeButton state cps3
+      , upgradeButton state cps4
+      , upgradeButton state cps5
+      ]
+    , div [ class_ $ className "upgrades burst" ]
+      [ upgradeButton state burst1
+      , upgradeButton state burst2
+      , upgradeButton state burst3
+      , upgradeButton state burst4
+      , upgradeButton state burst5
+      ]
+    ]
   where
-    upgradeProps state =
-      fold [ [ disabled $ not $ canBuyUpgrade state ]
-           , if canBuyUpgrade state
-                then [ onMouseDown $ input_ $ Buy $ nextUpgrade $ state ^. upgrades <<< cps1 ]
-                else []
-           ]
+    upgradeButton :: State -> LensP Upgrades Upgrade -> _
+    upgradeButton state cpsn =
+      button (upgradeProps state cpsn)
+              [ text $
+                fold [upgradeName (state ^. upgrades <<< cpsn) state.age
+                     , " "
+                     , prettify (upgradeCost $ nextUpgrade $ state ^. upgrades <<< cpsn)
+                     ]
+              ]
+    hoverText state cpsn = [ title $ upgradeDescription (state ^. upgrades <<< cpsn) state.age ]
+    upgradeProps :: State -> LensP Upgrades Upgrade -> _
+    upgradeProps state cpsn =
+      let clickAction = onMouseDown $ input_ $ Buy $ nextUpgrade $ state ^. upgrades <<< cpsn
+       in fold [ [ disabled $ not $ canBuyUpgrade state cpsn ]
+               , hoverText state cpsn
+               , if canBuyUpgrade state cpsn
+                    then [ clickAction ]
+                    else []
+               ]
 
 eval :: Eval Action State Action (Aff AppEffects)
 eval (Click next) = do
-  modify $ (currentClicksNumber +~ 1.0) <<< (totalClicksNumber +~ 1.0)
+  modify $ \ state -> ((currentClicksNumber +~ state ^. burstNumber)
+                   <<< (totalClicksNumber +~ state ^. burstNumber)) state
   pure next
 eval (Autoclick next) = do
-  modify $ (\ state -> (currentClicksNumber +~ (state ^. cpsNumber / 10.0)) state)
-       <<< (\ state -> (totalClicksNumber +~ (state ^. cpsNumber / 10.0)) state)
+  modify \ state -> ((currentClicksNumber +~ state ^. cpsNumber / 10.0)
+                 <<< (totalClicksNumber +~ state ^. cpsNumber / 10.0)) state
   pure next
 eval (Reset next) = do
   modify $ const initialState
@@ -91,19 +136,19 @@ eval (Buy upgrade next) = do
   pure next
 
 buyUpgrade :: Upgrade -> State -> State
-buyUpgrade up@(CPS1 _ _) = installUpgrade up (cps <<< clicksPerSecond) <<< recordPurchase up cps1
-buyUpgrade up@(CPS2 _ _) = installUpgrade up (cps <<< clicksPerSecond) <<< recordPurchase up cps2
-buyUpgrade up@(CPS3 _ _) = installUpgrade up (cps <<< clicksPerSecond) <<< recordPurchase up cps3
-buyUpgrade up@(CPS4 _ _) = installUpgrade up (cps <<< clicksPerSecond) <<< recordPurchase up cps4
-buyUpgrade up@(CPS5 _ _) = installUpgrade up (cps <<< clicksPerSecond) <<< recordPurchase up cps5
-buyUpgrade up@(Burst1 _ _) = installUpgrade up (burst <<< clicks) <<< recordPurchase up burst1
-buyUpgrade up@(Burst2 _ _) = installUpgrade up (burst <<< clicks) <<< recordPurchase up burst2
-buyUpgrade up@(Burst3 _ _) = installUpgrade up (burst <<< clicks) <<< recordPurchase up burst3
-buyUpgrade up@(Burst4 _ _) = installUpgrade up (burst <<< clicks) <<< recordPurchase up burst4
-buyUpgrade up@(Burst5 _ _) = installUpgrade up (burst <<< clicks) <<< recordPurchase up burst5
+buyUpgrade up@(CPS1 _ _) = installUpgrade up cpsNumber <<< recordPurchase up cps1
+buyUpgrade up@(CPS2 _ _) = installUpgrade up cpsNumber <<< recordPurchase up cps2
+buyUpgrade up@(CPS3 _ _) = installUpgrade up cpsNumber <<< recordPurchase up cps3
+buyUpgrade up@(CPS4 _ _) = installUpgrade up cpsNumber <<< recordPurchase up cps4
+buyUpgrade up@(CPS5 _ _) = installUpgrade up cpsNumber <<< recordPurchase up cps5
+buyUpgrade up@(Burst1 _ _) = installUpgrade up burstNumber <<< recordPurchase up burst1
+buyUpgrade up@(Burst2 _ _) = installUpgrade up burstNumber <<< recordPurchase up burst2
+buyUpgrade up@(Burst3 _ _) = installUpgrade up burstNumber <<< recordPurchase up burst3
+buyUpgrade up@(Burst4 _ _) = installUpgrade up burstNumber <<< recordPurchase up burst4
+buyUpgrade up@(Burst5 _ _) = installUpgrade up burstNumber <<< recordPurchase up burst5
 
 recordPurchase :: Upgrade -> LensP Upgrades Upgrade -> State -> State
-recordPurchase up optic = (currentClicks <<< clicks -~ upgradeCost up)
+recordPurchase up optic = (currentClicksNumber -~ upgradeCost up)
                       <<< (upgrades <<< optic .~ up)
 
 installUpgrade :: Upgrade -> LensP State Number -> State -> State

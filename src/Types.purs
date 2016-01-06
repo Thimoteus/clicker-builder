@@ -166,10 +166,10 @@ instance prettyNumber :: Pretty Number where
                         in large ++ small
 
 instance prettyClicks :: Pretty Clicks where
-  prettify (Clicks n) = "Clicks: " ++ prettify n
+  prettify (Clicks n) = prettify n ++ " c"
 
 instance prettyClicksPerSecond :: Pretty ClicksPerSecond where
-  prettify (ClicksPerSecond n) = "CPS: " ++ prettify n
+  prettify (ClicksPerSecond n) = prettify n ++ " cps"
 
 instance prettyInt :: Pretty Int where
   prettify = show
