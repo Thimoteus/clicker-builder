@@ -5,7 +5,6 @@ import Prelude
 import Control.Monad.Eff.Console (CONSOLE())
 
 import Data.Array (take)
-import Data.String (toCharArray, fromCharArray)
 import Data.Generic (Generic, gShow)
 import Data.Foreign.Class (IsForeign, readProp)
 

@@ -3,7 +3,7 @@ module Main where
 import Prelude hiding (div, top, bottom)
 
 import Data.Lens (LensP(), (+~), (^.))
-import Data.Foldable (fold)
+import Data.Tuple (Tuple(..))
 
 import Control.Monad.Aff (Aff(), runAff, later')
 import Control.Monad.Eff (Eff())
@@ -19,12 +19,13 @@ import Halogen
 import Halogen.Util (appendToBody, onLoad)
 import Halogen.HTML.Indexed (div, div_, h1_, text, button, br_, a, i, className)
 import Halogen.HTML.Events.Indexed (onMouseDown, input_)
-import Halogen.HTML.Properties.Indexed (disabled, id_, href, class_, title)
+import Halogen.HTML.Properties.Indexed (id_, href, class_, title)
 
 import Types
 import Lenses
 import Save
 import Upgrades
+import Util
 
 interface :: Component State Action (Aff AppEffects)
 interface = component render eval
@@ -80,8 +81,8 @@ render state =
     bottom = div [ id_ "bottom" ]
       [ text """
       clicker builder is an incremental click-based game where you play a
-      civilization from its humble beginnings in the stone age to its mastery
-      of the universe.
+      civilization from its humble beginnings in the stone age to its eventual
+      mastery of time and space.
       """ ]
 
 upgradesComponent :: Render State Action
@@ -150,9 +151,11 @@ main = runAff throwException (const (pure unit)) do
   savedState <- liftEff getSavedState
   app <- runUI interface savedState
   onLoad $ appendToBody app.node
+  schedule [ Tuple 100 (app.driver (action Autoclick))
+           , Tuple 15000 (app.driver (action Save)) ]
   --forever do
     --app.driver $ action Save
     --later' 15000 $ pure unit
-  forever do
-    app.driver $ action Autoclick
-    later' 100 $ pure unit
+  --forever do
+    --app.driver $ action Autoclick
+    --later' 100 $ pure unit

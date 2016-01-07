@@ -40,7 +40,6 @@ body {
   color: #ff3e45;
   font-family: Verdana;
   font-size: 1.2em;
-  font-weight: bold;
   text-decoration: none;
 }
 .upgrades {
@@ -58,6 +57,7 @@ body {
   cursor: pointer;
   color: #ff3e45;
   background: #242424;
+  font-weight: bold;
 }
 .upgrade .upgrade-name {
   font-size: 1.5em;
