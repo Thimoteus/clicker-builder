@@ -26,6 +26,7 @@ import Lenses
 import Save
 import Upgrades
 import Reset
+import Disaster
 import Util
 
 interface :: Component State Action (Aff AppEffects)
@@ -45,6 +46,8 @@ render state =
       [ div_
         [ text "Current clicks:" , br_
         , text (prettify state.currentClicks) , br_
+        , text "Total clicks:" , br_
+        , text (prettify state.totalClicks), br_
         , text "Burst:" , br_
         , text (prettify state.burst) , br_
         , text "CPS:" , br_
@@ -117,7 +120,7 @@ upgradeButton cpsn state =
     [ div [ class_ (className "name") ]
       [ text (upgradeName (state ^. upgrades <<< cpsn) state.age)
       , span [ class_ (className "level") ]
-        [ text (" " ++ (show $ state ^. upgrades <<< cpsn <<< (viewUpgradeLevel cpsn))) ]
+        [ text (" " ++ (show $ state ^. upgrades <<< cpsn <<< viewLevel)) ]
       ]
     , div [ class_ (className "cost") ]
       [ text $ prettify $ upgradeCost $ nextUpgrade $ state ^. upgrades <<< cpsn ]
@@ -153,6 +156,9 @@ eval (Save next) = do
   pure next
 eval (Buy upgrade next) = do
   modify $ buyUpgrade upgrade
+  pure next
+eval (Suffer disaster next) = do
+  modify $ suffer disaster
   pure next
 
 main :: Eff AppEffects Unit

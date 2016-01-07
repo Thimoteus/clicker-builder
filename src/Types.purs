@@ -3,6 +3,7 @@ module Types where
 import Prelude
 
 import Control.Monad.Eff.Console (CONSOLE())
+import Control.Monad.Eff.Random (RANDOM())
 
 import Data.Array (take)
 import Data.Generic (Generic, gShow)
@@ -12,6 +13,13 @@ import Browser.WebStorage (WebStorage())
 import Halogen (HalogenEffects())
 import Unsafe.Coerce (unsafeCoerce)
 import Util
+
+data Action a = Click a
+              | Autoclick a
+              | Reset a
+              | Save a
+              | Buy Upgrade a
+              | Suffer Disaster a
 
 type State = { currentClicks :: Clicks
              , totalClicks :: Clicks
@@ -54,13 +62,37 @@ instance ringClicks :: Ring Clicks where
 instance ringClicksPerSecond :: Ring ClicksPerSecond where
   sub (ClicksPerSecond m) (ClicksPerSecond n) = ClicksPerSecond (m - n)
 
-type AppEffects = HalogenEffects ( webStorage :: WebStorage, console :: CONSOLE )
+type AppEffects = HalogenEffects ( webStorage :: WebStorage
+                                 , console :: CONSOLE
+                                 , random :: RANDOM )
 
-data Action a = Click a
-              | Autoclick a
-              | Reset a
-              | Save a
-              | Buy Upgrade a
+data Disaster = Disaster1 TagDisaster1
+              | Disaster2 TagDisaster2
+              | Disaster3 TagDisaster3
+              | Disaster4 TagDisaster4
+              | Disaster5 TagDisaster5
+              | NoDisaster
+
+data TagDisaster1
+data TagDisaster2
+data TagDisaster3
+data TagDisaster4
+data TagDisaster5
+
+tagDisaster1 :: TagDisaster1
+tagDisaster1 = unsafeCoerce unit
+
+tagDisaster2 :: TagDisaster2
+tagDisaster2 = unsafeCoerce unit
+
+tagDisaster3 :: TagDisaster3
+tagDisaster3 = unsafeCoerce unit
+
+tagDisaster4 :: TagDisaster4
+tagDisaster4 = unsafeCoerce unit
+
+tagDisaster5 :: TagDisaster5
+tagDisaster5 = unsafeCoerce unit
 
 data Upgrade = CPS1 Int TagCPS1
              | CPS2 Int TagCPS2

@@ -20,6 +20,7 @@
     "purescript-generics": "~0.7.0",
     "purescript-profunctor-lenses": "~0.3.5",
     "purescript-halogen": "~0.5.9",
-    "purescript-aff": "~0.13.1"
+    "purescript-aff": "~0.13.1",
+    "purescript-random": "~0.2.3"
   }
 }

@@ -72,46 +72,16 @@ burst4 = lens (_.burst4 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { burs
 burst5 :: LensP Upgrades Upgrade
 burst5 = lens (_.burst5 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { burst5 = v }))
 
-cps1level :: GetterP Upgrade Int
-cps1level = to (\ (CPS1 n _) -> n)
-
-cps2level :: GetterP Upgrade Int
-cps2level = to (\ (CPS2 n _) -> n)
-
-cps3level :: GetterP Upgrade Int
-cps3level = to (\ (CPS3 n _) -> n)
-
-cps4level :: GetterP Upgrade Int
-cps4level = to (\ (CPS4 n _) -> n)
-
-cps5level :: GetterP Upgrade Int
-cps5level = to (\ (CPS5 n _) -> n)
-
-burst1level :: GetterP Upgrade Int
-burst1level = to (\ (Burst1 n _) -> n)
-
-burst2level :: GetterP Upgrade Int
-burst2level = to (\ (Burst2 n _) -> n)
-
-burst3level :: GetterP Upgrade Int
-burst3level = to (\ (Burst3 n _) -> n)
-
-burst4level :: GetterP Upgrade Int
-burst4level = to (\ (Burst4 n _) -> n)
-
-burst5level :: GetterP Upgrade Int
-burst5level = to (\ (Burst5 n _) -> n)
-
-viewUpgradeLevel :: LensP Upgrades Upgrade -> GetterP Upgrade Int
-viewUpgradeLevel cpsn = case initialState ^. upgrades <<< cpsn of
-                             CPS1 _ _ -> cps1level
-                             CPS2 _ _ -> cps2level
-                             CPS3 _ _ -> cps3level
-                             CPS4 _ _ -> cps4level
-                             CPS5 _ _ -> cps5level
-                             Burst1 _ _ -> burst1level
-                             Burst2 _ _ -> burst2level
-                             Burst3 _ _ -> burst3level
-                             Burst4 _ _ -> burst4level
-                             Burst5 _ _ -> burst5level
-
+viewLevel :: GetterP Upgrade Int
+viewLevel = to viewLevel'
+  where
+    viewLevel' (CPS1 n _) = n
+    viewLevel' (CPS2 n _) = n
+    viewLevel' (CPS3 n _) = n
+    viewLevel' (CPS4 n _) = n
+    viewLevel' (CPS5 n _) = n
+    viewLevel' (Burst1 n _) = n
+    viewLevel' (Burst2 n _) = n
+    viewLevel' (Burst3 n _) = n
+    viewLevel' (Burst4 n _) = n
+    viewLevel' (Burst5 n _) = n

@@ -4,7 +4,6 @@ module Reset (
 
 import Prelude
 
-import Save
 import Types
 
 reset :: State -> State
