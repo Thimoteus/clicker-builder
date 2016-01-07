@@ -3,7 +3,6 @@ module Upgrades
   , upgradeName
   , nextUpgrade
   , canBuyUpgrade
-  , upgradeBoost
   , upgradeDescription
   , buyUpgrade
   ) where
@@ -33,10 +32,10 @@ upgradeCostPolynomial coeff level = upgradeCostModifier level * coeff * 1.2 ^ (t
 
 upgradeCostModifier :: Int -> Number
 upgradeCostModifier n
-  | n < 25 = 1.0
-  | n < 50 = 0.5
-  | n < 75 = 0.25
-  | n < 100 = 0.125
+  | n <= 25 = 1.0
+  | n <= 50 = 0.5
+  | n <= 75 = 0.25
+  | n <= 100 = 0.125
   | otherwise = 0.0625
 
 upgradeName :: Upgrade -> Age -> String
@@ -97,10 +96,10 @@ upgradeBoost (Burst5 n _) = 100000000.0 * upgradeBoostModifier n
 
 upgradeBoostModifier :: Int -> Number
 upgradeBoostModifier n
-  | n < 25 = 1.0
-  | n < 50 = 2.0
-  | n < 75 = 4.0
-  | n < 100 = 8.0
+  | n <= 25 = 1.0
+  | n <= 50 = 2.0
+  | n <= 75 = 4.0
+  | n <= 100 = 8.0
   | otherwise = 16.0
 
 buyUpgrade :: Upgrade -> State -> State
