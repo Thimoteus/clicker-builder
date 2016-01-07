@@ -3,7 +3,7 @@ module Main where
 import Prelude hiding (div, top, bottom)
 
 import Data.Lens (LensP(), (+~), (^.))
-import Data.Foldable (fold)
+import Data.Tuple (Tuple(..))
 
 import Control.Monad.Aff (Aff(), runAff, later')
 import Control.Monad.Eff (Eff())
@@ -19,12 +19,14 @@ import Halogen
 import Halogen.Util (appendToBody, onLoad)
 import Halogen.HTML.Indexed (div, div_, h1_, text, button, br_, a, i, className)
 import Halogen.HTML.Events.Indexed (onMouseDown, input_)
-import Halogen.HTML.Properties.Indexed (disabled, id_, href, class_, title)
+import Halogen.HTML.Properties.Indexed (id_, href, class_, title)
 
 import Types
 import Lenses
 import Save
 import Upgrades
+import Reset
+import Util
 
 interface :: Component State Action (Aff AppEffects)
 interface = component render eval
@@ -41,16 +43,11 @@ render state =
     top = h1_ [ text "clicker builder" ]
     side = div [ id_ "side" ]
       [ div_
-        [ text "Current clicks:"
-        , br_
-        , text (prettify state.currentClicks)
-        , br_
-        , text "Burst:"
-        , br_
-        , text (prettify state.burst)
-        , br_
-        , text "CPS:"
-        , br_
+        [ text "Current clicks:" , br_
+        , text (prettify state.currentClicks) , br_
+        , text "Burst:" , br_
+        , text (prettify state.burst) , br_
+        , text "CPS:" , br_
         , text (prettify state.cps)
         ]
       , br_
@@ -65,23 +62,23 @@ render state =
             [ i [ class_ $ className "fa fa-hand-pointer-o" ] [] ]
           ]
         ]
-      ]
-    main' = div [ id_ "main" ]
-      [ button
+      , button
         [ onMouseDown (input_ Save) ]
         [ text "Save" ]
       , button
         [ onMouseDown (input_ Reset) ]
         [ text "Reset" ]
-      , div
+      ]
+    main' = div [ id_ "main" ]
+      [ div
         [ id_ "upgrades" ]
         [ upgradesComponent state ]
       ]
     bottom = div [ id_ "bottom" ]
       [ text """
       clicker builder is an incremental click-based game where you play a
-      civilization from its humble beginnings in the stone age to its mastery
-      of the universe.
+      civilization from its humble beginnings in the stone age to its eventual
+      mastery of time and space.
       """ ]
 
 upgradesComponent :: Render State Action
@@ -120,8 +117,7 @@ upgradeProps cpsn state =
         onMouseDown $ input_ $ Buy $ nextUpgrade $ state ^. upgrades <<< cpsn
       hoverText state cpsn =
         [ title $ upgradeDescription (state ^. upgrades <<< cpsn) state.age ]
-   in --[disabled $ not $ canBuyUpgrade state cpsn] ++
-      hoverText state cpsn ++
+   in hoverText state cpsn ++
       if canBuyUpgrade state cpsn
          then [ clickAction, class_ (className "upgrade") ]
          else [ class_ (className "upgrade disabled") ]
@@ -136,7 +132,7 @@ eval (Autoclick next) = do
                  <<< (totalClicksNumber +~ state ^. cpsNumber / 10.0)) state
   pure next
 eval (Reset next) = do
-  modify $ const initialState
+  modify reset
   pure next
 eval (Save next) = do
   currentState <- get
@@ -151,9 +147,5 @@ main = runAff throwException (const (pure unit)) do
   savedState <- liftEff getSavedState
   app <- runUI interface savedState
   onLoad $ appendToBody app.node
-  --forever do
-    --app.driver $ action Save
-    --later' 15000 $ pure unit
-  forever do
-    app.driver $ action Autoclick
-    later' 100 $ pure unit
+  schedule [ Tuple 100 (app.driver (action Autoclick))
+           , Tuple 15000 (app.driver (action Save)) ]

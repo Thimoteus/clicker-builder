@@ -4,14 +4,14 @@ import Prelude
 
 import Control.Monad.Eff.Console (CONSOLE())
 
-import Data.Array (span, take)
-import Data.String (toCharArray, fromCharArray)
+import Data.Array (take)
 import Data.Generic (Generic, gShow)
 import Data.Foreign.Class (IsForeign, readProp)
 
 import Browser.WebStorage (WebStorage())
 import Halogen (HalogenEffects())
 import Unsafe.Coerce (unsafeCoerce)
+import Util
 
 type State = { currentClicks :: Clicks
              , totalClicks :: Clicks
@@ -157,13 +157,13 @@ instance prettifyUpgrade :: Pretty Upgrade where
   prettify (Burst5 n _) = prettify n
 
 instance prettyNumber :: Pretty Number where
-  prettify = show >>> toCharArray >>> chopDigits >>> fromCharArray
-    where
-      chopDigits :: Array Char -> Array Char
-      chopDigits arr = let split = span (/= '.') arr
-                           large = split.init
-                           small = take 2 $ split.rest
-                        in large ++ small
+  prettify n
+    | sigFigs n <= 3 = oneDecimal n
+    | sigFigs n <= 5 = noDecimal n
+    | sigFigs n <= 6 = transformDigits (take 3) n ++ "k"
+    | sigFigs n <= 7 = transformDigits (take 4) n ++ "k"
+    | sigFigs n <= 8 = transformDigits (take 5) n ++ "k"
+    | otherwise = "Your civilization hasn't figured out how to count this high!"
 
 instance prettyClicks :: Pretty Clicks where
   prettify (Clicks n) = prettify n ++ " c"
