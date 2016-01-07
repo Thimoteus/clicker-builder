@@ -57,6 +57,11 @@ body {
   width: 300px;
   float: left;
   overflow: hidden;
+  .category {
+    display: block;
+    width: 100%;
+    border-bottom: 1px solid @text-color;
+  }
 }
 
 .upgrade {
@@ -70,8 +75,11 @@ body {
   color: @text-color;
   background: @bg-color;
   font-weight: bold;
-  .upgrade-name {
+  .name {
     font-size: 1.5em;
+  }
+  .level {
+    font-size: 0.7em;
   }
 }
 

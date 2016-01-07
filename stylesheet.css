@@ -47,6 +47,11 @@ body {
   float: left;
   overflow: hidden;
 }
+.upgrades .category {
+  display: block;
+  width: 100%;
+  border-bottom: 1px solid #ff3e45;
+}
 .upgrade {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -59,8 +64,11 @@ body {
   background: #242424;
   font-weight: bold;
 }
-.upgrade .upgrade-name {
+.upgrade .name {
   font-size: 1.5em;
+}
+.upgrade .level {
+  font-size: 0.7em;
 }
 .upgrade.disabled {
   cursor: default;

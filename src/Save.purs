@@ -1,5 +1,4 @@
 module Save (
-  initialState,
   getSavedState,
   saveState
   ) where
@@ -26,28 +25,6 @@ import Data.Lens (view, (^.))
 import Util
 import Types
 import Lenses
-
-initialState :: State
-initialState = { currentClicks: Clicks 0.0
-               , totalClicks: Clicks 0.0
-               , cps: ClicksPerSecond 0.0
-               , age: Stone
-               , burst: Clicks 1.0
-               , upgrades: initialUpgrades
-               }
-
-initialUpgrades :: Upgrades
-initialUpgrades = Upgrades { cps1: CPS1 0 tagCPS1
-                           , cps2: CPS2 0 tagCPS2
-                           , cps3: CPS3 0 tagCPS3
-                           , cps4: CPS4 0 tagCPS4
-                           , cps5: CPS5 0 tagCPS5
-                           , burst1: Burst1 0 tagBurst1
-                           , burst2: Burst2 0 tagBurst2
-                           , burst3: Burst3 0 tagBurst3
-                           , burst4: Burst4 0 tagBurst4
-                           , burst5: Burst5 0 tagBurst5
-                           }
  
 getSavedState :: forall eff. Eff ( console :: CONSOLE, webStorage :: WebStorage | eff ) State
 getSavedState = do

@@ -16,17 +16,17 @@ import Types
 import Lenses
 import Util
 
-upgradeCost :: Upgrade -> Number
-upgradeCost (CPS1 n _) = makeUpgrade 25.0 n
-upgradeCost (CPS2 n _) = makeUpgrade 5000.0 n
-upgradeCost (CPS3 n _) = makeUpgrade 750000.0 n
-upgradeCost (CPS4 n _) = makeUpgrade 95000000.0 n
-upgradeCost (CPS5 n _) = makeUpgrade 8250000000.0 n
-upgradeCost (Burst1 n _) = makeUpgrade 10.0 n
-upgradeCost (Burst2 n _) = makeUpgrade 6000.0 n
-upgradeCost (Burst3 n _) = makeUpgrade 850000.0 n
-upgradeCost (Burst4 n _) = makeUpgrade 72000000.0 n
-upgradeCost (Burst5 n _) = makeUpgrade 7500000000.0 n
+upgradeCost :: Upgrade -> Clicks
+upgradeCost (CPS1 n _) = Clicks (makeUpgrade 25.0 n)
+upgradeCost (CPS2 n _) = Clicks (makeUpgrade 5000.0 n)
+upgradeCost (CPS3 n _) = Clicks (makeUpgrade 750000.0 n)
+upgradeCost (CPS4 n _) = Clicks (makeUpgrade 95000000.0 n)
+upgradeCost (CPS5 n _) = Clicks (makeUpgrade 8250000000.0 n)
+upgradeCost (Burst1 n _) = Clicks (makeUpgrade 10.0 n)
+upgradeCost (Burst2 n _) = Clicks (makeUpgrade 6000.0 n)
+upgradeCost (Burst3 n _) = Clicks (makeUpgrade 850000.0 n)
+upgradeCost (Burst4 n _) = Clicks (makeUpgrade 72000000.0 n)
+upgradeCost (Burst5 n _) = Clicks (makeUpgrade 7500000000.0 n)
 
 makeUpgrade :: Number -> Int -> Number
 makeUpgrade coeff total = upgradePolynomial coeff (toNumber total)
@@ -72,23 +72,31 @@ nextUpgrade (Burst5 n t) = Burst5 (n + 1) t
 
 canBuyUpgrade :: State -> LensP Upgrades Upgrade -> Boolean
 canBuyUpgrade state optic =
-  let currClicks = state ^. currentClicksNumber
+  let currClicks = state ^. currentClicks
       currUpgrade = state ^. upgrades <<< optic
       next = nextUpgrade currUpgrade
       nextCost = upgradeCost next
    in currClicks >= nextCost
 
 upgradeBoost :: Upgrade -> Number
-upgradeBoost (CPS1 n _) = 0.1 * toNumber n
-upgradeBoost (CPS2 n _) = 2.0 * toNumber n
-upgradeBoost (CPS3 n _) = 40.0 * toNumber n
-upgradeBoost (CPS4 n _) = 600.0 * toNumber n
-upgradeBoost (CPS5 n _) = 8000.0 * toNumber n
-upgradeBoost (Burst1 n _) = 0.2 * toNumber n
-upgradeBoost (Burst2 n _) = 4.0 * toNumber n
-upgradeBoost (Burst3 n _) = 55.0 * toNumber n
-upgradeBoost (Burst4 n _) = 590.0 * toNumber n
-upgradeBoost (Burst5 n _) = 10000.0 * toNumber n
+upgradeBoost (CPS1 n _) = 0.1 * upgradeModifier n
+upgradeBoost (CPS2 n _) = 2.0 * upgradeModifier n
+upgradeBoost (CPS3 n _) = 40.0 * upgradeModifier n
+upgradeBoost (CPS4 n _) = 600.0 * upgradeModifier n
+upgradeBoost (CPS5 n _) = 8000.0 * upgradeModifier n
+upgradeBoost (Burst1 n _) = 0.2 * upgradeModifier n
+upgradeBoost (Burst2 n _) = 4.0 * upgradeModifier n
+upgradeBoost (Burst3 n _) = 55.0 * upgradeModifier n
+upgradeBoost (Burst4 n _) = 590.0 * upgradeModifier n
+upgradeBoost (Burst5 n _) = 10000.0 * upgradeModifier n
+
+upgradeModifier :: Int -> Number
+upgradeModifier n
+  | n < 25 = 1.0
+  | n < 50 = 2.0
+  | n < 75 = 4.0
+  | n < 100 = 8.0
+  | otherwise = 16.0
 
 buyUpgrade :: Upgrade -> State -> State
 buyUpgrade up@(CPS1 _ _) = installUpgrade up cpsNumber <<< recordPurchase up cps1
@@ -103,7 +111,7 @@ buyUpgrade up@(Burst4 _ _) = installUpgrade up burstNumber <<< recordPurchase up
 buyUpgrade up@(Burst5 _ _) = installUpgrade up burstNumber <<< recordPurchase up burst5
 
 recordPurchase :: Upgrade -> LensP Upgrades Upgrade -> State -> State
-recordPurchase up optic = (currentClicksNumber -~ upgradeCost up)
+recordPurchase up optic = (currentClicks -~ upgradeCost up)
                       <<< (upgrades <<< optic .~ up)
 
 installUpgrade :: Upgrade -> LensP State Number -> State -> State
