@@ -52,6 +52,18 @@ body {
   width: 100%;
   border-bottom: 1px solid #ff3e45;
 }
+.button {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: pointer;
+  color: #ff3e45;
+  background: #242424;
+  font-weight: bold;
+}
 .upgrade {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
