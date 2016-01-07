@@ -17,19 +17,19 @@ import Lenses
 import Util
 
 upgradeCost :: Upgrade -> Number
-upgradeCost (CPS1 n _) = makeUpgrade 25 n
-upgradeCost (CPS2 n _) = makeUpgrade 500 n
-upgradeCost (CPS3 n _) = makeUpgrade 7500 n
-upgradeCost (CPS4 n _) = makeUpgrade 90000 n
-upgradeCost (CPS5 n _) = makeUpgrade 825000 n
-upgradeCost (Burst1 n _) = makeUpgrade 10 n
-upgradeCost (Burst2 n _) = makeUpgrade 600 n
-upgradeCost (Burst3 n _) = makeUpgrade 8500 n
-upgradeCost (Burst4 n _) = makeUpgrade 72000 n
-upgradeCost (Burst5 n _) = makeUpgrade 7500000 n
+upgradeCost (CPS1 n _) = makeUpgrade 25.0 n
+upgradeCost (CPS2 n _) = makeUpgrade 5000.0 n
+upgradeCost (CPS3 n _) = makeUpgrade 750000.0 n
+upgradeCost (CPS4 n _) = makeUpgrade 95000000.0 n
+upgradeCost (CPS5 n _) = makeUpgrade 8250000000.0 n
+upgradeCost (Burst1 n _) = makeUpgrade 10.0 n
+upgradeCost (Burst2 n _) = makeUpgrade 6000.0 n
+upgradeCost (Burst3 n _) = makeUpgrade 850000.0 n
+upgradeCost (Burst4 n _) = makeUpgrade 72000000.0 n
+upgradeCost (Burst5 n _) = makeUpgrade 7500000000.0 n
 
-makeUpgrade :: Int -> Int -> Number
-makeUpgrade coeff total = upgradePolynomial (toNumber coeff) (toNumber total)
+makeUpgrade :: Number -> Int -> Number
+makeUpgrade coeff total = upgradePolynomial coeff (toNumber total)
 
 upgradePolynomial :: Number -> Number -> Number
 upgradePolynomial coeff total = coeff * 1.2 ^ total --coeff + coeff * 0.1 * total ^ 2.0 + 10.0 * total + 13.0
