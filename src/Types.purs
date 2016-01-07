@@ -163,7 +163,10 @@ instance prettyNumber :: Pretty Number where
     | sigFigs n <= 6 = transformDigits (take 3) n ++ "k"
     | sigFigs n <= 7 = transformDigits (take 4) n ++ "k"
     | sigFigs n <= 8 = transformDigits (take 5) n ++ "k"
-    | otherwise = "Your civilization hasn't figured out how to count this high!"
+    | sigFigs n <= 9 = transformDigits (take 3) n ++ "m"
+    | sigFigs n <= 10 = transformDigits (take 4) n ++ "m"
+    | sigFigs n <= 11 = transformDigits (take 5) n ++ "m"
+    | otherwise = "Your civilization can't count this high!"
 
 instance prettyClicks :: Pretty Clicks where
   prettify (Clicks n) = prettify n ++ " c"

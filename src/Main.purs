@@ -9,6 +9,7 @@ import Control.Monad.Aff (Aff(), runAff, later')
 import Control.Monad.Eff (Eff())
 import Control.Monad.Eff.Class (liftEff)
 import Control.Monad.Eff.Exception (throwException)
+import Control.Monad.Eff.Console (log)
 import Control.Monad.Rec.Class (forever)
 
 import Halogen
@@ -79,7 +80,10 @@ render state =
       clicker builder is an incremental click-based game where you play a
       civilization from its humble beginnings in the stone age to its eventual
       mastery of time and space.
-      """ ]
+      """, br_
+      , text """
+      Changelog: blah blah
+      """]
 
 upgradesComponent :: Render State Action
 upgradesComponent state =
@@ -136,6 +140,7 @@ eval (Reset next) = do
   pure next
 eval (Save next) = do
   currentState <- get
+  liftEff' $ log "Saving game ... "
   liftEff' $ saveState currentState
   pure next
 eval (Buy upgrade next) = do
