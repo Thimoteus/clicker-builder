@@ -5,12 +5,11 @@ import Prelude hiding (div, top, bottom)
 import Data.Lens (LensP(), (+~), (^.))
 import Data.Tuple (Tuple(..))
 
-import Control.Monad.Aff (Aff(), runAff, later')
+import Control.Monad.Aff (Aff(), runAff)
 import Control.Monad.Eff (Eff())
 import Control.Monad.Eff.Class (liftEff)
 import Control.Monad.Eff.Exception (throwException)
 import Control.Monad.Eff.Console (log)
-import Control.Monad.Rec.Class (forever)
 
 import Halogen
   ( Component(), component
@@ -18,7 +17,7 @@ import Halogen
   , runUI, modify, action, get, liftEff'
   )
 import Halogen.Util (appendToBody, onLoad)
-import Halogen.HTML.Indexed (div, div_, h1_, text, button, br_, a, i, className, span)
+import Halogen.HTML.Indexed (div, div_, h1_, text, br_, a, i, className, span)
 import Halogen.HTML.Events.Indexed (onMouseDown, input_)
 import Halogen.HTML.Properties.Indexed (id_, href, class_, title)
 
@@ -63,11 +62,15 @@ render state =
             [ i [ class_ $ className "fa fa-hand-pointer-o" ] [] ]
           ]
         ]
-      , button
-        [ onMouseDown (input_ Save) ]
+      , br_
+      , span
+        [ onMouseDown (input_ Save)
+        , class_ (className "button") ]
         [ text "Save" ]
-      , button
-        [ onMouseDown (input_ Reset) ]
+      , br_
+      , span
+        [ onMouseDown (input_ Reset)
+        , class_ (className "button") ]
         [ text "Reset" ]
       ]
     main' = div [ id_ "main" ]
@@ -77,12 +80,12 @@ render state =
       ]
     bottom = div [ id_ "bottom" ]
       [ text """
-      clicker builder is an incremental click-based game where you play a
-      civilization from its humble beginnings in the stone age to its eventual
-      mastery of time and space.
+      clicker builder is an incremental click-based game where you guide a
+      civilization from its humble stone age beginnings to eventually master
+      time and space.
       """, br_
       , text """
-      Changelog: blah blah
+      Changelog: Version so-alpha-it-doesn't-get-a-version-number.
       """]
 
 upgradesComponent :: Render State Action

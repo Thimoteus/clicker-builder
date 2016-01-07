@@ -17,22 +17,27 @@ import Lenses
 import Util
 
 upgradeCost :: Upgrade -> Clicks
-upgradeCost (CPS1 n _) = Clicks (makeUpgrade 25.0 n)
-upgradeCost (CPS2 n _) = Clicks (makeUpgrade 5000.0 n)
-upgradeCost (CPS3 n _) = Clicks (makeUpgrade 750000.0 n)
-upgradeCost (CPS4 n _) = Clicks (makeUpgrade 95000000.0 n)
-upgradeCost (CPS5 n _) = Clicks (makeUpgrade 8250000000.0 n)
-upgradeCost (Burst1 n _) = Clicks (makeUpgrade 10.0 n)
-upgradeCost (Burst2 n _) = Clicks (makeUpgrade 6000.0 n)
-upgradeCost (Burst3 n _) = Clicks (makeUpgrade 850000.0 n)
-upgradeCost (Burst4 n _) = Clicks (makeUpgrade 72000000.0 n)
-upgradeCost (Burst5 n _) = Clicks (makeUpgrade 7500000000.0 n)
+upgradeCost (CPS1 n _) = Clicks (upgradeCostPolynomial 25.0 n)
+upgradeCost (CPS2 n _) = Clicks (upgradeCostPolynomial 5000.0 n)
+upgradeCost (CPS3 n _) = Clicks (upgradeCostPolynomial 750000.0 n)
+upgradeCost (CPS4 n _) = Clicks (upgradeCostPolynomial 95000000.0 n)
+upgradeCost (CPS5 n _) = Clicks (upgradeCostPolynomial 8250000000.0 n)
+upgradeCost (Burst1 n _) = Clicks (upgradeCostPolynomial 10.0 n)
+upgradeCost (Burst2 n _) = Clicks (upgradeCostPolynomial 6000.0 n)
+upgradeCost (Burst3 n _) = Clicks (upgradeCostPolynomial 850000.0 n)
+upgradeCost (Burst4 n _) = Clicks (upgradeCostPolynomial 72000000.0 n)
+upgradeCost (Burst5 n _) = Clicks (upgradeCostPolynomial 7500000000.0 n)
 
-makeUpgrade :: Number -> Int -> Number
-makeUpgrade coeff total = upgradePolynomial coeff (toNumber total)
+upgradeCostPolynomial :: Number -> Int -> Number
+upgradeCostPolynomial coeff level = upgradeCostModifier level * coeff * 1.2 ^ (toNumber level)
 
-upgradePolynomial :: Number -> Number -> Number
-upgradePolynomial coeff total = coeff * 1.2 ^ total --coeff + coeff * 0.1 * total ^ 2.0 + 10.0 * total + 13.0
+upgradeCostModifier :: Int -> Number
+upgradeCostModifier n
+  | n < 25 = 1.0
+  | n < 50 = 0.5
+  | n < 75 = 0.25
+  | n < 100 = 0.125
+  | otherwise = 0.0625
 
 upgradeName :: Upgrade -> Age -> String
 upgradeName (CPS1 _ _) Stone = "fire!"
@@ -54,7 +59,7 @@ upgradeDescription (CPS4 _ _) Stone = "Can I interest you in some delicious BEET
 upgradeDescription (CPS5 _ _) Stone = "never leave the Stone Age without 'em"
 upgradeDescription (Burst1 _ _) Stone = "no more wearing leaves as underwear"
 upgradeDescription (Burst2 _ _) Stone = "Oh, my love, my darling, I've hungered for your touch ... "
-upgradeDescription (Burst3 _ _) Stone = ""
+upgradeDescription (Burst3 _ _) Stone = "funerals are a basic human rite"
 upgradeDescription (Burst4 _ _) Stone = "are the huts made out of mammoth bone, or are they just really large bone huts?"
 upgradeDescription (Burst5 _ _) Stone = "is that a painting of a spaceship ... ?"
 
@@ -79,19 +84,19 @@ canBuyUpgrade state optic =
    in currClicks >= nextCost
 
 upgradeBoost :: Upgrade -> Number
-upgradeBoost (CPS1 n _) = 0.1 * upgradeModifier n
-upgradeBoost (CPS2 n _) = 2.0 * upgradeModifier n
-upgradeBoost (CPS3 n _) = 40.0 * upgradeModifier n
-upgradeBoost (CPS4 n _) = 600.0 * upgradeModifier n
-upgradeBoost (CPS5 n _) = 8000.0 * upgradeModifier n
-upgradeBoost (Burst1 n _) = 0.2 * upgradeModifier n
-upgradeBoost (Burst2 n _) = 4.0 * upgradeModifier n
-upgradeBoost (Burst3 n _) = 55.0 * upgradeModifier n
-upgradeBoost (Burst4 n _) = 590.0 * upgradeModifier n
-upgradeBoost (Burst5 n _) = 10000.0 * upgradeModifier n
+upgradeBoost (CPS1 n _) = 0.1 * upgradeBoostModifier n
+upgradeBoost (CPS2 n _) = 100.0 * upgradeBoostModifier n
+upgradeBoost (CPS3 n _) = 40000.0 * upgradeBoostModifier n
+upgradeBoost (CPS4 n _) = 6000000.0 * upgradeBoostModifier n
+upgradeBoost (CPS5 n _) = 800000000.0 * upgradeBoostModifier n
+upgradeBoost (Burst1 n _) = 0.2 * upgradeBoostModifier n
+upgradeBoost (Burst2 n _) = 400.0 * upgradeBoostModifier n
+upgradeBoost (Burst3 n _) = 55000.0 * upgradeBoostModifier n
+upgradeBoost (Burst4 n _) = 5900000.0 * upgradeBoostModifier n
+upgradeBoost (Burst5 n _) = 100000000.0 * upgradeBoostModifier n
 
-upgradeModifier :: Int -> Number
-upgradeModifier n
+upgradeBoostModifier :: Int -> Number
+upgradeBoostModifier n
   | n < 25 = 1.0
   | n < 50 = 2.0
   | n < 75 = 4.0
