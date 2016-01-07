@@ -24,6 +24,36 @@ type State = { currentClicks :: Clicks
 newtype Clicks = Clicks Number
 newtype ClicksPerSecond = ClicksPerSecond Number
 
+instance eqClicks :: Eq Clicks where
+  eq (Clicks m) (Clicks n) = m == n
+
+instance eqClicksPerSecond :: Eq ClicksPerSecond where
+  eq (ClicksPerSecond m) (ClicksPerSecond n) = m == n
+
+instance ordClicks :: Ord Clicks where
+  compare (Clicks m) (Clicks n) = compare m n
+
+instance ordClicksPerSecond :: Ord ClicksPerSecond where
+  compare (ClicksPerSecond m) (ClicksPerSecond n) = compare m n
+
+instance semiringClicks :: Semiring Clicks where
+  one = Clicks one
+  zero = Clicks zero
+  mul (Clicks m) (Clicks n) = Clicks (m * n)
+  add (Clicks m) (Clicks n) = Clicks (m + n)
+
+instance semiringClicksPerSecond :: Semiring ClicksPerSecond where
+  one = ClicksPerSecond one
+  zero = ClicksPerSecond zero
+  mul (ClicksPerSecond m) (ClicksPerSecond n) = ClicksPerSecond (m * n)
+  add (ClicksPerSecond m) (ClicksPerSecond n) = ClicksPerSecond (m + n)
+
+instance ringClicks :: Ring Clicks where
+  sub (Clicks m) (Clicks n) = Clicks (m - n)
+
+instance ringClicksPerSecond :: Ring ClicksPerSecond where
+  sub (ClicksPerSecond m) (ClicksPerSecond n) = ClicksPerSecond (m - n)
+
 type AppEffects = HalogenEffects ( webStorage :: WebStorage, console :: CONSOLE )
 
 data Action a = Click a
@@ -225,3 +255,25 @@ instance serializeUpgrades :: Serialize Upgrades where
     ++ serialize u.burst3 ++ """, "burst4": """
     ++ serialize u.burst4 ++ """, "burst5": """
     ++ serialize u.burst5 ++ "}"
+
+initialState :: State
+initialState = { currentClicks: Clicks 0.0
+               , totalClicks: Clicks 0.0
+               , cps: ClicksPerSecond 0.0
+               , age: Stone
+               , burst: Clicks 1.0
+               , upgrades: initialUpgrades
+               }
+
+initialUpgrades :: Upgrades
+initialUpgrades = Upgrades { cps1: CPS1 0 tagCPS1
+                           , cps2: CPS2 0 tagCPS2
+                           , cps3: CPS3 0 tagCPS3
+                           , cps4: CPS4 0 tagCPS4
+                           , cps5: CPS5 0 tagCPS5
+                           , burst1: Burst1 0 tagBurst1
+                           , burst2: Burst2 0 tagBurst2
+                           , burst3: Burst3 0 tagBurst3
+                           , burst4: Burst4 0 tagBurst4
+                           , burst5: Burst5 0 tagBurst5
+                           }

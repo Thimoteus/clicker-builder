@@ -18,7 +18,7 @@ import Halogen
   , runUI, modify, action, get, liftEff'
   )
 import Halogen.Util (appendToBody, onLoad)
-import Halogen.HTML.Indexed (div, div_, h1_, text, button, br_, a, i, className)
+import Halogen.HTML.Indexed (div, div_, h1_, text, button, br_, a, i, className, span)
 import Halogen.HTML.Events.Indexed (onMouseDown, input_)
 import Halogen.HTML.Properties.Indexed (id_, href, class_, title)
 
@@ -89,7 +89,8 @@ upgradesComponent :: Render State Action
 upgradesComponent state =
   div_
     [ div [ class_ $ className "upgrades cps" ]
-      [ text "CPS upgrades"
+      [ span [ class_ (className "category") ]
+        [ text "CPS" ]
       , upgradeButton cps1 state
       , upgradeButton cps2 state
       , upgradeButton cps3 state
@@ -97,7 +98,8 @@ upgradesComponent state =
       , upgradeButton cps5 state
       ]
     , div [ class_ $ className "upgrades burst" ]
-      [ text "Burst upgrades"
+      [ span [ class_ (className "category") ]
+        [ text "Burst" ]
       , upgradeButton burst1 state
       , upgradeButton burst2 state
       , upgradeButton burst3 state
@@ -109,9 +111,12 @@ upgradesComponent state =
 upgradeButton :: LensP Upgrades Upgrade -> Render State Action
 upgradeButton cpsn state =
   div (upgradeProps cpsn state)
-    [ div [ class_ (className "upgrade-name") ]
-      [ text $ upgradeName (state ^. upgrades <<< cpsn) state.age ]
-    , div [ class_ (className "upgrade-cost") ]
+    [ div [ class_ (className "name") ]
+      [ text (upgradeName (state ^. upgrades <<< cpsn) state.age)
+      , span [ class_ (className "level") ]
+        [ text (" " ++ (show $ state ^. upgrades <<< cpsn <<< (viewUpgradeLevel cpsn))) ]
+      ]
+    , div [ class_ (className "cost") ]
       [ text $ prettify $ upgradeCost $ nextUpgrade $ state ^. upgrades <<< cpsn ]
     ]
 
