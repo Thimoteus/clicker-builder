@@ -65,7 +65,7 @@ schedule :: forall e. Array (Tuple Int (Aff e Unit)) -> Aff e Unit
 schedule arr =
   tailRecM go (map (\ (Tuple timer comp) -> { timer: timer
                                             , comp: comp
-                                            , numbalert: 0 })  arr)
+                                            , numbalert: timer })  arr)
   where
     timers = extractFsts arr
     theGCD = fromJust (foldGCD timers)
@@ -78,7 +78,7 @@ schedule arr =
       if numbalert >= timer
          then do
            comp
-           pure (s { numbalert = 0 })
+           pure (s { numbalert = timer })
          else
            pure (s { numbalert = numbalert + theGCD })
 

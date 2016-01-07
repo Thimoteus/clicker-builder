@@ -25,6 +25,7 @@ import Types
 import Lenses
 import Save
 import Upgrades
+import Reset
 import Util
 
 interface :: Component State Action (Aff AppEffects)
@@ -42,16 +43,11 @@ render state =
     top = h1_ [ text "clicker builder" ]
     side = div [ id_ "side" ]
       [ div_
-        [ text "Current clicks:"
-        , br_
-        , text (prettify state.currentClicks)
-        , br_
-        , text "Burst:"
-        , br_
-        , text (prettify state.burst)
-        , br_
-        , text "CPS:"
-        , br_
+        [ text "Current clicks:" , br_
+        , text (prettify state.currentClicks) , br_
+        , text "Burst:" , br_
+        , text (prettify state.burst) , br_
+        , text "CPS:" , br_
         , text (prettify state.cps)
         ]
       , br_
@@ -66,15 +62,15 @@ render state =
             [ i [ class_ $ className "fa fa-hand-pointer-o" ] [] ]
           ]
         ]
-      ]
-    main' = div [ id_ "main" ]
-      [ button
+      , button
         [ onMouseDown (input_ Save) ]
         [ text "Save" ]
       , button
         [ onMouseDown (input_ Reset) ]
         [ text "Reset" ]
-      , div
+      ]
+    main' = div [ id_ "main" ]
+      [ div
         [ id_ "upgrades" ]
         [ upgradesComponent state ]
       ]
@@ -136,7 +132,7 @@ eval (Autoclick next) = do
                  <<< (totalClicksNumber +~ state ^. cpsNumber / 10.0)) state
   pure next
 eval (Reset next) = do
-  modify $ const initialState
+  modify reset
   pure next
 eval (Save next) = do
   currentState <- get
@@ -153,9 +149,3 @@ main = runAff throwException (const (pure unit)) do
   onLoad $ appendToBody app.node
   schedule [ Tuple 100 (app.driver (action Autoclick))
            , Tuple 15000 (app.driver (action Save)) ]
-  --forever do
-    --app.driver $ action Save
-    --later' 15000 $ pure unit
-  --forever do
-    --app.driver $ action Autoclick
-    --later' 100 $ pure unit
