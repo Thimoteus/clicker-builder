@@ -23328,6 +23328,7 @@ var Control_Monad_Aff = require("../Control.Monad.Aff");
 var Control_Monad_Eff = require("../Control.Monad.Eff");
 var Control_Monad_Eff_Class = require("../Control.Monad.Eff.Class");
 var Control_Monad_Eff_Exception = require("../Control.Monad.Eff.Exception");
+var Control_Monad_Eff_Console = require("../Control.Monad.Eff.Console");
 var Control_Monad_Rec_Class = require("../Control.Monad.Rec.Class");
 var Halogen = require("../Halogen");
 var Halogen_Util = require("../Halogen.Util");
@@ -23366,7 +23367,7 @@ var upgradeProps = function (cpsn) {
             if (!_4) {
                 return [ Halogen_HTML_Properties_Indexed.class_(Halogen_HTML_Core.className("upgrade disabled")) ];
             };
-            throw new Error("Failed pattern match at Main line 114, column 1 - line 115, column 1: " + [ _4.constructor.name ]);
+            throw new Error("Failed pattern match at Main line 118, column 1 - line 119, column 1: " + [ _4.constructor.name ]);
         })());
     };
 };
@@ -23408,7 +23409,7 @@ var render = function (state) {
     var top = Halogen_HTML_Elements.h1_([ Halogen_HTML.text("clicker builder") ]);
     var side = Halogen_HTML_Elements_Indexed.div([ Halogen_HTML_Properties_Indexed.id_("side") ])([ Halogen_HTML_Elements.div_([ Halogen_HTML.text("Current clicks:"), Halogen_HTML_Elements.br_, Halogen_HTML.text(Types.prettify(Types.prettyClicks)(state.currentClicks)), Halogen_HTML_Elements.br_, Halogen_HTML.text("Burst:"), Halogen_HTML_Elements.br_, Halogen_HTML.text(Types.prettify(Types.prettyClicks)(state.burst)), Halogen_HTML_Elements.br_, Halogen_HTML.text("CPS:"), Halogen_HTML_Elements.br_, Halogen_HTML.text(Types.prettify(Types.prettyClicksPerSecond)(state.cps)) ]), Halogen_HTML_Elements.br_, Halogen_HTML_Elements_Indexed.div([ Halogen_HTML_Properties_Indexed.id_("clicker-wrapper") ])([ Halogen_HTML_Elements_Indexed.div([ Halogen_HTML_Events_Indexed.onMouseDown(Halogen_HTML_Events.input_(Types.Click.create)), Halogen_HTML_Properties_Indexed.id_("the-button") ])([ Halogen_HTML_Elements_Indexed.a([ Halogen_HTML_Properties_Indexed.href("#") ])([ Halogen_HTML_Elements_Indexed.i([ Halogen_HTML_Properties_Indexed.class_(Halogen_HTML_Core.className("fa fa-hand-pointer-o")) ])([  ]) ]) ]) ]), Halogen_HTML_Elements_Indexed.button([ Halogen_HTML_Events_Indexed.onMouseDown(Halogen_HTML_Events.input_(Types.Save.create)) ])([ Halogen_HTML.text("Save") ]), Halogen_HTML_Elements_Indexed.button([ Halogen_HTML_Events_Indexed.onMouseDown(Halogen_HTML_Events.input_(Types.Reset.create)) ])([ Halogen_HTML.text("Reset") ]) ]);
     var main$prime = Halogen_HTML_Elements_Indexed.div([ Halogen_HTML_Properties_Indexed.id_("main") ])([ Halogen_HTML_Elements_Indexed.div([ Halogen_HTML_Properties_Indexed.id_("upgrades") ])([ upgradesComponent(state) ]) ]);
-    var bottom = Halogen_HTML_Elements_Indexed.div([ Halogen_HTML_Properties_Indexed.id_("bottom") ])([ Halogen_HTML.text("\n      clicker builder is an incremental click-based game where you play a\n      civilization from its humble beginnings in the stone age to its eventual\n      mastery of time and space.\n      ") ]);
+    var bottom = Halogen_HTML_Elements_Indexed.div([ Halogen_HTML_Properties_Indexed.id_("bottom") ])([ Halogen_HTML.text("\n      clicker builder is an incremental click-based game where you play a\n      civilization from its humble beginnings in the stone age to its eventual\n      mastery of time and space.\n      "), Halogen_HTML_Elements.br_, Halogen_HTML.text("\n      Changelog: blah blah\n      ") ]);
     return Halogen_HTML_Elements.div_([ top, side, main$prime, bottom ]);
 };
 var $$eval = function (_3) {
@@ -23433,8 +23434,10 @@ var $$eval = function (_3) {
     };
     if (_3 instanceof Types.Save) {
         return Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query.get)(function (_0) {
-            return Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query["liftEff'"](Control_Monad_Aff.monadEffAff)(Save.saveState(_0)))(function () {
-                return Prelude.pure(Control_Monad_Free.freeApplicative)(_3.value0);
+            return Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query["liftEff'"](Control_Monad_Aff.monadEffAff)(Control_Monad_Eff_Console.log("Saving game ... ")))(function () {
+                return Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query["liftEff'"](Control_Monad_Aff.monadEffAff)(Save.saveState(_0)))(function () {
+                    return Prelude.pure(Control_Monad_Free.freeApplicative)(_3.value0);
+                });
             });
         });
     };
@@ -23443,7 +23446,7 @@ var $$eval = function (_3) {
             return Prelude.pure(Control_Monad_Free.freeApplicative)(_3.value1);
         });
     };
-    throw new Error("Failed pattern match at Main line 125, column 1 - line 126, column 1: " + [ _3.constructor.name ]);
+    throw new Error("Failed pattern match at Main line 129, column 1 - line 130, column 1: " + [ _3.constructor.name ]);
 };
 var $$interface = Halogen_Component.component(render)($$eval);
 var main = Control_Monad_Aff.runAff(Control_Monad_Eff_Exception.throwException)(Prelude["const"](Prelude.pure(Control_Monad_Eff.applicativeEff)(Prelude.unit)))(Prelude.bind(Control_Monad_Aff.bindAff)(Control_Monad_Eff_Class.liftEff(Control_Monad_Aff.monadEffAff)(Save.getSavedState))(function (_2) {
@@ -23463,7 +23466,7 @@ module.exports = {
     "interface": $$interface
 };
 
-},{"../Control.Monad.Aff":"/home/thimoteus/Programming/clicker-builder/output/Control.Monad.Aff/index.js","../Control.Monad.Eff":"/home/thimoteus/Programming/clicker-builder/output/Control.Monad.Eff/index.js","../Control.Monad.Eff.Class":"/home/thimoteus/Programming/clicker-builder/output/Control.Monad.Eff.Class/index.js","../Control.Monad.Eff.Exception":"/home/thimoteus/Programming/clicker-builder/output/Control.Monad.Eff.Exception/index.js","../Control.Monad.Free":"/home/thimoteus/Programming/clicker-builder/output/Control.Monad.Free/index.js","../Control.Monad.Rec.Class":"/home/thimoteus/Programming/clicker-builder/output/Control.Monad.Rec.Class/index.js","../Data.Const":"/home/thimoteus/Programming/clicker-builder/output/Data.Const/index.js","../Data.Lens":"/home/thimoteus/Programming/clicker-builder/output/Data.Lens/index.js","../Data.Lens.Getter":"/home/thimoteus/Programming/clicker-builder/output/Data.Lens.Getter/index.js","../Data.Lens.Setter":"/home/thimoteus/Programming/clicker-builder/output/Data.Lens.Setter/index.js","../Data.Profunctor.Star":"/home/thimoteus/Programming/clicker-builder/output/Data.Profunctor.Star/index.js","../Data.Profunctor.Strong":"/home/thimoteus/Programming/clicker-builder/output/Data.Profunctor.Strong/index.js","../Data.Tuple":"/home/thimoteus/Programming/clicker-builder/output/Data.Tuple/index.js","../Halogen":"/home/thimoteus/Programming/clicker-builder/output/Halogen/index.js","../Halogen.Component":"/home/thimoteus/Programming/clicker-builder/output/Halogen.Component/index.js","../Halogen.Driver":"/home/thimoteus/Programming/clicker-builder/output/Halogen.Driver/index.js","../Halogen.HTML":"/home/thimoteus/Programming/clicker-builder/output/Halogen.HTML/index.js","../Halogen.HTML.Core":"/home/thimoteus/Programming/clicker-builder/output/Halogen.HTML.Core/index.js","../Halogen.HTML.Elements":"/home/thimoteus/Programming/clicker-builder/output/Halogen.HTML.Elements/index.js","../Halogen.HTML.Elements.Indexed":"/home/thimoteus/Programming/clicker-builder/output/Halogen.HTML.Elements.Indexed/index.js","../Halogen.HTML.Events":"/home/thimoteus/Programming/clicker-builder/output/Halogen.HTML.Events/index.js","../Halogen.HTML.Events.Indexed":"/home/thimoteus/Programming/clicker-builder/output/Halogen.HTML.Events.Indexed/index.js","../Halogen.HTML.Indexed":"/home/thimoteus/Programming/clicker-builder/output/Halogen.HTML.Indexed/index.js","../Halogen.HTML.Properties.Indexed":"/home/thimoteus/Programming/clicker-builder/output/Halogen.HTML.Properties.Indexed/index.js","../Halogen.Query":"/home/thimoteus/Programming/clicker-builder/output/Halogen.Query/index.js","../Halogen.Util":"/home/thimoteus/Programming/clicker-builder/output/Halogen.Util/index.js","../Lenses":"/home/thimoteus/Programming/clicker-builder/output/Lenses/index.js","../Prelude":"/home/thimoteus/Programming/clicker-builder/output/Prelude/index.js","../Reset":"/home/thimoteus/Programming/clicker-builder/output/Reset/index.js","../Save":"/home/thimoteus/Programming/clicker-builder/output/Save/index.js","../Types":"/home/thimoteus/Programming/clicker-builder/output/Types/index.js","../Upgrades":"/home/thimoteus/Programming/clicker-builder/output/Upgrades/index.js","../Util":"/home/thimoteus/Programming/clicker-builder/output/Util/index.js"}],"/home/thimoteus/Programming/clicker-builder/output/Math/foreign.js":[function(require,module,exports){
+},{"../Control.Monad.Aff":"/home/thimoteus/Programming/clicker-builder/output/Control.Monad.Aff/index.js","../Control.Monad.Eff":"/home/thimoteus/Programming/clicker-builder/output/Control.Monad.Eff/index.js","../Control.Monad.Eff.Class":"/home/thimoteus/Programming/clicker-builder/output/Control.Monad.Eff.Class/index.js","../Control.Monad.Eff.Console":"/home/thimoteus/Programming/clicker-builder/output/Control.Monad.Eff.Console/index.js","../Control.Monad.Eff.Exception":"/home/thimoteus/Programming/clicker-builder/output/Control.Monad.Eff.Exception/index.js","../Control.Monad.Free":"/home/thimoteus/Programming/clicker-builder/output/Control.Monad.Free/index.js","../Control.Monad.Rec.Class":"/home/thimoteus/Programming/clicker-builder/output/Control.Monad.Rec.Class/index.js","../Data.Const":"/home/thimoteus/Programming/clicker-builder/output/Data.Const/index.js","../Data.Lens":"/home/thimoteus/Programming/clicker-builder/output/Data.Lens/index.js","../Data.Lens.Getter":"/home/thimoteus/Programming/clicker-builder/output/Data.Lens.Getter/index.js","../Data.Lens.Setter":"/home/thimoteus/Programming/clicker-builder/output/Data.Lens.Setter/index.js","../Data.Profunctor.Star":"/home/thimoteus/Programming/clicker-builder/output/Data.Profunctor.Star/index.js","../Data.Profunctor.Strong":"/home/thimoteus/Programming/clicker-builder/output/Data.Profunctor.Strong/index.js","../Data.Tuple":"/home/thimoteus/Programming/clicker-builder/output/Data.Tuple/index.js","../Halogen":"/home/thimoteus/Programming/clicker-builder/output/Halogen/index.js","../Halogen.Component":"/home/thimoteus/Programming/clicker-builder/output/Halogen.Component/index.js","../Halogen.Driver":"/home/thimoteus/Programming/clicker-builder/output/Halogen.Driver/index.js","../Halogen.HTML":"/home/thimoteus/Programming/clicker-builder/output/Halogen.HTML/index.js","../Halogen.HTML.Core":"/home/thimoteus/Programming/clicker-builder/output/Halogen.HTML.Core/index.js","../Halogen.HTML.Elements":"/home/thimoteus/Programming/clicker-builder/output/Halogen.HTML.Elements/index.js","../Halogen.HTML.Elements.Indexed":"/home/thimoteus/Programming/clicker-builder/output/Halogen.HTML.Elements.Indexed/index.js","../Halogen.HTML.Events":"/home/thimoteus/Programming/clicker-builder/output/Halogen.HTML.Events/index.js","../Halogen.HTML.Events.Indexed":"/home/thimoteus/Programming/clicker-builder/output/Halogen.HTML.Events.Indexed/index.js","../Halogen.HTML.Indexed":"/home/thimoteus/Programming/clicker-builder/output/Halogen.HTML.Indexed/index.js","../Halogen.HTML.Properties.Indexed":"/home/thimoteus/Programming/clicker-builder/output/Halogen.HTML.Properties.Indexed/index.js","../Halogen.Query":"/home/thimoteus/Programming/clicker-builder/output/Halogen.Query/index.js","../Halogen.Util":"/home/thimoteus/Programming/clicker-builder/output/Halogen.Util/index.js","../Lenses":"/home/thimoteus/Programming/clicker-builder/output/Lenses/index.js","../Prelude":"/home/thimoteus/Programming/clicker-builder/output/Prelude/index.js","../Reset":"/home/thimoteus/Programming/clicker-builder/output/Reset/index.js","../Save":"/home/thimoteus/Programming/clicker-builder/output/Save/index.js","../Types":"/home/thimoteus/Programming/clicker-builder/output/Types/index.js","../Upgrades":"/home/thimoteus/Programming/clicker-builder/output/Upgrades/index.js","../Util":"/home/thimoteus/Programming/clicker-builder/output/Util/index.js"}],"/home/thimoteus/Programming/clicker-builder/output/Math/foreign.js":[function(require,module,exports){
 /* global exports */
 "use strict";
 
@@ -25243,7 +25246,7 @@ var serializeUpgrade = new Serialize(function (_15) {
     if (_15 instanceof Burst5) {
         return serialize(serializeInt)(_15.value0);
     };
-    throw new Error("Failed pattern match at Types line 201, column 1 - line 213, column 1: " + [ _15.constructor.name ]);
+    throw new Error("Failed pattern match at Types line 204, column 1 - line 216, column 1: " + [ _15.constructor.name ]);
 });
 var serializeUpgrades = new Serialize(function (_16) {
     return "{ \"cps1\": " + (serialize(serializeUpgrade)(_16.cps1) + (", \"cps2\": " + (serialize(serializeUpgrade)(_16.cps2) + (", \"cps3\": " + (serialize(serializeUpgrade)(_16.cps3) + (", \"cps4\": " + (serialize(serializeUpgrade)(_16.cps4) + (", \"cps5\": " + (serialize(serializeUpgrade)(_16.cps5) + (", \"burst1\": " + (serialize(serializeUpgrade)(_16.burst1) + (", \"burst2\": " + (serialize(serializeUpgrade)(_16.burst2) + (", \"burst3\": " + (serialize(serializeUpgrade)(_16.burst3) + (", \"burst4\": " + (serialize(serializeUpgrade)(_16.burst4) + (", \"burst5\": " + (serialize(serializeUpgrade)(_16.burst5) + "}")))))))))))))))))));
@@ -25264,10 +25267,19 @@ var prettyNumber = new Pretty(function (n) {
     if (Util.sigFigs(n) <= 8) {
         return Util.transformDigits(Data_Array.take(5))(n) + "k";
     };
-    if (Prelude.otherwise) {
-        return "Your civilization hasn't figured out how to count this high!";
+    if (Util.sigFigs(n) <= 9) {
+        return Util.transformDigits(Data_Array.take(3))(n) + "m";
     };
-    throw new Error("Failed pattern match at Types line 159, column 1 - line 168, column 1: " + [ n.constructor.name ]);
+    if (Util.sigFigs(n) <= 10) {
+        return Util.transformDigits(Data_Array.take(4))(n) + "m";
+    };
+    if (Util.sigFigs(n) <= 11) {
+        return Util.transformDigits(Data_Array.take(5))(n) + "m";
+    };
+    if (Prelude.otherwise) {
+        return "Your civilization can't count this high!";
+    };
+    throw new Error("Failed pattern match at Types line 159, column 1 - line 171, column 1: " + [ n.constructor.name ]);
 });
 var prettyInt = new Pretty(Prelude.show(Prelude.showInt));
 var prettify = function (dict) {
@@ -25727,39 +25739,39 @@ var nextUpgrade = function (_5) {
 };
 var makeUpgrade = function (coeff) {
     return function (total) {
-        return upgradePolynomial(Data_Int.toNumber(coeff))(Data_Int.toNumber(total));
+        return upgradePolynomial(coeff)(Data_Int.toNumber(total));
     };
 };
 var upgradeCost = function (_0) {
     if (_0 instanceof Types.CPS1) {
-        return makeUpgrade(25)(_0.value0);
+        return makeUpgrade(25.0)(_0.value0);
     };
     if (_0 instanceof Types.CPS2) {
-        return makeUpgrade(500)(_0.value0);
+        return makeUpgrade(5000.0)(_0.value0);
     };
     if (_0 instanceof Types.CPS3) {
-        return makeUpgrade(7500)(_0.value0);
+        return makeUpgrade(750000.0)(_0.value0);
     };
     if (_0 instanceof Types.CPS4) {
-        return makeUpgrade(90000)(_0.value0);
+        return makeUpgrade(9.5e7)(_0.value0);
     };
     if (_0 instanceof Types.CPS5) {
-        return makeUpgrade(825000)(_0.value0);
+        return makeUpgrade(8.25e9)(_0.value0);
     };
     if (_0 instanceof Types.Burst1) {
-        return makeUpgrade(10)(_0.value0);
+        return makeUpgrade(10.0)(_0.value0);
     };
     if (_0 instanceof Types.Burst2) {
-        return makeUpgrade(600)(_0.value0);
+        return makeUpgrade(6000.0)(_0.value0);
     };
     if (_0 instanceof Types.Burst3) {
-        return makeUpgrade(8500)(_0.value0);
+        return makeUpgrade(850000.0)(_0.value0);
     };
     if (_0 instanceof Types.Burst4) {
-        return makeUpgrade(72000)(_0.value0);
+        return makeUpgrade(7.2e7)(_0.value0);
     };
     if (_0 instanceof Types.Burst5) {
-        return makeUpgrade(7500000)(_0.value0);
+        return makeUpgrade(7.5e9)(_0.value0);
     };
     throw new Error("Failed pattern match at Upgrades line 19, column 1 - line 20, column 1: " + [ _0.constructor.name ]);
 };
@@ -25997,7 +26009,7 @@ var schedule = function (arr) {
                             _18[_19] = _5[_19];
                         };
                     };
-                    _18.numbalert = _5.timer;
+                    _18.numbalert = theGCD;
                     return _18;
                 })());
             });
@@ -26025,7 +26037,7 @@ var schedule = function (arr) {
         return {
             timer: _3.value0, 
             comp: _3.value1, 
-            numbalert: _3.value0
+            numbalert: theGCD
         };
     })(arr));
 };
