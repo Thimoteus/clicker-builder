@@ -1,7 +1,7 @@
 module Lenses where
 
 import Prelude
-import Data.Lens (GetterP(), LensP(), lens, to, (^.))
+import Data.Lens (GetterP(), LensP(), lens, to)
 import Types
 
 clicks :: LensP Clicks Number
@@ -36,6 +36,9 @@ burstNumber = burst <<< clicks
 
 age :: LensP State Age
 age = lens _.age (_ { age = _ })
+
+message :: LensP State String
+message = lens _.message (_ { message = _ })
 
 upgrades :: LensP State Upgrades
 upgrades = lens _.upgrades (_ { upgrades = _ })

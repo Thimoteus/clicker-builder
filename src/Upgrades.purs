@@ -5,9 +5,12 @@ module Upgrades
   , canBuyUpgrade
   , upgradeDescription
   , buyUpgrade
+  , isInflectionUpgrade
+  , inflectionUpgradeMessage
   ) where
 
 import Prelude
+import Data.Foldable (elem)
 import Data.Int (toNumber)
 import Data.Lens (LensP(), (^.), (+~), (-~), (.~))
 
@@ -32,7 +35,8 @@ upgradeCostPolynomial coeff level = upgradeCostModifier level * coeff * 1.2 ^ (t
 
 upgradeCostModifier :: Int -> Number
 upgradeCostModifier n
-  | n <= 25 = 1.0
+  | n <= 10 = 1.0
+  | n <= 25 = 0.8
   | n <= 50 = 0.5
   | n <= 75 = 0.25
   | n <= 100 = 0.125
@@ -96,11 +100,15 @@ upgradeBoost (Burst5 n _) = 100000000.0 * upgradeBoostModifier n
 
 upgradeBoostModifier :: Int -> Number
 upgradeBoostModifier n
-  | n <= 25 = 1.0
-  | n <= 50 = 2.0
-  | n <= 75 = 4.0
-  | n <= 100 = 8.0
-  | otherwise = 16.0
+  | n <= 10 = 1.0
+  | n <= 25 = 1.5
+  | n <= 50 = 3.0
+  | n <= 75 = 5.0
+  | n <= 100 = 10.0
+  | otherwise = 15.0
+
+isInflectionUpgrade :: Upgrade -> Boolean
+isInflectionUpgrade up = (up ^. viewLevel) `elem` [10, 25, 50, 75, 100]
 
 buyUpgrade :: Upgrade -> State -> State
 buyUpgrade up@(CPS1 _ _) = installUpgrade up cpsNumber <<< recordPurchase up cps1
@@ -120,3 +128,6 @@ recordPurchase up optic = (currentClicks -~ upgradeCost up)
 
 installUpgrade :: Upgrade -> LensP State Number -> State -> State
 installUpgrade up optic = optic +~ upgradeBoost up
+
+inflectionUpgradeMessage :: Upgrade -> Age -> String
+inflectionUpgradeMessage up age = upgradeName up age ++ " cost down, boost up"

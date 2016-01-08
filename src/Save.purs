@@ -35,6 +35,7 @@ getSavedState = do
          , upgrades: stateValueMaker (view upgrades) parseUpgrades "upgrades" arr
          , age: stateValueMaker _.age parseAge "age" arr
          , burst: stateValueMaker _.burst parseBurst "burst" arr
+         , message: ""
          }
 
 stateValueMaker :: forall a. (State -> a) -> (String -> a) -> String -> Array (Tuple String String) -> a

@@ -89,4 +89,21 @@ body {
 #bottom {
   padding-top: 20px;
   float: left;
+  color: #717171;
+}
+.messages {
+  margin-top: 15px;
+  float: left;
+  font-style: italic;
+  color: #e8df28;
+  opacity: 1;
+  transition: opacity 5s ease-in-out;
+  -moz-transition: opacity 5s ease-in-out;
+  -webkit-transition: opacity 5s ease-in-out;
+}
+.bold {
+  font-weight: bold;
+}
+.fade {
+  opacity: 0.0 !important;
 }

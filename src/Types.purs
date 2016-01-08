@@ -20,6 +20,7 @@ data Action a = Click a
               | Save a
               | Buy Upgrade a
               | Suffer Disaster a
+              | Unmessage a
 
 type State = { currentClicks :: Clicks
              , totalClicks :: Clicks
@@ -27,6 +28,7 @@ type State = { currentClicks :: Clicks
              , burst :: Clicks
              , age :: Age
              , upgrades :: Upgrades
+             , message :: String
              }
 
 newtype Clicks = Clicks Number
@@ -65,6 +67,11 @@ instance ringClicksPerSecond :: Ring ClicksPerSecond where
 type AppEffects = HalogenEffects ( webStorage :: WebStorage
                                  , console :: CONSOLE
                                  , random :: RANDOM )
+
+newtype Population = Population Number
+
+instance prettyPopulation :: Pretty Population where
+  prettify (Population n) = prettify n ++ " clickers"
 
 data Disaster = Disaster1 TagDisaster1
               | Disaster2 TagDisaster2
@@ -198,10 +205,21 @@ data Age = Stone
          | Space
          | Solar
 
-derive instance genericAge :: Generic Age
-
 instance ageShow :: Show Age where
-  show = gShow
+  show Stone = "Stone"
+  show Bronze = "Bronze"
+  show Iron = "Iron"
+  show Classical = "Classical"
+  show Dark = "Dark"
+  show Medieval = "Medieval"
+  show Renaissance = "Renaissance"
+  show Imperial = "Imperial"
+  show Industrial = "Industrial"
+  show Nuclear = "Nuclear"
+  show Information = "Information"
+  show Global = "Global"
+  show Space = "Space"
+  show Solar = "Solar"
 
 class Pretty a where
   prettify :: a -> String
@@ -295,6 +313,7 @@ initialState = { currentClicks: Clicks 0.0
                , age: Stone
                , burst: Clicks 1.0
                , upgrades: initialUpgrades
+               , message: ""
                }
 
 initialUpgrades :: Upgrades
