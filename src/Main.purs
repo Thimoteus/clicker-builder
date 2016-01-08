@@ -2,10 +2,11 @@ module Main where
 
 import Prelude hiding (div, top, bottom)
 
-import Data.Lens (LensP(), (+~), (^.))
+import Data.Lens (LensP(), (+~), (^.), set)
 import Data.Tuple (Tuple(..))
+import Data.String (null)
 
-import Control.Monad.Aff (Aff(), runAff)
+import Control.Monad.Aff (Aff(), runAff, later)
 import Control.Monad.Eff (Eff())
 import Control.Monad.Eff.Class (liftEff)
 import Control.Monad.Eff.Exception (throwException)
@@ -14,7 +15,7 @@ import Control.Monad.Eff.Console (log)
 import Halogen
   ( Component(), component
   , Eval(), Render()
-  , runUI, modify, action, get, liftEff'
+  , runUI, modify, action, get, liftEff', liftAff'
   )
 import Halogen.Util (appendToBody, onLoad)
 import Halogen.HTML.Indexed (div, div_, h1_, text, br_, a, i, className, span)
@@ -27,7 +28,9 @@ import Save
 import Upgrades
 import Reset
 import Disaster
+import Age
 import Util
+import Population
 
 interface :: Component State Action (Aff AppEffects)
 interface = component render eval
@@ -41,55 +44,65 @@ render state =
     , bottom
     ]
   where
-    top = h1_ [ text "clicker builder" ]
-    side = div [ id_ "side" ]
-      [ div_
-        [ text "Current clicks:" , br_
-        , text (prettify state.currentClicks) , br_
-        , text "Total clicks:" , br_
-        , text (prettify state.totalClicks), br_
-        , text "Burst:" , br_
-        , text (prettify state.burst) , br_
-        , text "CPS:" , br_
-        , text (prettify state.cps)
-        ]
-      , br_
-      , div
-        [ id_ "clicker-wrapper" ]
-        [ div
-          [ onMouseDown (input_ Click)
-          , id_ "the-button"
+    top =
+      h1_
+        [ text ("clicker builder: the " ++ show state.age ++ " Age.") ]
+    side =
+      div
+        [ id_ "side" ]
+        [ div_
+          [ text "Current clicks:" , br_
+          , span [ class_ (className "bold") ] [ text (prettify state.currentClicks) ], br_
+          , text "Total clicks:" , br_
+          , text (prettify state.totalClicks), br_
+          , text "Burst:" , br_
+          , text (prettify state.burst) , br_
+          , text "CPS:" , br_
+          , text (prettify state.cps) , br_
+          , text "Population:" , br_
+          , text (prettify (population state))
           ]
-          [ a
-            [ href "#" ]
-            [ i [ class_ $ className "fa fa-hand-pointer-o" ] [] ]
+        , br_
+        , div
+          [ id_ "clicker-wrapper" ]
+          [ div
+            [ onMouseDown (input_ Click)
+            , id_ "the-button"
+            ]
+            [ a
+              [ href "#" ]
+              [ i [ class_ $ className "fa fa-hand-pointer-o" ] [] ]
+            ]
           ]
+        , br_
+        , span
+          [ onMouseDown (input_ Save)
+          , class_ (className "button") ]
+          [ text "Save" ]
+        , br_
+        , span
+          [ onMouseDown (input_ Reset)
+          , class_ (className "button") ]
+          [ text "Reset" ]
         ]
-      , br_
-      , span
-        [ onMouseDown (input_ Save)
-        , class_ (className "button") ]
-        [ text "Save" ]
-      , br_
-      , span
-        [ onMouseDown (input_ Reset)
-        , class_ (className "button") ]
-        [ text "Reset" ]
-      ]
     main' = div [ id_ "main" ]
       [ div
         [ id_ "upgrades" ]
         [ upgradesComponent state ]
+      , if null state.message
+           then
+             div_
+               [ ]
+           else
+             div
+               [ class_ (className "fade messages") ]
+               [ text state.message ]
       ]
     bottom = div [ id_ "bottom" ]
-      [ text """
-      clicker builder is an incremental click-based game where you guide a
-      civilization from its humble stone age beginnings to eventually master
-      time and space.
-      """, br_
-      , text """
-      Changelog: Version so-alpha-it-doesn't-get-a-version-number.
-      """]
+      [ text (ageDescription state.age), br_, br_
+      , text "Changelog: Version so-alpha-it-doesn't-get-a-version-number.", br_
+      , text "Upcoming:", br_
+      , text "Bronze Age, population, randomly occurring disasters, 'graphics'." ]
 
 upgradesComponent :: Render State Action
 upgradesComponent state =
@@ -155,10 +168,18 @@ eval (Save next) = do
   liftEff' $ saveState currentState
   pure next
 eval (Buy upgrade next) = do
-  modify $ buyUpgrade upgrade
+  modify (set message "")
+  liftAff' (later (pure unit :: Aff AppEffects Unit))
+  modify (buyUpgrade upgrade)
+  if isInflectionUpgrade upgrade
+     then modify (\ state -> set message (inflectionUpgradeMessage upgrade state.age) state)
+     else modify (\ state -> set message ("Bought " ++ upgradeName upgrade state.age) state)
   pure next
 eval (Suffer disaster next) = do
   modify $ suffer disaster
+  pure next
+eval (Unmessage next) = do
+  modify (set message "")
   pure next
 
 main :: Eff AppEffects Unit

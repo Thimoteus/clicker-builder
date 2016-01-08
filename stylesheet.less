@@ -95,4 +95,24 @@ body {
 #bottom {
   padding-top: 20px;
   float: left;
+  color: lighten(@bg-color, 30%);
+}
+
+.messages {
+  margin-top: 15px;
+  float: left;
+  font-style: italic;
+  color: @fg-color;
+  opacity: 1;
+  transition: opacity 5.0s ease-in-out;
+  -moz-transition: opacity 5.0s ease-in-out;
+  -webkit-transition: opacity 5.0s ease-in-out;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.fade {
+  opacity: 0.0 !important;
 }

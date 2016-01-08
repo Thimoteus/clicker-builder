@@ -1,0 +1,32 @@
+{
+  "name": "clicker-builder",
+  "version": "1.0.0",
+  "description": "an incremental game for the ages",
+  "main": "app.js",
+  "directories": {
+    "test": "test"
+  },
+  "dependencies": {
+    "virtual-dom": "2.1.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Thimoteus/clicker-builder.git"
+  },
+  "keywords": [
+    "incremental",
+    "purescript",
+    "halogen",
+    "clicker"
+  ],
+  "author": "thimoteus",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Thimoteus/clicker-builder/issues"
+  },
+  "homepage": "https://github.com/Thimoteus/clicker-builder#readme"
+}
