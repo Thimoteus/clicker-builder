@@ -25,17 +25,22 @@ import Data.Lens (view, (^.))
 import Util
 import Types
 import Lenses
+import Upgrades
  
 getSavedState :: forall eff. Eff ( console :: CONSOLE, webStorage :: WebStorage | eff ) State
 getSavedState = do
   arr <- zip storageKeys <<< catMaybes <$> sequence (getItem localStorage <$> storageKeys)
-  pure $ { currentClicks: stateValueMaker _.currentClicks parseCurrentClicks "currentClicks" arr
-         , totalClicks: stateValueMaker _.totalClicks parseTotalClicks "totalClicks" arr
-         , cps: stateValueMaker _.cps parseCPS "cps" arr
-         , upgrades: stateValueMaker (view upgrades) parseUpgrades "upgrades" arr
-         , age: stateValueMaker _.age parseAge "age" arr
-         , burst: stateValueMaker _.burst parseBurst "burst" arr
+  let _upgrades = stateValueMaker (view upgrades) parseUpgrades "upgrades" arr
+      _currentClicks = stateValueMaker _.currentClicks parseCurrentClicks "currentClicks" arr
+      _totalClicks = stateValueMaker _.totalClicks parseTotalClicks "totalClicks" arr
+      _age = stateValueMaker _.age parseAge "age" arr
+  pure $ { currentClicks: _currentClicks
+         , totalClicks: _totalClicks
+         , upgrades: _upgrades
+         , age: _age
          , message: ""
+         , cps: cpsFromUpgrades _upgrades
+         , burst: burstFromUpgrades _upgrades
          }
 
 stateValueMaker :: forall a. (State -> a) -> (String -> a) -> String -> Array (Tuple String String) -> a
@@ -43,7 +48,7 @@ stateValueMaker default parser key arr =
   maybe (default initialState) parser $ lookup (scramble key) arr
 
 storageKeys :: Array String
-storageKeys = map scramble ["totalClicks", "currentClicks", "cps", "burst", "age", "upgrades"]
+storageKeys = map scramble ["totalClicks", "currentClicks", "age", "upgrades"]
 
 parseCurrentClicks :: String -> Clicks
 parseCurrentClicks = Clicks <<< getNumber (initialState ^. currentClicksNumber)
@@ -51,17 +56,11 @@ parseCurrentClicks = Clicks <<< getNumber (initialState ^. currentClicksNumber)
 parseTotalClicks :: String -> Clicks
 parseTotalClicks = Clicks <<< getNumber (initialState ^. totalClicksNumber)
 
-parseCPS :: String -> ClicksPerSecond
-parseCPS = ClicksPerSecond <<< getNumber (initialState ^. cpsNumber)
-
 parseUpgrades :: String -> Upgrades
 parseUpgrades = maybe initialState.upgrades id <<< get (json <<< ups) <<< unscramble
   where
     ups :: PartialGetter Upgrades Foreign
     ups = getter read
-
-parseBurst :: String -> Clicks
-parseBurst = Clicks <<< getNumber (initialState ^. burst <<< clicks)
 
 getNumber :: Number -> String -> Number
 getNumber default = maybe default id <<< get (json <<< number) <<< unscramble
@@ -86,6 +85,11 @@ parseAge = maybe initialState.age id <<< get (getter age) <<< unscramble
     age "Solar" = Right Solar
     age _ = Left unit
 
+cpsFromUpgrades :: Upgrades -> ClicksPerSecond
+cpsFromUpgrades (Upgrades u) = ClicksPerSecond 
+
+burstFromUpgrades :: Upgrades -> Clicks
+
 saveState :: forall eff. State -> Eff ( webStorage :: WebStorage | eff ) Unit
 saveState = traverse_ saveSingleState <<< stateTuples
 
@@ -95,10 +99,8 @@ saveSingleState = uncurry $ setItem localStorage
 stateTuples :: State -> Array (Tuple String String)
 stateTuples state = [ makeTuple "currentClicks" state.currentClicks
                     , makeTuple "totalClicks" state.totalClicks
-                    , makeTuple "cps" state.cps
                     , makeTuple "upgrades" state.upgrades
                     , makeTuple "age" state.age
-                    , makeTuple "burst" state.burst
                     ]
   where
     makeTuple :: forall a. (Serialize a) => String -> a -> Tuple String String

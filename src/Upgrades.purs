@@ -126,7 +126,7 @@ recordPurchase :: Upgrade -> LensP Upgrades Upgrade -> State -> State
 recordPurchase up optic = (currentClicks -~ upgradeCost up)
                       <<< (upgrades <<< optic .~ up)
 
-installUpgrade :: Upgrade -> LensP State Number -> State -> State
+installUpgrade :: Upgrade -> LensP { burst :: Clicks, cps :: CliskPerSecond, upgrades :: Upgrades } Number -> { burst :: Clicks, cps :: CliskPerSecond, upgrades :: Upgrades } -> { burst :: Clicks, cps :: CliskPerSecond, upgrades :: Upgrades }
 installUpgrade up optic = optic +~ upgradeBoost up
 
 inflectionUpgradeMessage :: Upgrade -> Age -> String
