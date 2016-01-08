@@ -7,12 +7,15 @@ module Upgrades
   , buyUpgrade
   , isInflectionUpgrade
   , inflectionUpgradeMessage
+  , cpsFromUpgrades
+  , burstFromUpgrades
   ) where
 
 import Prelude
-import Data.Foldable (elem)
+import Data.Foldable (elem, sum)
 import Data.Int (toNumber)
 import Data.Lens (LensP(), (^.), (+~), (-~), (.~))
+import Data.Array ((..))
 
 import Types
 import Lenses
@@ -126,8 +129,62 @@ recordPurchase :: Upgrade -> LensP Upgrades Upgrade -> State -> State
 recordPurchase up optic = (currentClicks -~ upgradeCost up)
                       <<< (upgrades <<< optic .~ up)
 
-installUpgrade :: Upgrade -> LensP { burst :: Clicks, cps :: CliskPerSecond, upgrades :: Upgrades } Number -> { burst :: Clicks, cps :: CliskPerSecond, upgrades :: Upgrades } -> { burst :: Clicks, cps :: CliskPerSecond, upgrades :: Upgrades }
+installUpgrade :: Upgrade -> LensP State Number -> State -> State
 installUpgrade up optic = optic +~ upgradeBoost up
 
 inflectionUpgradeMessage :: Upgrade -> Age -> String
 inflectionUpgradeMessage up age = upgradeName up age ++ " cost down, boost up"
+
+makeCPS1 :: Int -> Upgrade
+makeCPS1 n = CPS1 n tagCPS1
+
+makeCPS2 :: Int -> Upgrade
+makeCPS2 n = CPS2 n tagCPS2
+
+makeCPS3 :: Int -> Upgrade
+makeCPS3 n = CPS3 n tagCPS3
+
+makeCPS4 :: Int -> Upgrade
+makeCPS4 n = CPS4 n tagCPS4
+
+makeCPS5 :: Int -> Upgrade
+makeCPS5 n = CPS5 n tagCPS5
+
+makeBurst1 :: Int -> Upgrade
+makeBurst1 n = Burst1 n tagBurst1
+
+makeBurst2 :: Int -> Upgrade
+makeBurst2 n = Burst2 n tagBurst2
+
+makeBurst3 :: Int -> Upgrade
+makeBurst3 n = Burst3 n tagBurst3
+
+makeBurst4 :: Int -> Upgrade
+makeBurst4 n = Burst4 n tagBurst4
+
+makeBurst5 :: Int -> Upgrade
+makeBurst5 n = Burst5 n tagBurst5
+
+sumUpgrade :: Upgrade -> Number
+sumUpgrade (CPS1 n _) = sum (map (upgradeBoost <<< makeCPS1) (1 ... n))
+sumUpgrade (CPS2 n _) = sum (map (upgradeBoost <<< makeCPS2) (1 ... n))
+sumUpgrade (CPS3 n _) = sum (map (upgradeBoost <<< makeCPS3) (1 ... n))
+sumUpgrade (CPS4 n _) = sum (map (upgradeBoost <<< makeCPS4) (1 ... n))
+sumUpgrade (CPS5 n _) = sum (map (upgradeBoost <<< makeCPS5) (1 ... n))
+sumUpgrade (Burst1 n _) = sum (map (upgradeBoost <<< makeBurst1) (1 ... n))
+sumUpgrade (Burst2 n _) = sum (map (upgradeBoost <<< makeBurst2) (1 ... n))
+sumUpgrade (Burst3 n _) = sum (map (upgradeBoost <<< makeBurst3) (1 ... n))
+sumUpgrade (Burst4 n _) = sum (map (upgradeBoost <<< makeBurst4) (1 ... n))
+sumUpgrade (Burst5 n _) = sum (map (upgradeBoost <<< makeBurst5) (1 ... n))
+
+burstFromUpgrades :: Upgrades -> Clicks
+burstFromUpgrades (Upgrades u) =
+  (initialState ^. burst) + Clicks (sum (map sumUpgrade upgradeArray))
+  where
+    upgradeArray = [ u.burst1, u.burst2, u.burst3, u.burst4, u.burst5 ]
+
+cpsFromUpgrades :: Upgrades -> ClicksPerSecond
+cpsFromUpgrades (Upgrades u) =
+  (initialState ^. cps) + ClicksPerSecond (sum (map sumUpgrade upgradeArray))
+  where
+    upgradeArray = [ u.cps1, u.cps2, u.cps3, u.cps4, u.cps5 ]

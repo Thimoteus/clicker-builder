@@ -85,16 +85,11 @@ parseAge = maybe initialState.age id <<< get (getter age) <<< unscramble
     age "Solar" = Right Solar
     age _ = Left unit
 
-cpsFromUpgrades :: Upgrades -> ClicksPerSecond
-cpsFromUpgrades (Upgrades u) = ClicksPerSecond 
-
-burstFromUpgrades :: Upgrades -> Clicks
-
 saveState :: forall eff. State -> Eff ( webStorage :: WebStorage | eff ) Unit
 saveState = traverse_ saveSingleState <<< stateTuples
 
 saveSingleState :: forall eff. Tuple String String -> Eff ( webStorage :: WebStorage | eff ) Unit
-saveSingleState = uncurry $ setItem localStorage
+saveSingleState = uncurry (setItem localStorage)
 
 stateTuples :: State -> Array (Tuple String String)
 stateTuples state = [ makeTuple "currentClicks" state.currentClicks

@@ -5,7 +5,7 @@ import Prelude
 import Text.Browser.Base64 (decode64, encode64)
 import Math (pow)
 
-import Data.Array (span, length, take)
+import Data.Array (span, length, take, range)
 import Data.Either(Either(..))
 import Data.Maybe (Maybe(..))
 import Data.Maybe.Unsafe (fromJust)
@@ -98,3 +98,8 @@ gcd m n
 
 divides :: Int -> Int -> Boolean
 divides m n = n `mod` m == 0
+
+infix 8 ...
+(...) :: Int -> Int -> Array Int
+(...) inf sup | inf <= sup = range inf sup
+              | otherwise = []
