@@ -2,20 +2,54 @@ body {
   font-family: sans-serif;
   max-width: 800px;
   margin: auto;
-  background: #242424;
+  background: url(bg.png);
   color: #ff3e45;
 }
+p {
+  margin: 5px 0px;
+}
+h3 {
+  margin: 0;
+  border-bottom: 1px solid #484848;
+}
+.bold {
+  font-weight: bold;
+}
+.fade {
+  opacity: 0.0 !important;
+}
+.transparent-bg {
+  background: rgba(62, 62, 62, 0.4);
+  padding: 5px;
+  border: 1px solid #484848;
+}
+#title {
+  background: rgba(62, 62, 62, 0.4);
+  padding: 5px;
+  border: 1px solid #484848;
+  font: serif;
+  margin: 5px 0;
+}
 #side {
+  background: rgba(62, 62, 62, 0.4);
+  padding: 5px;
+  border: 1px solid #484848;
   min-width: 200px;
   float: left;
+  font-size: 0.9em;
 }
 #main {
   float: left;
+  margin-left: 5px;
+  background: rgba(62, 62, 62, 0.4);
+  padding: 5px;
+  border: 1px solid #484848;
 }
 #clicker-wrapper {
-  width: 25%;
+  width: 50px;
 }
 #the-button {
+  font-size: 1.3em;
   width: 100%;
   height: 0;
   padding-bottom: 100%;
@@ -43,14 +77,16 @@ body {
   text-decoration: none;
 }
 .upgrades {
-  width: 300px;
+  width: 275px;
   float: left;
   overflow: hidden;
 }
 .upgrades .category {
   display: block;
   width: 100%;
-  border-bottom: 1px solid #ff3e45;
+  margin-bottom: 5px;
+  padding-bottom: 2px;
+  border-bottom: 1px solid #484848;
 }
 .button {
   -webkit-touch-callout: none;
@@ -60,8 +96,6 @@ body {
   -ms-user-select: none;
   user-select: none;
   cursor: pointer;
-  color: #ff3e45;
-  background: #242424;
   font-weight: bold;
 }
 .upgrade {
@@ -72,8 +106,6 @@ body {
   -ms-user-select: none;
   user-select: none;
   cursor: pointer;
-  color: #ff3e45;
-  background: #242424;
   font-weight: bold;
 }
 .upgrade .name {
@@ -87,7 +119,10 @@ body {
   color: #575757;
 }
 #bottom {
-  padding-top: 20px;
+  background: rgba(62, 62, 62, 0.4);
+  padding: 5px;
+  border: 1px solid #484848;
+  margin-top: 5px;
   float: left;
   color: #717171;
 }
@@ -101,9 +136,6 @@ body {
   -moz-transition: opacity 5s ease-in-out;
   -webkit-transition: opacity 5s ease-in-out;
 }
-.bold {
-  font-weight: bold;
-}
-.fade {
-  opacity: 0.0 !important;
+.current-clicks {
+  font-size: 1.5em;
 }

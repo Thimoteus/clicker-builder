@@ -1,6 +1,7 @@
 module Save (
   getSavedState,
-  saveState
+  saveState,
+  welcomeMessage
   ) where
 
 import Prelude
@@ -38,10 +39,13 @@ getSavedState = do
          , totalClicks: _totalClicks
          , upgrades: _upgrades
          , age: _age
-         , message: ""
+         , message: welcomeMessage
          , cps: cpsFromUpgrades _upgrades
          , burst: burstFromUpgrades _upgrades
          }
+
+welcomeMessage :: String
+welcomeMessage = "Welcome to clicker builder"
 
 stateValueMaker :: forall a. (State -> a) -> (String -> a) -> String -> Array (Tuple String String) -> a
 stateValueMaker default parser key arr =

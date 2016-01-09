@@ -18,7 +18,7 @@ import Halogen
   , runUI, modify, action, get, liftEff', liftAff'
   )
 import Halogen.Util (appendToBody, onLoad)
-import Halogen.HTML.Indexed (div, div_, h1_, text, br_, a, i, className, span)
+import Halogen.HTML.Indexed (div, div_, h1, h3_, text, br_, a, i, className, span, p_)
 import Halogen.HTML.Events.Indexed (onMouseDown, input_)
 import Halogen.HTML.Properties.Indexed (id_, href, class_, title)
 
@@ -45,14 +45,14 @@ render state =
     ]
   where
     top =
-      h1_
-        [ text ("clicker builder: the " ++ show state.age ++ " Age.") ]
+      h1 [ id_ "title" ]
+         [ text ("clicker builder: the " ++ show state.age ++ " Age.") ]
     side =
       div
         [ id_ "side" ]
         [ div_
           [ text "Current clicks:" , br_
-          , span [ class_ (className "bold") ] [ text (prettify state.currentClicks) ], br_
+          , span [ class_ (className "current-clicks bold") ] [ text (prettify state.currentClicks) ], br_
           , text "Total clicks:" , br_
           , text (prettify state.totalClicks), br_
           , text "Burst:" , br_
@@ -68,6 +68,7 @@ render state =
           [ div
             [ onMouseDown (input_ Click)
             , id_ "the-button"
+            , class_ (className "shake-little")
             ]
             [ a
               [ href "#" ]
@@ -85,31 +86,31 @@ render state =
           , class_ (className "button") ]
           [ text "Reset" ]
         ]
-    main' = div [ id_ "main" ]
-      [ div
-        [ id_ "upgrades" ]
-        [ upgradesComponent state ]
-      , if null state.message
-           then
-             div_
-               [ ]
-           else
-             div
-               [ class_ (className "fade messages") ]
-               [ text state.message ]
-      ]
+    main' =
+      div
+        [ id_ "main" ]
+        [ div
+          [ id_ "upgrades" ]
+          [ upgradesComponent state ]
+        , div
+          [ class_ (className if state.message == welcomeMessage || null state.message then "messages" else "fade messages") ]
+          [ text state.message ]
+        ]
     bottom = div [ id_ "bottom" ]
-      [ text (ageDescription state.age), br_, br_
-      , text "Changelog: Version so-alpha-it-doesn't-get-a-version-number.", br_
-      , text "Upcoming:", br_
-      , text "Bronze Age, population, randomly occurring disasters, 'graphics'." ]
+      [ h3_ [ text "About" ]
+      , renderText (ageDescription state.age)
+      , h3_ [ text "Changelog" ]
+      , p_ [ text "Version so-alpha-it-doesn't-get-a-version-number." ]
+      , h3_ [ text "Upcoming" ]
+      , p_ [ text "Bronze Age, population, disasters, graphical representation." ]
+      ]
 
 upgradesComponent :: Render State Action
 upgradesComponent state =
   div_
     [ div [ class_ $ className "upgrades cps" ]
       [ span [ class_ (className "category") ]
-        [ text "CPS" ]
+        [ text "Tribal upgrades" ]
       , upgradeButton cps1 state
       , upgradeButton cps2 state
       , upgradeButton cps3 state
@@ -118,7 +119,7 @@ upgradesComponent state =
       ]
     , div [ class_ $ className "upgrades burst" ]
       [ span [ class_ (className "category") ]
-        [ text "Burst" ]
+        [ text "Self upgrades" ]
       , upgradeButton burst1 state
       , upgradeButton burst2 state
       , upgradeButton burst3 state
@@ -173,7 +174,7 @@ eval (Buy upgrade next) = do
   modify (buyUpgrade upgrade)
   if isInflectionUpgrade upgrade
      then modify (\ state -> set message (inflectionUpgradeMessage upgrade state.age) state)
-     else modify (\ state -> set message ("Bought " ++ upgradeName upgrade state.age) state)
+     else modify (\ state -> set message ("Upgraded " ++ upgradeName upgrade state.age) state)
   pure next
 eval (Suffer disaster next) = do
   modify $ suffer disaster
