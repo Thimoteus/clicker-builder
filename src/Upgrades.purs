@@ -15,7 +15,6 @@ import Prelude
 import Data.Foldable (elem, sum)
 import Data.Int (toNumber)
 import Data.Lens (LensP(), (^.), (+~), (-~), (.~))
-import Data.Array ((..))
 
 import Types
 import Lenses
@@ -90,12 +89,12 @@ canBuyUpgrade state optic =
    in currClicks >= nextCost
 
 upgradeBoost :: Upgrade -> Number
-upgradeBoost (CPS1 n _) = 0.1 * upgradeBoostModifier n
+upgradeBoost (CPS1 n _) = 0.5 * upgradeBoostModifier n
 upgradeBoost (CPS2 n _) = 100.0 * upgradeBoostModifier n
 upgradeBoost (CPS3 n _) = 40000.0 * upgradeBoostModifier n
 upgradeBoost (CPS4 n _) = 6000000.0 * upgradeBoostModifier n
 upgradeBoost (CPS5 n _) = 800000000.0 * upgradeBoostModifier n
-upgradeBoost (Burst1 n _) = 0.2 * upgradeBoostModifier n
+upgradeBoost (Burst1 n _) = 0.75 * upgradeBoostModifier n
 upgradeBoost (Burst2 n _) = 400.0 * upgradeBoostModifier n
 upgradeBoost (Burst3 n _) = 55000.0 * upgradeBoostModifier n
 upgradeBoost (Burst4 n _) = 5900000.0 * upgradeBoostModifier n

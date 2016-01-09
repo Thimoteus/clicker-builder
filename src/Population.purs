@@ -7,7 +7,7 @@ import Types
 import Math
 import Lenses
 
-import Data.Foldable (sum, foldl)
+import Data.Foldable (foldl)
 import Data.Int (toNumber)
 import Data.Lens ((^.))
 

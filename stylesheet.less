@@ -1,29 +1,65 @@
 @text-color: #ff3e45; // yellow
 @fg-color: #e8df28; // red
 @bg-color: #242424; // black
+@border: 1px solid lighten(@bg-color, 14%);
 
 body {
   font-family: sans-serif;
   max-width: 800px;
   margin: auto;
-  background: @bg-color;
+  //background: @bg-color;
+  background: url(bg.png);
   color: @text-color;
 }
 
+p {
+  margin: 5px 0px;
+}
+
+h3 {
+  margin: 0;
+  border-bottom: @border;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.fade {
+  opacity: 0.0 !important;
+}
+
+.transparent-bg {
+  background: fade(lighten(@bg-color, 10%), 40%);
+  padding: 5px;
+  border: @border;
+}
+
+#title {
+  .transparent-bg();
+  font: serif;
+  margin: 5px 0;
+}
+
 #side {
+  .transparent-bg();
   min-width: 200px;
   float: left;
+  font-size: 0.9em;
 }
 
 #main {
   float: left;
+  margin-left: 5px;
+  .transparent-bg();
 }
 
 #clicker-wrapper {
-  width: 25%;
+  width: 50px;
 }
 
 #the-button {
+  font-size: 1.3em;
   width: 100%;
   height: 0;
   padding-bottom: 100%;
@@ -54,13 +90,15 @@ body {
 }
 
 .upgrades {
-  width: 300px;
+  width: 275px;
   float: left;
   overflow: hidden;
   .category {
     display: block;
     width: 100%;
-    border-bottom: 1px solid @text-color;
+    margin-bottom: 5px;
+    padding-bottom: 2px;
+    border-bottom: @border;
   }
 }
 
@@ -72,8 +110,6 @@ body {
   -ms-user-select: none;
   user-select: none;
   cursor: pointer;
-  color: @text-color;
-  background: @bg-color;
   font-weight: bold;
 }
 
@@ -93,7 +129,8 @@ body {
 }
 
 #bottom {
-  padding-top: 20px;
+  .transparent-bg();
+  margin-top: 5px;
   float: left;
   color: lighten(@bg-color, 30%);
 }
@@ -109,10 +146,6 @@ body {
   -webkit-transition: opacity 5.0s ease-in-out;
 }
 
-.bold {
-  font-weight: bold;
-}
-
-.fade {
-  opacity: 0.0 !important;
+.current-clicks {
+  font-size: 1.5em;
 }

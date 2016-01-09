@@ -2,8 +2,11 @@ module Util where
 
 import Prelude
 
-import Text.Browser.Base64 (decode64, encode64)
+import Text.Base64 (decode64, encode64)
 import Math (pow)
+
+import Halogen.HTML.Core (HTML())
+import Halogen.HTML.Indexed (p_, div_, text)
 
 import Data.Array (span, length, take, range)
 import Data.Either(Either(..))
@@ -103,3 +106,6 @@ infix 8 ...
 (...) :: Int -> Int -> Array Int
 (...) inf sup | inf <= sup = range inf sup
               | otherwise = []
+
+renderText :: forall p i. Array String -> HTML p i
+renderText = div_ <<< map (p_ <<< pure <<< text)
