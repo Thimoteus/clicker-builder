@@ -71,7 +71,7 @@ type AppEffects = HalogenEffects ( webStorage :: WebStorage
 newtype Population = Population Number
 
 instance prettyPopulation :: Pretty Population where
-  prettify (Population n) = prettify n ++ " clickers"
+  prettify (Population n) = prettify n ++ " Clickonians"
 
 data Disaster = Disaster1 TagDisaster1
               | Disaster2 TagDisaster2

@@ -1,8 +1,12 @@
+@font-face {
+  font-family: "Silkscreen";
+  src: url('slkscr.ttf') format('truetype');
+}
 body {
-  font-family: sans-serif;
+  font-family: "Silkscreen", sans-serif;
   max-width: 800px;
   margin: auto;
-  background: url(bg.png);
+  background: url('bg-pixel.png');
   color: #ff3e45;
 }
 p {
@@ -109,7 +113,7 @@ h3 {
   font-weight: bold;
 }
 .upgrade .name {
-  font-size: 1.5em;
+  font-size: 1.1em;
 }
 .upgrade .level {
   font-size: 0.7em;

@@ -5,8 +5,9 @@ import Prelude
 import Text.Base64 (decode64, encode64)
 import Math (pow)
 
-import Halogen.HTML.Core (HTML())
+import Halogen.HTML.Core (HTML(), className)
 import Halogen.HTML.Indexed (p_, div_, text)
+import Halogen.HTML.Properties.Indexed (I(), IProp(), class_)
 
 import Data.Array (span, length, take, range)
 import Data.Either(Either(..))
@@ -109,3 +110,6 @@ infix 8 ...
 
 renderText :: forall p i. Array String -> HTML p i
 renderText = div_ <<< map (p_ <<< pure <<< text)
+
+mkClass :: forall p i. String -> IProp ( class :: I | p ) i
+mkClass = class_ <<< className

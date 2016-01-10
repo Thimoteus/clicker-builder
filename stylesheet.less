@@ -3,12 +3,17 @@
 @bg-color: #242424; // black
 @border: 1px solid lighten(@bg-color, 14%);
 
+@font-face {
+  font-family: "Silkscreen";
+  src: url('slkscr.ttf') format('truetype') ;
+}
+
 body {
-  font-family: sans-serif;
+  font-family: "Silkscreen", sans-serif;
   max-width: 800px;
   margin: auto;
   //background: @bg-color;
-  background: url(bg.png);
+  background: url('bg-pixel.png');
   color: @text-color;
 }
 
@@ -116,7 +121,7 @@ h3 {
 .upgrade {
   .button();
   .name {
-    font-size: 1.5em;
+    font-size: 1.1em;
   }
   .level {
     font-size: 0.7em;

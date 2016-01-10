@@ -46,44 +46,44 @@ render state =
   where
     top =
       h1 [ id_ "title" ]
-         [ text ("clicker builder: the " ++ show state.age ++ " Age.") ]
+         [ text $ "clicker builder: the " ++ show state.age ++ " Age." ]
     side =
       div
         [ id_ "side" ]
         [ div_
           [ text "Current clicks:" , br_
-          , span [ class_ (className "current-clicks bold") ] [ text (prettify state.currentClicks) ], br_
+          , span [ mkClass "current-clicks bold" ] [ text $ prettify state.currentClicks ], br_
           , text "Total clicks:" , br_
-          , text (prettify state.totalClicks), br_
-          , text "Burst:" , br_
-          , text (prettify state.burst) , br_
-          , text "CPS:" , br_
-          , text (prettify state.cps) , br_
+          , text $ prettify state.totalClicks, br_
+          , text "My click power:" , br_
+          , text $ prettify state.burst , br_
+          , text "Tribal click power:" , br_
+          , text $ prettify state.cps , br_
           , text "Population:" , br_
-          , text (prettify (population state))
+          , text $ prettify $ population state
           ]
         , br_
         , div
           [ id_ "clicker-wrapper" ]
           [ div
-            [ onMouseDown (input_ Click)
+            [ onMouseDown $ input_ Click
             , id_ "the-button"
-            , class_ (className "shake-little")
+            , mkClass "shake-little"
             ]
             [ a
               [ href "#" ]
-              [ i [ class_ $ className "fa fa-hand-pointer-o" ] [] ]
+              [ i [ mkClass "fa fa-hand-pointer-o" ] [] ]
             ]
           ]
         , br_
         , span
-          [ onMouseDown (input_ Save)
-          , class_ (className "button") ]
+          [ onMouseDown $ input_ Save
+          , mkClass "button" ]
           [ text "Save" ]
         , br_
         , span
-          [ onMouseDown (input_ Reset)
-          , class_ (className "button") ]
+          [ onMouseDown $ input_ Reset
+          , mkClass "button" ]
           [ text "Reset" ]
         ]
     main' =
@@ -92,13 +92,18 @@ render state =
         [ div
           [ id_ "upgrades" ]
           [ upgradesComponent state ]
-        , div
-          [ class_ (className if state.message == welcomeMessage || null state.message then "messages" else "fade messages") ]
-          [ text state.message ]
+          , if null state.message
+               then
+                 div_
+                   []
+               else
+                 div
+                   [ mkClass "fade messages" ]
+                   [ text state.message ]
         ]
     bottom = div [ id_ "bottom" ]
       [ h3_ [ text "About" ]
-      , renderText (ageDescription state.age)
+      , renderText $ ageDescription state.age
       , h3_ [ text "Changelog" ]
       , p_ [ text "Version so-alpha-it-doesn't-get-a-version-number." ]
       , h3_ [ text "Upcoming" ]
@@ -108,8 +113,8 @@ render state =
 upgradesComponent :: Render State Action
 upgradesComponent state =
   div_
-    [ div [ class_ $ className "upgrades cps" ]
-      [ span [ class_ (className "category") ]
+    [ div [ mkClass "upgrades cps" ]
+      [ span [ mkClass "category" ]
         [ text "Tribal upgrades" ]
       , upgradeButton cps1 state
       , upgradeButton cps2 state
@@ -117,8 +122,8 @@ upgradesComponent state =
       , upgradeButton cps4 state
       , upgradeButton cps5 state
       ]
-    , div [ class_ $ className "upgrades burst" ]
-      [ span [ class_ (className "category") ]
+    , div [ mkClass "upgrades burst" ]
+      [ span [ mkClass "category" ]
         [ text "Self upgrades" ]
       , upgradeButton burst1 state
       , upgradeButton burst2 state
@@ -131,12 +136,12 @@ upgradesComponent state =
 upgradeButton :: LensP Upgrades Upgrade -> Render State Action
 upgradeButton cpsn state =
   div (upgradeProps cpsn state)
-    [ div [ class_ (className "name") ]
-      [ text (upgradeName (state ^. upgrades <<< cpsn) state.age)
-      , span [ class_ (className "level") ]
-        [ text (" " ++ (show $ state ^. upgrades <<< cpsn <<< viewLevel)) ]
+    [ div [ mkClass "name" ]
+      [ text $ upgradeName (state ^. upgrades <<< cpsn) state.age
+      , span [ mkClass "level" ]
+        [ text $ " " ++ (show $ state ^. upgrades <<< cpsn <<< viewLevel) ]
       ]
-    , div [ class_ (className "cost") ]
+    , div [ mkClass "cost" ]
       [ text $ prettify $ upgradeCost $ nextUpgrade $ state ^. upgrades <<< cpsn ]
     ]
 
@@ -148,8 +153,8 @@ upgradeProps cpsn state =
         [ title $ upgradeDescription (state ^. upgrades <<< cpsn) state.age ]
    in hoverText state cpsn ++
       if canBuyUpgrade state cpsn
-         then [ clickAction, class_ (className "upgrade") ]
-         else [ class_ (className "upgrade disabled") ]
+         then [ clickAction, mkClass "upgrade" ]
+         else [ mkClass "upgrade disabled" ]
 
 eval :: Eval Action State Action (Aff AppEffects)
 eval (Click next) = do
@@ -169,24 +174,24 @@ eval (Save next) = do
   liftEff' $ saveState currentState
   pure next
 eval (Buy upgrade next) = do
-  modify (set message "")
-  liftAff' (later (pure unit :: Aff AppEffects Unit))
-  modify (buyUpgrade upgrade)
+  modify $ set message ""
+  liftAff' $ later $ pure unit :: Aff AppEffects Unit
+  modify $ buyUpgrade upgrade
   if isInflectionUpgrade upgrade
-     then modify (\ state -> set message (inflectionUpgradeMessage upgrade state.age) state)
-     else modify (\ state -> set message ("Upgraded " ++ upgradeName upgrade state.age) state)
+     then modify \ state -> set message (inflectionUpgradeMessage upgrade state.age) state
+     else modify \ state -> set message ("Upgraded " ++ upgradeName upgrade state.age) state
   pure next
 eval (Suffer disaster next) = do
   modify $ suffer disaster
   pure next
 eval (Unmessage next) = do
-  modify (set message "")
+  modify $ set message ""
   pure next
 
 main :: Eff AppEffects Unit
-main = runAff throwException (const (pure unit)) do
+main = runAff throwException (const $ pure unit) do
   savedState <- liftEff getSavedState
   app <- runUI interface savedState
   onLoad $ appendToBody app.node
-  schedule [ Tuple 100 (app.driver (action Autoclick))
-           , Tuple 15000 (app.driver (action Save)) ]
+  schedule [ Tuple 100 $ app.driver $ action Autoclick
+           , Tuple 15000 $ app.driver $ action Save ]
