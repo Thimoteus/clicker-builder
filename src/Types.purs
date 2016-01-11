@@ -246,6 +246,15 @@ instance prettyNumber :: Pretty Number where
     | sigFigs n <= 9 = transformDigits (take 3) n ++ "m"
     | sigFigs n <= 10 = transformDigits (take 4) n ++ "m"
     | sigFigs n <= 11 = transformDigits (take 5) n ++ "m"
+    | sigFigs n <= 12 = transformDigits (take 3) n ++ "b"
+    | sigFigs n <= 13 = transformDigits (take 4) n ++ "b"
+    | sigFigs n <= 14 = transformDigits (take 5) n ++ "b"
+    | sigFigs n <= 15 = transformDigits (take 3) n ++ "t"
+    | sigFigs n <= 16 = transformDigits (take 4) n ++ "t"
+    | sigFigs n <= 17 = transformDigits (take 5) n ++ "t"
+    | sigFigs n <= 18 = transformDigits (take 3) n ++ "q"
+    | sigFigs n <= 19 = transformDigits (take 4) n ++ "q"
+    | sigFigs n <= 20 = transformDigits (take 5) n ++ "q"
     | otherwise = "Your civilization can't count this high!"
 
 instance prettyClicks :: Pretty Clicks where

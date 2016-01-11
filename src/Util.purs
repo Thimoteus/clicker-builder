@@ -4,8 +4,9 @@ import Prelude
 
 import Text.Base64 (decode64, encode64)
 import Math (pow)
+import Unsafe.Coerce (unsafeCoerce)
 
-import Halogen.HTML.Core (HTML(), className)
+import Halogen.HTML.Core (HTML(), Prop(Attr), className, prop, propName, attrName)
 import Halogen.HTML.Indexed (p_, div_, text)
 import Halogen.HTML.Properties.Indexed (I(), IProp(), class_)
 
@@ -113,3 +114,9 @@ renderText = div_ <<< map (p_ <<< pure <<< text)
 
 mkClass :: forall p i. String -> IProp ( class :: I | p ) i
 mkClass = class_ <<< className
+
+dhint :: forall i. String -> Prop i
+dhint = Attr Nothing (attrName "data-hint")
+
+dataHint :: forall i r. String -> IProp r i
+dataHint = unsafeCoerce dhint

@@ -14,7 +14,8 @@ p {
 }
 h3 {
   margin: 0;
-  border-bottom: 1px solid #484848;
+  border-bottom: 1px solid #3e3e3e;
+  color: #f2ed84;
 }
 .bold {
   font-weight: bold;
@@ -23,21 +24,24 @@ h3 {
   opacity: 0.0 !important;
 }
 .transparent-bg {
-  background: rgba(62, 62, 62, 0.4);
+  background: rgba(62, 62, 62, 0.6);
+  box-shadow: 5px 5px 9px black;
   padding: 5px;
-  border: 1px solid #484848;
+  border: 1px solid #3e3e3e;
 }
 #title {
-  background: rgba(62, 62, 62, 0.4);
+  background: rgba(62, 62, 62, 0.6);
+  box-shadow: 5px 5px 9px black;
   padding: 5px;
-  border: 1px solid #484848;
+  border: 1px solid #3e3e3e;
   font: serif;
   margin: 5px 0;
 }
 #side {
-  background: rgba(62, 62, 62, 0.4);
+  background: rgba(62, 62, 62, 0.6);
+  box-shadow: 5px 5px 9px black;
   padding: 5px;
-  border: 1px solid #484848;
+  border: 1px solid #3e3e3e;
   min-width: 200px;
   float: left;
   font-size: 0.9em;
@@ -45,9 +49,10 @@ h3 {
 #main {
   float: left;
   margin-left: 5px;
-  background: rgba(62, 62, 62, 0.4);
+  background: rgba(62, 62, 62, 0.6);
+  box-shadow: 5px 5px 9px black;
   padding: 5px;
-  border: 1px solid #484848;
+  border: 1px solid #3e3e3e;
 }
 #clicker-wrapper {
   width: 50px;
@@ -90,7 +95,7 @@ h3 {
   width: 100%;
   margin-bottom: 5px;
   padding-bottom: 2px;
-  border-bottom: 1px solid #484848;
+  border-bottom: 1px solid #3e3e3e;
 }
 .button {
   -webkit-touch-callout: none;
@@ -120,15 +125,16 @@ h3 {
 }
 .upgrade.disabled {
   cursor: default;
-  color: #575757;
+  color: #a3a3a3;
 }
 #bottom {
-  background: rgba(62, 62, 62, 0.4);
+  background: rgba(62, 62, 62, 0.6);
+  box-shadow: 5px 5px 9px black;
   padding: 5px;
-  border: 1px solid #484848;
+  border: 1px solid #3e3e3e;
   margin-top: 5px;
   float: left;
-  color: #717171;
+  color: #d6d6d6;
 }
 .messages {
   margin-top: 15px;

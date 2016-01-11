@@ -1,7 +1,7 @@
-@text-color: #ff3e45; // yellow
-@fg-color: #e8df28; // red
+@text-color: #ff3e45; // red
+@fg-color: #e8df28; // yellow
 @bg-color: #242424; // black
-@border: 1px solid lighten(@bg-color, 14%);
+@border: 1px solid lighten(@bg-color, 10%);
 
 @font-face {
   font-family: "Silkscreen";
@@ -24,6 +24,7 @@ p {
 h3 {
   margin: 0;
   border-bottom: @border;
+  color: lighten(@fg-color, 20%);
 }
 
 .bold {
@@ -35,7 +36,8 @@ h3 {
 }
 
 .transparent-bg {
-  background: fade(lighten(@bg-color, 10%), 40%);
+  background: fade(lighten(@bg-color, 10%), 60%);
+  box-shadow: 5px 5px 9px black;
   padding: 5px;
   border: @border;
 }
@@ -130,14 +132,14 @@ h3 {
 
 .upgrade.disabled {
   cursor: default;
-  color: lighten(@bg-color, 20%);
+  color: lighten(@bg-color, 50%);
 }
 
 #bottom {
   .transparent-bg();
   margin-top: 5px;
   float: left;
-  color: lighten(@bg-color, 30%);
+  color: lighten(@bg-color, 70%);
 }
 
 .messages {
