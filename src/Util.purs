@@ -6,7 +6,7 @@ import Text.Base64 (decode64, encode64)
 import Math (pow)
 import Unsafe.Coerce (unsafeCoerce)
 
-import Halogen.HTML.Core (HTML(), Prop(Attr), className, prop, propName, attrName)
+import Halogen.HTML.Core (HTML(), Prop(Attr), className, attrName)
 import Halogen.HTML.Indexed (p_, div_, text)
 import Halogen.HTML.Properties.Indexed (I(), IProp(), class_)
 

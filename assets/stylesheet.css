@@ -2,12 +2,21 @@
   font-family: "Silkscreen";
   src: url('slkscr.ttf') format('truetype');
 }
-body {
+#body {
   font-family: "Silkscreen", sans-serif;
+  color: #ff3e45;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+}
+#body.Stone {
+  background: url('stone-pixel-bg.png');
+}
+#container {
   max-width: 800px;
   margin: auto;
-  background: url('bg-pixel.png');
-  color: #ff3e45;
 }
 p {
   margin: 5px 0px;

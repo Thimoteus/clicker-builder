@@ -6,7 +6,6 @@ import Control.Monad.Eff.Console (CONSOLE())
 import Control.Monad.Eff.Random (RANDOM())
 
 import Data.Array (take)
-import Data.Generic (Generic, gShow)
 import Data.Foreign.Class (IsForeign, readProp)
 
 import Browser.WebStorage (WebStorage())

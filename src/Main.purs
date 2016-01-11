@@ -18,9 +18,9 @@ import Halogen
   , runUI, modify, action, get, liftEff', liftAff'
   )
 import Halogen.Util (appendToBody, onLoad)
-import Halogen.HTML.Indexed (div, div_, h1, h3_, text, br_, a, i, className, span, p_)
+import Halogen.HTML.Indexed (div, div_, h1, h3_, text, br_, a, i, span, p_)
 import Halogen.HTML.Events.Indexed (onMouseDown, input_)
-import Halogen.HTML.Properties.Indexed (id_, href, class_, title)
+import Halogen.HTML.Properties.Indexed (id_, href, title)
 
 import Types
 import Lenses
@@ -37,11 +37,15 @@ interface = component render eval
 
 render :: Render State Action
 render state =
-  div_
-    [ top
-    , side
-    , main'
-    , bottom
+  div
+    [ id_ "body", mkClass (show state.age) ]
+    [ div
+      [ id_ "container" ]
+      [ top
+      , side
+      , main'
+      , bottom
+      ]
     ]
   where
     top =
