@@ -1,13 +1,15 @@
 module Save (
   getSavedState,
   saveState,
-  welcomeMessage
+  welcomeMessage,
+  calculateTimeDifferential
   ) where
 
 import Prelude
+import Math (abs)
 
 import Control.Monad.Eff (Eff())
-import Control.Monad.Eff.Console (CONSOLE())
+import Control.Monad.Eff.Console (CONSOLE(), log)
 
 import Browser.WebStorage (WebStorage(), getItem, localStorage, setItem)
 
@@ -40,14 +42,20 @@ getSavedState = do
       _totalClicks = stateValueMaker _.totalClicks parseTotalClicks "totalClicks" arr
       _age = stateValueMaker _.age parseAge "age" arr
       _now = stateValueMaker _.now parseNow "now" arr
-  pure $ { currentClicks: _currentClicks + calculateTimeDifferential _now currentTime
-         , totalClicks: _totalClicks
+      _cps = cpsFromUpgrades _upgrades
+      _burst = burstFromUpgrades _upgrades
+      _cc = calculateTimeDifferential (_now - currentTime) _cps
+  log $ "currentTime: " ++ show currentTime
+  log $ "_now: " ++ show _now
+  log $ "sum: " ++ prettify _cc
+  pure $ { currentClicks: _currentClicks + _cc
+         , totalClicks: _totalClicks + _cc
          , upgrades: _upgrades
          , age: _age
          , message: welcomeMessage
-         , cps: cpsFromUpgrades _upgrades
-         , burst: burstFromUpgrades _upgrades
-         , now: _now
+         , cps: _cps
+         , burst: _burst
+         , now: currentTime
          }
 
 welcomeMessage :: String
@@ -122,15 +130,16 @@ stateTuples state = [ makeTuple "currentClicks" state.currentClicks
 
 -- | used to calculate how many clicks to add to currentclicks and totalclicks
 -- | after user has been away for a certain amount of time
-calculateTimeDifferential :: Milliseconds -> Milliseconds -> Clicks
-calculateTimeDifferential state@(Milliseconds stored) ms = Clicks (f delta)
+calculateTimeDifferential :: Milliseconds -> ClicksPerSecond -> Clicks
+calculateTimeDifferential delta (ClicksPerSecond c) = Clicks (f delta)
   where
-  delta = ms - state
-  unimpairedClickDebt = stored * seconds delta
+  clickDebt :: Number
+  clickDebt = c * abs (seconds delta)
+  f :: Milliseconds -> Number
   f t
-    | minutes t < 5.0 = unimpairedClickDebt
-    | hours t < 1.0 = unimpairedClickDebt * 0.9
-    | hours t < 12.0 = unimpairedClickDebt * 0.75
-    | days t < 1.0 = unimpairedClickDebt * 0.6
-    | otherwise = unimpairedClickDebt * 0.5
+    | minutes t < 5.0 = clickDebt
+    | hours t < 1.0 = clickDebt * 0.9
+    | hours t < 12.0 = clickDebt * 0.75
+    | days t < 1.0 = clickDebt * 0.6
+    | otherwise = clickDebt * 0.5
 

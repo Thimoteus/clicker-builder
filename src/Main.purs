@@ -17,7 +17,7 @@ import Control.Monad.Eff.Console (log)
 import Halogen
   ( Component(), component
   , Eval(), Render()
-  , runUI, modify, action, get, liftEff', liftAff'
+  , runUI, modify, action, get, gets, liftEff', liftAff'
   )
 import Halogen.Util (appendToBody, onLoad)
 import Halogen.HTML.Indexed (div, div_, h1, h3_, text, br_, a, i, span, p_)
@@ -167,10 +167,16 @@ eval (Click next) = next <$ do
   modify \ state -> ((currentClicksNumber +~ state ^. burstNumber)
                  <<< (totalClicksNumber +~ state ^. burstNumber)) state
 eval (Autoclick next) = next <$ do
+  savedTime <- gets _.now
+  savedCPS <- gets _.cps
   currentTime <- liftEff' nowEpochMilliseconds
-  modify \ state -> ((currentClicksNumber +~ state ^. cpsNumber / 10.0)
-                 <<< (totalClicksNumber +~ state ^. cpsNumber / 10.0)
-                 <<< (now .~ currentTime)) state
+  let summand = calculateTimeDifferential (currentTime - savedTime) savedCPS
+  modify $ (currentClicks +~ summand)
+       <<< (totalClicks +~ summand) 
+       <<< (now .~ currentTime)
+  -- modify \ state -> ((currentClicksNumber +~ state ^. cpsNumber / 10.0)
+                 -- <<< (totalClicksNumber +~ state ^. cpsNumber / 10.0)
+                 -- <<< (now .~ currentTime)) state
 eval (Reset next) = next <$ modify reset
 eval (Save next) = next <$ do
   currentState <- get

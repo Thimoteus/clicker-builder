@@ -282,7 +282,7 @@ instance serializeInt :: Serialize Int where
   serialize = show
 
 instance serializeNumber :: Serialize Number where
-  serialize = prettify
+  serialize = oneDecimal
 
 instance serializeClicks :: Serialize Clicks where
   serialize (Clicks n) = prettify n
@@ -344,3 +344,4 @@ initialUpgrades = Upgrades { cps1: CPS1 0 tagCPS1
                            , burst4: Burst4 0 tagBurst4
                            , burst5: Burst5 0 tagBurst5
                            }
+

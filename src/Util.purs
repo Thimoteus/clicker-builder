@@ -123,13 +123,13 @@ dataHint = unsafeCoerce dhint
   dhint = Attr Nothing (attrName "data-hint")
 
 seconds :: Milliseconds -> Number
-seconds (Milliseconds n) = 1000.0 * n
+seconds (Milliseconds n) = n / 1000.0
 
 minutes :: Milliseconds -> Number
-minutes n = seconds n * 60.0
+minutes n = seconds n / 60.0
 
 hours :: Milliseconds -> Number
-hours n = minutes n * 60.0
+hours n = minutes n / 60.0
 
 days :: Milliseconds -> Number
-days n = hours n * 24.0
+days n = hours n / 24.0
