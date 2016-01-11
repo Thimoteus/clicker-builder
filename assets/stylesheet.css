@@ -106,6 +106,15 @@ h3 {
   padding-bottom: 2px;
   border-bottom: 1px solid #3e3e3e;
 }
+.noselect {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: default;
+}
 .button {
   -webkit-touch-callout: none;
   -webkit-user-select: none;
@@ -113,6 +122,7 @@ h3 {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  cursor: default;
   cursor: pointer;
   font-weight: bold;
 }
@@ -123,6 +133,7 @@ h3 {
   -moz-user-select: none;
   -ms-user-select: none;
   user-select: none;
+  cursor: default;
   cursor: pointer;
   font-weight: bold;
 }
@@ -146,6 +157,13 @@ h3 {
   color: #d6d6d6;
 }
 .messages {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: default;
   margin-top: 15px;
   float: left;
   font-style: italic;

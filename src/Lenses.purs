@@ -2,6 +2,7 @@ module Lenses where
 
 import Prelude
 import Data.Lens (GetterP(), LensP(), lens, to)
+import Data.Time (Milliseconds())
 import Types
 
 clicks :: LensP Clicks Number
@@ -39,6 +40,9 @@ age = lens _.age (_ { age = _ })
 
 message :: LensP State String
 message = lens _.message (_ { message = _ })
+
+now :: LensP State Milliseconds
+now = lens _.now (_ { now = _ })
 
 upgrades :: LensP State Upgrades
 upgrades = lens _.upgrades (_ { upgrades = _ })

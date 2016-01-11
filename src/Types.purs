@@ -7,6 +7,8 @@ import Control.Monad.Eff.Random (RANDOM())
 
 import Data.Array (take)
 import Data.Foreign.Class (IsForeign, readProp)
+import Data.Date (Now())
+import Data.Time (Milliseconds(..))
 
 import Browser.WebStorage (WebStorage())
 import Halogen (HalogenEffects())
@@ -28,6 +30,7 @@ type State = { currentClicks :: Clicks
              , age :: Age
              , upgrades :: Upgrades
              , message :: String
+             , now :: Milliseconds
              }
 
 newtype Clicks = Clicks Number
@@ -65,6 +68,7 @@ instance ringClicksPerSecond :: Ring ClicksPerSecond where
 
 type AppEffects = HalogenEffects ( webStorage :: WebStorage
                                  , console :: CONSOLE
+                                 , now :: Now
                                  , random :: RANDOM )
 
 newtype Population = Population Number
@@ -314,6 +318,9 @@ instance serializeUpgrades :: Serialize Upgrades where
     ++ serialize u.burst4 ++ """, "burst5": """
     ++ serialize u.burst5 ++ "}"
 
+instance serializeMilliseconds :: Serialize Milliseconds where
+  serialize (Milliseconds n) = serialize n
+
 initialState :: State
 initialState = { currentClicks: Clicks 0.0
                , totalClicks: Clicks 0.0
@@ -322,6 +329,7 @@ initialState = { currentClicks: Clicks 0.0
                , burst: Clicks 1.0
                , upgrades: initialUpgrades
                , message: ""
+               , now: zero
                }
 
 initialUpgrades :: Upgrades

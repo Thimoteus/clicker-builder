@@ -20,6 +20,7 @@ import Data.String (toCharArray, fromCharArray)
 import Data.Char (toCharCode, fromCharCode)
 import Data.Foldable (Foldable, foldl)
 import Data.Traversable (traverse)
+import Data.Time (Milliseconds(..))
 
 import Control.Monad.Aff (Aff(), later')
 import Control.Monad.Rec.Class (tailRecM)
@@ -115,8 +116,20 @@ renderText = div_ <<< map (p_ <<< pure <<< text)
 mkClass :: forall p i. String -> IProp ( class :: I | p ) i
 mkClass = class_ <<< className
 
-dhint :: forall i. String -> Prop i
-dhint = Attr Nothing (attrName "data-hint")
-
 dataHint :: forall i r. String -> IProp r i
 dataHint = unsafeCoerce dhint
+  where
+  dhint :: forall i. String -> Prop i
+  dhint = Attr Nothing (attrName "data-hint")
+
+seconds :: Milliseconds -> Number
+seconds (Milliseconds n) = 1000.0 * n
+
+minutes :: Milliseconds -> Number
+minutes n = seconds n * 60.0
+
+hours :: Milliseconds -> Number
+hours n = minutes n * 60.0
+
+days :: Milliseconds -> Number
+days n = hours n * 24.0

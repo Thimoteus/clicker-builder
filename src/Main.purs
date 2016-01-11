@@ -2,9 +2,11 @@ module Main where
 
 import Prelude hiding (div, top, bottom)
 
-import Data.Lens (LensP(), (+~), (^.), set)
+import Data.Lens (LensP(), (+~), (^.), set, (.~))
 import Data.Tuple (Tuple(..))
 import Data.String (null)
+import Data.Functor ((<$))
+import Data.Date (nowEpochMilliseconds)
 
 import Control.Monad.Aff (Aff(), runAff, later)
 import Control.Monad.Eff (Eff())
@@ -161,36 +163,28 @@ upgradeProps cpsn state =
          else [ mkClass "upgrade disabled" ]
 
 eval :: Eval Action State Action (Aff AppEffects)
-eval (Click next) = do
-  modify $ \ state -> ((currentClicksNumber +~ state ^. burstNumber)
-                   <<< (totalClicksNumber +~ state ^. burstNumber)) state
-  pure next
-eval (Autoclick next) = do
+eval (Click next) = next <$ do
+  modify \ state -> ((currentClicksNumber +~ state ^. burstNumber)
+                 <<< (totalClicksNumber +~ state ^. burstNumber)) state
+eval (Autoclick next) = next <$ do
+  currentTime <- liftEff' nowEpochMilliseconds
   modify \ state -> ((currentClicksNumber +~ state ^. cpsNumber / 10.0)
-                 <<< (totalClicksNumber +~ state ^. cpsNumber / 10.0)) state
-  pure next
-eval (Reset next) = do
-  modify reset
-  pure next
-eval (Save next) = do
+                 <<< (totalClicksNumber +~ state ^. cpsNumber / 10.0)
+                 <<< (now .~ currentTime)) state
+eval (Reset next) = next <$ modify reset
+eval (Save next) = next <$ do
   currentState <- get
   liftEff' $ log "Saving game ... "
   liftEff' $ saveState currentState
-  pure next
-eval (Buy upgrade next) = do
+eval (Buy upgrade next) = next <$ do
   modify $ set message ""
   liftAff' $ later $ pure unit :: Aff AppEffects Unit
   modify $ buyUpgrade upgrade
   if isInflectionUpgrade upgrade
      then modify \ state -> set message (inflectionUpgradeMessage upgrade state.age) state
      else modify \ state -> set message ("Upgraded " ++ upgradeName upgrade state.age) state
-  pure next
-eval (Suffer disaster next) = do
-  modify $ suffer disaster
-  pure next
-eval (Unmessage next) = do
-  modify $ set message ""
-  pure next
+eval (Suffer disaster next) = next <$ modify (suffer disaster)
+eval (Unmessage next) = next <$ modify (set message "")
 
 main :: Eff AppEffects Unit
 main = runAff throwException (const $ pure unit) do

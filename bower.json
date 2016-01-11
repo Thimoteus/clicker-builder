@@ -21,6 +21,7 @@
     "purescript-halogen": "~0.5.9",
     "purescript-aff": "~0.13.1",
     "purescript-random": "~0.2.3",
-    "purescript-base64": "~2.0.2"
+    "purescript-base64": "~2.0.2",
+    "purescript-datetime": "~0.9.1"
   }
 }
