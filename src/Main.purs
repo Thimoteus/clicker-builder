@@ -20,7 +20,7 @@ import Halogen
   , runUI, modify, action, get, gets, liftEff', liftAff'
   )
 import Halogen.Util (appendToBody, onLoad)
-import Halogen.HTML.Indexed (div, div_, h1, h3_, text, br_, a, i, span, p_)
+import Halogen.HTML.Indexed (div, div_, h1, h3_, h3, text, br_, a, i, span, p_)
 import Halogen.HTML.Events.Indexed (onMouseDown, input_)
 import Halogen.HTML.Properties.Indexed (id_, href, title)
 
@@ -96,7 +96,7 @@ render state =
         [ id_ "main" ]
         [ div
           [ id_ "upgrades" ]
-          [ div [ mkClass "title" ] [ text "Upgrades" ]
+          [ h3 [ mkClass "title" ] [ text "Upgrades" ]
           , upgradesComponent state ]
           , if null state.message
                then
@@ -111,7 +111,7 @@ render state =
       [ h3_ [ text "About" ]
       , renderParagraphs $ ageDescription state.age
       , h3_ [ text "Changelog" ]
-      , p_ [ text "First release!" ]
+      , p_ [ text "First beta!" ]
       , h3_ [ text "Upcoming" ]
       , p_ [ text "Bronze Age, population, disasters, graphical representation." ]
       , h3_ [ text "Credits" ]
