@@ -20,9 +20,9 @@ import Halogen
   , runUI, modify, action, get, gets, liftEff', liftAff'
   )
 import Halogen.Util (appendToBody, onLoad)
-import Halogen.HTML.Indexed (div, div_, h1, h3_, h3, text, br_, a, i, span, p_)
+import Halogen.HTML.Indexed (div, div_, h1, h3_, h3, text, br_, a, i, span, p_, img)
 import Halogen.HTML.Events.Indexed (onMouseDown, input_)
-import Halogen.HTML.Properties.Indexed (id_, href, title)
+import Halogen.HTML.Properties.Indexed (id_, href, title, src, alt)
 
 import Types
 import Lenses
@@ -41,7 +41,14 @@ render :: Render State Action
 render state =
   div
     [ id_ "body", mkClass (show state.age) ]
-    [ div
+    [ a
+      [ href "https://github.com/thimoteus/clicker-builder"
+      , id_ "fork-me" ]
+      [ img
+        [ src "https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67"
+        , alt "Fork me on Github" ]
+      ]
+    , div
       [ id_ "container" ]
       [ top
       , side
