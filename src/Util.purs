@@ -10,7 +10,7 @@ import Halogen.HTML.Core (HTML(), Prop(Attr), className, attrName)
 import Halogen.HTML.Indexed (p_, div_, text)
 import Halogen.HTML.Properties.Indexed (I(), IProp(), class_)
 
-import Data.Array (span, length, take, range)
+import Data.Array (span, length, take, range, drop)
 import Data.Either(Either(..))
 import Data.Maybe (Maybe(..))
 import Data.Maybe.Unsafe (fromJust)
@@ -65,6 +65,15 @@ noDecimal = transformDigits (chopDigits 0)
 
 transformDigits :: (Array Char -> Array Char) -> Number -> String
 transformDigits f = show >>> toCharArray >>> f >>> fromCharArray
+
+insertDecimal :: Int -> Number -> String
+insertDecimal i num =
+  let shown = take (i + 1) $ toCharArray $ show num
+      len = length shown
+      large = take (len - 1) shown
+      small = ['.'] ++ drop (len - 1) shown
+   in fromCharArray (large ++ small)
+
 
 type Scheduler e = { timer :: Int, comp :: Aff e Unit, numbalert :: Int }
 schedule :: forall e. Array (Tuple Int (Aff e Unit)) -> Aff e Unit
