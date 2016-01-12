@@ -110,8 +110,8 @@ infix 7 ...
 (...) inf sup | inf <= sup = range inf sup
               | otherwise = []
 
-renderText :: forall p i. Array String -> HTML p i
-renderText = div_ <<< map (p_ <<< pure <<< text)
+renderParagraphs :: forall p i. Array String -> HTML p i
+renderParagraphs = div_ <<< map (p_ <<< pure <<< text)
 
 mkClass :: forall p i. String -> IProp ( class :: I | p ) i
 mkClass = class_ <<< className

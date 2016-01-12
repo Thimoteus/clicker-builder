@@ -12,6 +12,4 @@ ageDescription Stone =
   important decisions. It is your task to shepherd your people through the
   Stone Age into a brighter, more prosperous future."""
   , """The tribe must develop various technologies to stand any hope of surviving
-  more than a few years. Some of these inventions will help your tribe's members,
-  others will help you help the tribe."""
-  ]
+  more than a few years.""" ]

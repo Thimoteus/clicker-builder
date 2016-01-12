@@ -115,16 +115,18 @@ h3 {
 }
 
 .upgrades {
-  width: 275px;
-  float: left;
+  //width: 275px;
+  -webkit-columns: 275px 2;
+  -moz-columns: 275px 2;
+  columns: 250px 2;
   overflow: hidden;
-  .category {
-    display: block;
-    width: 100%;
-    margin-bottom: 5px;
-    padding-bottom: 2px;
-    border-bottom: @border;
-  }
+}
+
+#upgrades .title {
+  //width: 100%;
+  margin-bottom: 5px;
+  padding-bottom: 2px;
+  border-bottom: @border;
 }
 
 .noselect {

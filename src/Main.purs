@@ -96,7 +96,8 @@ render state =
         [ id_ "main" ]
         [ div
           [ id_ "upgrades" ]
-          [ upgradesComponent state ]
+          [ div [ mkClass "title" ] [ text "Upgrades" ]
+          , upgradesComponent state ]
           , if null state.message
                then
                  div_
@@ -108,31 +109,25 @@ render state =
         ]
     bottom = div [ id_ "bottom" ]
       [ h3_ [ text "About" ]
-      , renderText $ ageDescription state.age
+      , renderParagraphs $ ageDescription state.age
       , h3_ [ text "Changelog" ]
-      , p_ [ text "Version so-alpha-it-doesn't-get-a-version-number." ]
+      , p_ [ text "First release!" ]
       , h3_ [ text "Upcoming" ]
       , p_ [ text "Bronze Age, population, disasters, graphical representation." ]
       , h3_ [ text "Credits" ]
-      , renderText
+      , renderParagraphs
         [ "Font: Silkscreen by Jason Kottke.", "Icons: fontawesome by Dave Gandy.", "Ideas and feedback: Himrin." ]
       ]
 
 upgradesComponent :: Render State Action
 upgradesComponent state =
   div_
-    [ div [ mkClass "upgrades cps" ]
-      [ span [ mkClass "category" ]
-        [ text "Tribal upgrades" ]
-      , upgradeButton misc1 state
+    [ div [ mkClass "upgrades" ]
+      [ upgradeButton misc1 state
       , upgradeButton misc2 state
       , upgradeButton tech1 state
       , upgradeButton tech2 state
       , upgradeButton phil1 state
-      ]
-    , div [ mkClass "upgrades burst" ]
-      [ span [ mkClass "category" ]
-        [ text "Self upgrades" ]
       , upgradeButton phil2 state
       , upgradeButton poli1 state
       , upgradeButton poli2 state
