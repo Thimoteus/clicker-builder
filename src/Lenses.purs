@@ -49,46 +49,46 @@ upgrades = lens _.upgrades (_ { upgrades = _ })
 
 runUpgrades (Upgrades u) = u
 
-cps1 :: LensP Upgrades Upgrade
-cps1 = lens (_.cps1 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { cps1 = v }))
+misc1 :: LensP Upgrades Upgrade
+misc1 = lens (_.misc1 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { misc1 = v }))
 
-cps2 :: LensP Upgrades Upgrade
-cps2 = lens (_.cps2 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { cps2 = v }))
+misc2 :: LensP Upgrades Upgrade
+misc2 = lens (_.misc2 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { misc2 = v }))
 
-cps3 :: LensP Upgrades Upgrade
-cps3 = lens (_.cps3 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { cps3 = v }))
+tech1 :: LensP Upgrades Upgrade
+tech1 = lens (_.tech1 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { tech1 = v }))
 
-cps4 :: LensP Upgrades Upgrade
-cps4 = lens (_.cps4 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { cps4 = v }))
+tech2 :: LensP Upgrades Upgrade
+tech2 = lens (_.tech2 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { tech2 = v }))
 
-cps5 :: LensP Upgrades Upgrade
-cps5 = lens (_.cps5 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { cps5 = v }))
+phil1 :: LensP Upgrades Upgrade
+phil1 = lens (_.phil1 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { phil1 = v }))
 
-burst1 :: LensP Upgrades Upgrade
-burst1 = lens (_.burst1 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { burst1 = v }))
+phil2 :: LensP Upgrades Upgrade
+phil2 = lens (_.phil2 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { phil2 = v }))
 
-burst2 :: LensP Upgrades Upgrade
-burst2 = lens (_.burst2 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { burst2 = v }))
+poli1 :: LensP Upgrades Upgrade
+poli1 = lens (_.poli1 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { poli1 = v }))
 
-burst3 :: LensP Upgrades Upgrade
-burst3 = lens (_.burst3 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { burst3 = v }))
+poli2 :: LensP Upgrades Upgrade
+poli2 = lens (_.poli2 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { poli2 = v }))
 
-burst4 :: LensP Upgrades Upgrade
-burst4 = lens (_.burst4 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { burst4 = v }))
+science1 :: LensP Upgrades Upgrade
+science1 = lens (_.science1 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { science1 = v }))
 
-burst5 :: LensP Upgrades Upgrade
-burst5 = lens (_.burst5 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { burst5 = v }))
+science2 :: LensP Upgrades Upgrade
+science2 = lens (_.science2 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { science2 = v }))
 
 viewLevel :: GetterP Upgrade Int
 viewLevel = to viewLevel'
   where
-    viewLevel' (CPS1 n _) = n
-    viewLevel' (CPS2 n _) = n
-    viewLevel' (CPS3 n _) = n
-    viewLevel' (CPS4 n _) = n
-    viewLevel' (CPS5 n _) = n
-    viewLevel' (Burst1 n _) = n
-    viewLevel' (Burst2 n _) = n
-    viewLevel' (Burst3 n _) = n
-    viewLevel' (Burst4 n _) = n
-    viewLevel' (Burst5 n _) = n
+    viewLevel' (Misc1 n) = n
+    viewLevel' (Misc2 n) = n
+    viewLevel' (Tech1 n) = n
+    viewLevel' (Tech2 n) = n
+    viewLevel' (Phil1 n) = n
+    viewLevel' (Phil2 n) = n
+    viewLevel' (Poli1 n) = n
+    viewLevel' (Poli2 n) = n
+    viewLevel' (Science1 n) = n
+    viewLevel' (Science2 n) = n

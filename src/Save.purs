@@ -1,7 +1,6 @@
 module Save (
   getSavedState,
   saveState,
-  welcomeMessage,
   calculateTimeDifferential
   ) where
 
@@ -57,9 +56,6 @@ getSavedState = do
          , burst: _burst
          , now: currentTime
          }
-
-welcomeMessage :: String
-welcomeMessage = unscramble "GTWbVUAvnTSkVTq1pvOlozMapzHtpaE0VD=="
 
 -- | abstraction of a function that helps parse strings to state values
 stateValueMaker :: forall a. (State -> a) -> (String -> a) -> String -> Array (Tuple String String) -> a

@@ -114,6 +114,9 @@ render state =
       , p_ [ text "Version so-alpha-it-doesn't-get-a-version-number." ]
       , h3_ [ text "Upcoming" ]
       , p_ [ text "Bronze Age, population, disasters, graphical representation." ]
+      , h3_ [ text "Credits" ]
+      , renderText
+        [ "Font: Silkscreen by Jason Kottke.", "Icons: fontawesome by Dave Gandy.", "Ideas and feedback: Himrin." ]
       ]
 
 upgradesComponent :: Render State Action
@@ -122,43 +125,43 @@ upgradesComponent state =
     [ div [ mkClass "upgrades cps" ]
       [ span [ mkClass "category" ]
         [ text "Tribal upgrades" ]
-      , upgradeButton cps1 state
-      , upgradeButton cps2 state
-      , upgradeButton cps3 state
-      , upgradeButton cps4 state
-      , upgradeButton cps5 state
+      , upgradeButton misc1 state
+      , upgradeButton misc2 state
+      , upgradeButton tech1 state
+      , upgradeButton tech2 state
+      , upgradeButton phil1 state
       ]
     , div [ mkClass "upgrades burst" ]
       [ span [ mkClass "category" ]
         [ text "Self upgrades" ]
-      , upgradeButton burst1 state
-      , upgradeButton burst2 state
-      , upgradeButton burst3 state
-      , upgradeButton burst4 state
-      , upgradeButton burst5 state
+      , upgradeButton phil2 state
+      , upgradeButton poli1 state
+      , upgradeButton poli2 state
+      , upgradeButton science1 state
+      , upgradeButton science2 state
       ]
     ]
 
 upgradeButton :: LensP Upgrades Upgrade -> Render State Action
-upgradeButton cpsn state =
-  div (upgradeProps cpsn state)
+upgradeButton uplens state =
+  div (upgradeProps uplens state)
     [ div [ mkClass "name" ]
-      [ text $ upgradeName (state ^. upgrades <<< cpsn) state.age
+      [ text $ upgradeName (state ^. upgrades <<< uplens) state.age
       , span [ mkClass "level" ]
-        [ text $ " " ++ (show $ state ^. upgrades <<< cpsn <<< viewLevel) ]
+        [ text $ " " ++ (show $ state ^. upgrades <<< uplens <<< viewLevel) ]
       ]
     , div [ mkClass "cost" ]
-      [ text $ prettify $ upgradeCost $ nextUpgrade $ state ^. upgrades <<< cpsn ]
+      [ text $ prettify $ upgradeCost $ nextUpgrade $ state ^. upgrades <<< uplens ]
     ]
 
 upgradeProps :: LensP Upgrades Upgrade -> State -> Array _
-upgradeProps cpsn state =
+upgradeProps uplens state =
   let clickAction =
-        onMouseDown $ input_ $ Buy $ nextUpgrade $ state ^. upgrades <<< cpsn
-      hoverText state cpsn =
-        [ title $ upgradeDescription (state ^. upgrades <<< cpsn) state.age ]
-   in hoverText state cpsn ++
-      if canBuyUpgrade state cpsn
+        onMouseDown $ input_ $ Buy $ nextUpgrade $ state ^. upgrades <<< uplens
+      hoverText state uplens =
+        [ title $ upgradeDescription (state ^. upgrades <<< uplens) state.age ]
+   in hoverText state uplens ++
+      if canBuyUpgrade state uplens
          then [ clickAction, mkClass "upgrade" ]
          else [ mkClass "upgrade disabled" ]
 

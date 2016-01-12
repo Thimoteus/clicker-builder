@@ -19,6 +19,6 @@ population state =
 
 sumUpgrades :: Upgrades -> Number
 sumUpgrades u =
-  let int = foldl g 0 [cps1, cps2, cps3, cps4, cps5, burst1, burst2, burst3, burst4, burst5]
-      g acc cpsn = acc + (u ^. cpsn <<< viewLevel)
+  let int = foldl g 0 [misc1, misc2, tech1, tech2, phil1, phil2, poli1, poli2, science1, science2]
+      g acc uplens = acc + (u ^. uplens <<< viewLevel)
    in toNumber int

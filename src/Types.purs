@@ -104,93 +104,51 @@ tagDisaster4 = unsafeCoerce unit
 tagDisaster5 :: TagDisaster5
 tagDisaster5 = unsafeCoerce unit
 
-data Upgrade = CPS1 Int TagCPS1
-             | CPS2 Int TagCPS2
-             | CPS3 Int TagCPS3
-             | CPS4 Int TagCPS4
-             | CPS5 Int TagCPS5
-             -- burst upgrades
-             | Burst1 Int TagBurst1
-             | Burst2 Int TagBurst2
-             | Burst3 Int TagBurst3
-             | Burst4 Int TagBurst4
-             | Burst5 Int TagBurst5
+data Upgrade = Misc1 Int
+             | Misc2 Int
+             | Tech1 Int
+             | Tech2 Int
+             | Phil1 Int
+             | Phil2 Int
+             | Poli1 Int
+             | Poli2 Int
+             | Science1 Int
+             | Science2 Int
 
-data TagCPS1
-data TagCPS2
-data TagCPS3
-data TagCPS4
-data TagCPS5
-data TagBurst1
-data TagBurst2
-data TagBurst3
-data TagBurst4
-data TagBurst5
-
-tagCPS1 :: TagCPS1
-tagCPS1 = unsafeCoerce unit
-
-tagCPS2 :: TagCPS2
-tagCPS2 = unsafeCoerce unit
-
-tagCPS3 :: TagCPS3
-tagCPS3 = unsafeCoerce unit
-
-tagCPS4 :: TagCPS4
-tagCPS4 = unsafeCoerce unit
-
-tagCPS5 :: TagCPS5
-tagCPS5 = unsafeCoerce unit
-
-tagBurst1 :: TagBurst1
-tagBurst1 = unsafeCoerce unit
-
-tagBurst2 :: TagBurst2
-tagBurst2 = unsafeCoerce unit
-
-tagBurst3 :: TagBurst3
-tagBurst3 = unsafeCoerce unit
-
-tagBurst4 :: TagBurst4
-tagBurst4 = unsafeCoerce unit
-
-tagBurst5 :: TagBurst5
-tagBurst5 = unsafeCoerce unit
-
-newtype Upgrades = Upgrades { cps1 :: Upgrade
-                            , cps2 :: Upgrade
-                            , cps3 :: Upgrade
-                            , cps4 :: Upgrade
-                            , cps5 :: Upgrade
-                            , burst1 :: Upgrade
-                            , burst2 :: Upgrade
-                            , burst3 :: Upgrade
-                            , burst4 :: Upgrade
-                            , burst5 :: Upgrade
+newtype Upgrades = Upgrades { misc1 :: Upgrade
+                            , misc2 :: Upgrade
+                            , tech1 :: Upgrade
+                            , tech2 :: Upgrade
+                            , phil1 :: Upgrade
+                            , phil2 :: Upgrade
+                            , poli1 :: Upgrade
+                            , poli2 :: Upgrade
+                            , science1 :: Upgrade
+                            , science2 :: Upgrade
                             }
 
 instance isForeignUpgrades :: IsForeign Upgrades where
   read value = do
-    _cps1 <- readProp "cps1" value
-    _cps2 <- readProp "cps2" value
-    _cps3 <- readProp "cps3" value
-    _cps4 <- readProp "cps4" value
-    _cps5 <- readProp "cps5" value
-    _burst1 <- readProp "burst1" value
-    _burst2 <- readProp "burst2" value
-    _burst3 <- readProp "burst3" value
-    _burst4 <- readProp "burst4" value
-    _burst5 <- readProp "burst5" value
-    pure $ Upgrades { cps1: CPS1 _cps1 tagCPS1
-                    , cps2: CPS2 _cps2 tagCPS2
-                    , cps3: CPS3 _cps3 tagCPS3
-                    , cps4: CPS4 _cps4 tagCPS4
-                    , cps5: CPS5 _cps5 tagCPS5
-                    , burst1: Burst1 _burst1 tagBurst1
-                    , burst2: Burst2 _burst2 tagBurst2
-                    , burst3: Burst3 _burst3 tagBurst3
-                    , burst4: Burst4 _burst4 tagBurst4
-                    , burst5: Burst5 _burst5 tagBurst5
+    _misc1 <- readProp "misc1" value
+    _misc2 <- readProp "misc2" value
+    _tech1 <- readProp "tech1" value
+    _tech2 <- readProp "tech2" value
+    _phil1 <- readProp "phil1" value
+    _phil2 <- readProp "phil2" value
+    _poli1 <- readProp "poli1" value
+    _poli2 <- readProp "poli2" value
+    _science1 <- readProp "science1" value
+    _science2 <- readProp "science2" value
+    pure $ Upgrades { misc1: Misc1 _misc1
+                    , misc2: Misc2 _misc2
+                    , tech1: Tech1 _tech1
+                    , tech2: Tech2 _tech2
+                    , phil1: Phil1 _phil1
+                    , phil2: Phil2 _phil2
+                    , poli1: Poli1 _poli1
+                    , poli2: Poli2 _poli2
+                    , science1: Science1 _science1
+                    , science2: Science2 _science2
                     }
 
 data Age = Stone
@@ -228,16 +186,16 @@ class Pretty a where
   prettify :: a -> String
 
 instance prettifyUpgrade :: Pretty Upgrade where
-  prettify (CPS1 n _) = prettify n
-  prettify (CPS2 n _) = prettify n
-  prettify (CPS3 n _) = prettify n
-  prettify (CPS4 n _) = prettify n
-  prettify (CPS5 n _) = prettify n
-  prettify (Burst1 n _) = prettify n
-  prettify (Burst2 n _) = prettify n
-  prettify (Burst3 n _) = prettify n
-  prettify (Burst4 n _) = prettify n
-  prettify (Burst5 n _) = prettify n
+  prettify (Misc1 n) = prettify n
+  prettify (Misc2 n) = prettify n
+  prettify (Tech1 n) = prettify n
+  prettify (Tech2 n) = prettify n
+  prettify (Phil1 n) = prettify n
+  prettify (Phil2 n) = prettify n
+  prettify (Poli1 n) = prettify n
+  prettify (Poli2 n) = prettify n
+  prettify (Science1 n) = prettify n
+  prettify (Science2 n) = prettify n
 
 instance prettyNumber :: Pretty Number where
   prettify n
@@ -258,6 +216,9 @@ instance prettyNumber :: Pretty Number where
     | sigFigs n <= 18 = transformDigits (take 3) n ++ "q"
     | sigFigs n <= 19 = transformDigits (take 4) n ++ "q"
     | sigFigs n <= 20 = transformDigits (take 5) n ++ "q"
+    | sigFigs n <= 21 = transformDigits (take 3) n ++ "qi"
+    | sigFigs n <= 22 = transformDigits (take 4) n ++ "qi"
+    | sigFigs n <= 23 = transformDigits (take 5) n ++ "qi"
     | otherwise = "Your civilization can't count this high!"
 
 instance prettyClicks :: Pretty Clicks where
@@ -294,29 +255,29 @@ instance serializeAge :: Serialize Age where
   serialize = prettify
 
 instance serializeUpgrade :: Serialize Upgrade where
-  serialize (CPS1 n _) = serialize n
-  serialize (CPS2 n _) = serialize n
-  serialize (CPS3 n _) = serialize n
-  serialize (CPS4 n _) = serialize n
-  serialize (CPS5 n _) = serialize n
-  serialize (Burst1 n _) = serialize n
-  serialize (Burst2 n _) = serialize n
-  serialize (Burst3 n _) = serialize n
-  serialize (Burst4 n _) = serialize n
-  serialize (Burst5 n _) = serialize n
+  serialize (Misc1 n) = serialize n
+  serialize (Misc2 n) = serialize n
+  serialize (Tech1 n) = serialize n
+  serialize (Tech2 n) = serialize n
+  serialize (Phil1 n) = serialize n
+  serialize (Phil2 n) = serialize n
+  serialize (Poli1 n) = serialize n
+  serialize (Poli2 n) = serialize n
+  serialize (Science1 n) = serialize n
+  serialize (Science2 n) = serialize n
 
 instance serializeUpgrades :: Serialize Upgrades where
-  serialize (Upgrades u) = """{ "cps1": """
-    ++ serialize u.cps1 ++ """, "cps2": """
-    ++ serialize u.cps2 ++ """, "cps3": """
-    ++ serialize u.cps3 ++ """, "cps4": """
-    ++ serialize u.cps4 ++ """, "cps5": """
-    ++ serialize u.cps5 ++ """, "burst1": """
-    ++ serialize u.burst1 ++ """, "burst2": """
-    ++ serialize u.burst2 ++ """, "burst3": """
-    ++ serialize u.burst3 ++ """, "burst4": """
-    ++ serialize u.burst4 ++ """, "burst5": """
-    ++ serialize u.burst5 ++ "}"
+  serialize (Upgrades u) = """{ "misc1": """
+    ++ serialize u.misc1 ++ """, "misc2": """
+    ++ serialize u.misc2 ++ """, "tech1": """
+    ++ serialize u.tech1 ++ """, "tech2": """
+    ++ serialize u.tech2 ++ """, "phil1": """
+    ++ serialize u.phil1 ++ """, "phil2": """
+    ++ serialize u.phil2 ++ """, "poli1": """
+    ++ serialize u.poli1 ++ """, "poli2": """
+    ++ serialize u.poli2 ++ """, "science1": """
+    ++ serialize u.science1 ++ """, "science2": """
+    ++ serialize u.science2 ++ "}"
 
 instance serializeMilliseconds :: Serialize Milliseconds where
   serialize (Milliseconds n) = serialize n
@@ -328,20 +289,23 @@ initialState = { currentClicks: Clicks 0.0
                , age: Stone
                , burst: Clicks 1.0
                , upgrades: initialUpgrades
-               , message: ""
+               , message: welcomeMessage
                , now: zero
                }
 
+welcomeMessage :: String
+welcomeMessage = unscramble "GTWbVUAvnTSkVTq1pvOlozMapzHtpaE0VD=="
+
 initialUpgrades :: Upgrades
-initialUpgrades = Upgrades { cps1: CPS1 0 tagCPS1
-                           , cps2: CPS2 0 tagCPS2
-                           , cps3: CPS3 0 tagCPS3
-                           , cps4: CPS4 0 tagCPS4
-                           , cps5: CPS5 0 tagCPS5
-                           , burst1: Burst1 0 tagBurst1
-                           , burst2: Burst2 0 tagBurst2
-                           , burst3: Burst3 0 tagBurst3
-                           , burst4: Burst4 0 tagBurst4
-                           , burst5: Burst5 0 tagBurst5
+initialUpgrades = Upgrades { misc1: Misc1 0
+                           , misc2: Misc2 0
+                           , tech1: Tech1 0
+                           , tech2: Tech2 0
+                           , phil1: Phil1 0
+                           , phil2: Phil2 0
+                           , poli1: Poli1 0
+                           , poli2: Poli2 0
+                           , science1: Science1 0
+                           , science2: Science2 0
                            }
 
