@@ -12,9 +12,10 @@ module Upgrades
   ) where
 
 import Prelude
-import Data.Foldable (elem, sum)
+import Data.Foldable (elem, sum, foldl)
+import Data.Array (concat)
 import Data.Int (toNumber)
-import Data.Lens (LensP(), (^.), (+~), (-~), (.~))
+import Data.Lens (LensP(), (^.), (+~), (-~), (.~), view)
 
 import Types
 import Lenses
@@ -138,26 +139,24 @@ installUpgrade up optic coeff = optic +~ coeff * upgradeBoost up
 inflectionUpgradeMessage :: Upgrade -> Age -> String
 inflectionUpgradeMessage up age = upgradeName up age ++ " cost down, boost up"
 
-sumUpgrade :: Upgrade -> Number
-sumUpgrade (Misc1 n) = sum (map (upgradeBoost <<< Misc1) (1 ... n))
-sumUpgrade (Misc2 n) = sum (map (upgradeBoost <<< Misc2) (1 ... n))
-sumUpgrade (Tech1 n) = sum (map (upgradeBoost <<< Tech1) (1 ... n))
-sumUpgrade (Tech2 n) = sum (map (upgradeBoost <<< Tech2) (1 ... n))
-sumUpgrade (Phil1 n) = sum (map (upgradeBoost <<< Phil1) (1 ... n))
-sumUpgrade (Phil2 n) = sum (map (upgradeBoost <<< Phil2) (1 ... n))
-sumUpgrade (Poli1 n) = sum (map (upgradeBoost <<< Poli1) (1 ... n))
-sumUpgrade (Poli2 n) = sum (map (upgradeBoost <<< Poli2) (1 ... n))
-sumUpgrade (Science1 n) = sum (map (upgradeBoost <<< Science1) (1 ... n))
-sumUpgrade (Science2 n) = sum (map (upgradeBoost <<< Science2) (1 ... n))
+makeUpgradedState :: Upgrades -> State
+makeUpgradedState u = foldl (flip buyUpgrade) initialState upArray
+  where
+    upArray = concat [ misc1arr, misc2arr, tech1arr, tech2arr, phil1arr
+                     , phil2arr, poli1arr, poli2arr, science1arr, science2arr ]
+    misc1arr    = Misc1 <$> 1 ... u ^. misc1 <<< viewLevel
+    misc2arr    = Misc2 <$> 1 ... u ^. misc2 <<< viewLevel
+    tech1arr    = Tech1 <$> 1 ... u ^. tech1 <<< viewLevel
+    tech2arr    = Tech2 <$> 1 ... u ^. tech2 <<< viewLevel
+    phil1arr    = Phil1 <$> 1 ... u ^. phil1 <<< viewLevel
+    phil2arr    = Phil2 <$> 1 ... u ^. phil2 <<< viewLevel
+    poli1arr    = Poli1 <$> 1 ... u ^. poli1 <<< viewLevel
+    poli2arr    = Poli2 <$> 1 ... u ^. poli2 <<< viewLevel
+    science1arr = Science1 <$> 1 ... u ^. science1 <<< viewLevel
+    science2arr = Science2 <$> 1 ... u ^. science2 <<< viewLevel
 
 cpsFromUpgrades :: Upgrades -> ClicksPerSecond
-cpsFromUpgrades (Upgrades u) =
-  (initialState ^. cps) + ClicksPerSecond (sum (map sumUpgrade upgradeArray))
-  where
-    upgradeArray = [ u.misc1, u.misc2, u.tech1, u.tech2, u.phil2 ]
+cpsFromUpgrades = view cps <<< makeUpgradedState
 
 burstFromUpgrades :: Upgrades -> Clicks
-burstFromUpgrades (Upgrades u) =
-  (initialState ^. burst) + Clicks (sum (map sumUpgrade upgradeArray))
-  where
-    upgradeArray = [ u.phil2, u.poli1, u.poli2, u.science1, u.science2 ]
+burstFromUpgrades = view burst <<< makeUpgradedState

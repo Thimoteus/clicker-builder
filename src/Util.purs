@@ -105,7 +105,7 @@ gcd m n
 divides :: Int -> Int -> Boolean
 divides m n = n `mod` m == 0
 
-infix 8 ...
+infix 7 ...
 (...) :: Int -> Int -> Array Int
 (...) inf sup | inf <= sup = range inf sup
               | otherwise = []
