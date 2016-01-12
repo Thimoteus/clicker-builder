@@ -114,20 +114,36 @@ isInflectionUpgrade :: Upgrade -> Boolean
 isInflectionUpgrade up = (up ^. viewLevel) `elem` [10, 25, 50, 75, 100]
 
 buyUpgrade :: Upgrade -> State -> State
-buyUpgrade up@(Misc1 _) = installUpgrade up burstNumber 0.15
-                      <<< installUpgrade up cpsNumber 1.0
+buyUpgrade up@(Misc1 _) = installUpgrade up burstNumber 0.4
+                      <<< installUpgrade up cpsNumber 0.75
                       <<< recordPurchase up misc1
-buyUpgrade up@(Misc2 _) = installUpgrade up cpsNumber 1.0
-                      <<< installUpgrade up burstNumber 0.2
+buyUpgrade up@(Misc2 _) = installUpgrade up cpsNumber 0.75
+                      <<< installUpgrade up burstNumber 0.3
                       <<< recordPurchase up misc2
-buyUpgrade up@(Tech1 _) = installUpgrade up cpsNumber 1.0 <<< recordPurchase up tech1
-buyUpgrade up@(Tech2 _) = installUpgrade up cpsNumber 1.0 <<< recordPurchase up tech2
-buyUpgrade up@(Phil1 _) = installUpgrade up cpsNumber 1.0 <<< recordPurchase up phil1
-buyUpgrade up@(Phil2 _) = installUpgrade up cpsNumber 1.0 <<< recordPurchase up phil2
-buyUpgrade up@(Poli1 _) = installUpgrade up cpsNumber 1.0 <<< recordPurchase up poli1
-buyUpgrade up@(Poli2 _) = installUpgrade up cpsNumber 1.0 <<< recordPurchase up poli2
-buyUpgrade up@(Science1 _) = installUpgrade up cpsNumber 1.0 <<< recordPurchase up science1
-buyUpgrade up@(Science2 _) = installUpgrade up cpsNumber 1.0 <<< recordPurchase up science2
+buyUpgrade up@(Tech1 _) = installUpgrade up cpsNumber 0.75
+                      <<< installUpgrade up burstNumber 0.2
+                      <<< recordPurchase up tech1
+buyUpgrade up@(Tech2 _) = installUpgrade up cpsNumber 0.75
+                      <<< installUpgrade up burstNumber 0.1
+                      <<< recordPurchase up tech2
+buyUpgrade up@(Phil1 _) = installUpgrade up cpsNumber 0.75
+                      <<< installUpgrade up burstNumber 0.2
+                      <<< recordPurchase up phil1
+buyUpgrade up@(Phil2 _) = installUpgrade up cpsNumber 0.75
+                      <<< installUpgrade up burstNumber 0.3
+                      <<< recordPurchase up phil2
+buyUpgrade up@(Poli1 _) = installUpgrade up cpsNumber 0.75
+                      <<< installUpgrade up burstNumber 0.4
+                      <<< recordPurchase up poli1
+buyUpgrade up@(Poli2 _) = installUpgrade up cpsNumber 0.75
+                      <<< installUpgrade up burstNumber 0.3
+                      <<< recordPurchase up poli2
+buyUpgrade up@(Science1 _) = installUpgrade up cpsNumber 0.75
+                         <<< installUpgrade up burstNumber 0.2
+                         <<< recordPurchase up science1
+buyUpgrade up@(Science2 _) = installUpgrade up cpsNumber 0.75
+                         <<< installUpgrade up burstNumber 0.1
+                         <<< recordPurchase up science2
 
 recordPurchase :: Upgrade -> LensP Upgrades Upgrade -> State -> State
 recordPurchase up optic = (currentClicks -~ upgradeCost up)
