@@ -52,7 +52,9 @@ render state =
   where
     top =
       h1 [ id_ "title" ]
-         [ text $ "clicker builder: the " ++ show state.age ++ " Age." ]
+         [ text "clicker builder: the "
+         , span [ mkClass $ show state.age ] [ text $ show state.age ]
+         , text " Age." ]
     side =
       div
         [ id_ "side" ]

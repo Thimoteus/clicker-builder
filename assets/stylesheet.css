@@ -52,6 +52,9 @@ h3 {
   margin: 5px 0;
   width: 100%;
 }
+#title .Stone {
+  color: #a3a3a3;
+}
 #side {
   background: rgba(62, 62, 62, 0.6);
   box-shadow: 5px 5px 9px black;
