@@ -24,6 +24,8 @@ import Halogen.HTML.Indexed (div, div_, h1, h3_, h3, text, br_, a, i, span, p_, 
 import Halogen.HTML.Events.Indexed (onMouseDown, input_)
 import Halogen.HTML.Properties.Indexed (id_, href, title, src, alt)
 
+import Browser.WebStorage (localStorage, clear)
+
 import Types
 import Lenses
 import Save
@@ -180,10 +182,9 @@ eval (Autoclick next) = next <$ do
   modify $ (currentClicks +~ summand)
        <<< (totalClicks +~ summand) 
        <<< (now .~ currentTime)
-  -- modify \ state -> ((currentClicksNumber +~ state ^. cpsNumber / 10.0)
-                 -- <<< (totalClicksNumber +~ state ^. cpsNumber / 10.0)
-                 -- <<< (now .~ currentTime)) state
-eval (Reset next) = next <$ modify reset
+eval (Reset next) = next <$ do
+  modify reset
+  liftEff' $ clear localStorage
 eval (Save next) = next <$ do
   currentState <- get
   liftEff' $ log "Saving game ... "
@@ -205,3 +206,4 @@ main = runAff throwException (const $ pure unit) do
   onLoad $ appendToBody app.node
   schedule [ Tuple 100 $ app.driver $ action Autoclick
            , Tuple 15000 $ app.driver $ action Save ]
+

@@ -246,13 +246,13 @@ instance serializeNumber :: Serialize Number where
   serialize = oneDecimal
 
 instance serializeClicks :: Serialize Clicks where
-  serialize (Clicks n) = prettify n
+  serialize (Clicks n) = serialize n
 
 instance serializeClicksPerSecond :: Serialize ClicksPerSecond where
-  serialize (ClicksPerSecond n) = prettify n
+  serialize (ClicksPerSecond n) = serialize n
 
 instance serializeAge :: Serialize Age where
-  serialize = prettify
+  serialize = show
 
 instance serializeUpgrade :: Serialize Upgrade where
   serialize (Misc1 n) = serialize n
