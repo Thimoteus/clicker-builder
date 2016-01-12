@@ -294,7 +294,7 @@ initialState = { currentClicks: Clicks 0.0
                }
 
 welcomeMessage :: String
-welcomeMessage = unscramble "GTWbVUAvnTSkVTq1pvOlozMapzHtpaE0VD=="
+welcomeMessage = "" --unscramble "GTWbVUAvnTSkVTq1pvOlozMapzHtpaE0VD=="
 
 initialUpgrades :: Upgrades
 initialUpgrades = Upgrades { misc1: Misc1 0

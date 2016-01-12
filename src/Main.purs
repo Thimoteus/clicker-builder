@@ -74,7 +74,6 @@ render state =
           [ div
             [ onMouseDown $ input_ Click
             , id_ "the-button"
-            , mkClass "shake-little"
             ]
             [ a
               [ href "#" ]
@@ -86,7 +85,7 @@ render state =
           [ onMouseDown $ input_ Save
           , mkClass "button" ]
           [ text "Save" ]
-        , br_
+        , text " | "
         , span
           [ onMouseDown $ input_ Reset
           , mkClass "button" ]
