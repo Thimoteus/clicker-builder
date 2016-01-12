@@ -1,6 +1,15 @@
 module Main where
 
 import Prelude hiding (div, top, bottom)
+import Types
+import Lenses
+import Save
+import Upgrades
+import Reset
+import Disaster
+import Age
+import Util
+import Population
 
 import Data.Lens (LensP(), (+~), (^.), set, (.~))
 import Data.Tuple (Tuple(..))
@@ -23,18 +32,6 @@ import Halogen.Util (appendToBody, onLoad)
 import Halogen.HTML.Indexed (div, div_, h1, h3_, h3, text, br_, a, i, span, p_, img)
 import Halogen.HTML.Events.Indexed (onMouseDown, input_)
 import Halogen.HTML.Properties.Indexed (id_, href, title, src, alt)
-
-import Browser.WebStorage (localStorage, clear)
-
-import Types
-import Lenses
-import Save
-import Upgrades
-import Reset
-import Disaster
-import Age
-import Util
-import Population
 
 interface :: Component State Action (Aff AppEffects)
 interface = component render eval
@@ -180,11 +177,11 @@ eval (Autoclick next) = next <$ do
   currentTime <- liftEff' nowEpochMilliseconds
   let summand = calculateTimeDifferential (currentTime - savedTime) savedCPS
   modify $ (currentClicks +~ summand)
-       <<< (totalClicks +~ summand) 
+       <<< (totalClicks +~ summand)
        <<< (now .~ currentTime)
 eval (Reset next) = next <$ do
-  modify reset
-  liftEff' $ clear localStorage
+  modify resetState
+  liftEff' resetSave
 eval (Save next) = next <$ do
   currentState <- get
   liftEff' $ log "Saving game ... "
