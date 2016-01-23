@@ -22,4 +22,4 @@ to stand any hope of surviving more than a few years.
 [thimoteus.github.io/clicker-builder](http://thimoteus.github.io/clicker-builder)
 
 ## preview
-[![Preview](assets/preview.png)](http://thimoteus.github.io/clicker-builder)
+<img src="assets/preview.png" alt="Preview" width=600 />
