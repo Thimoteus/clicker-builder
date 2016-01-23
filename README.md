@@ -20,3 +20,6 @@ to stand any hope of surviving more than a few years.
 
 ## live version
 [thimoteus.github.io/clicker-builder](http://thimoteus.github.io/clicker-builder)
+
+## preview
+[![Preview](assets/preview.png)](http://thimoteus.github.io/clicker-builder)

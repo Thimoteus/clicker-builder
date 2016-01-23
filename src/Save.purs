@@ -8,7 +8,7 @@ import Prelude
 import Math (abs)
 
 import Control.Monad.Eff (Eff())
-import Control.Monad.Eff.Console (CONSOLE(), log)
+import Control.Monad.Eff.Console (CONSOLE())
 
 import Browser.WebStorage (WebStorage(), getItem, localStorage, setItem)
 
@@ -44,9 +44,6 @@ getSavedState = do
       _cps = cpsFromUpgrades _upgrades
       _burst = burstFromUpgrades _upgrades
       _cc = calculateTimeDifferential (_now - currentTime) _cps
-  log $ "currentTime: " ++ show currentTime
-  log $ "_now: " ++ show _now
-  log $ "sum: " ++ prettify _cc
   pure $ { currentClicks: _currentClicks + _cc
          , totalClicks: _totalClicks + _cc
          , upgrades: _upgrades
@@ -130,12 +127,12 @@ calculateTimeDifferential :: Milliseconds -> ClicksPerSecond -> Clicks
 calculateTimeDifferential delta (ClicksPerSecond c) = Clicks (f delta)
   where
   clickDebt :: Number
-  clickDebt = c * abs (seconds delta)
+  clickDebt = c * abs (secondsMS delta)
   f :: Milliseconds -> Number
   f t
-    | minutes t < 5.0 = clickDebt
-    | hours t < 1.0 = clickDebt * 0.9
-    | hours t < 12.0 = clickDebt * 0.75
-    | days t < 1.0 = clickDebt * 0.6
+    | minutesMS t < 5.0 = clickDebt
+    | hoursMS t < 1.0 = clickDebt * 0.9
+    | hoursMS t < 12.0 = clickDebt * 0.75
+    | daysMS t < 1.0 = clickDebt * 0.6
     | otherwise = clickDebt * 0.5
 

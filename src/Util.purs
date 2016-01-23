@@ -131,14 +131,14 @@ dataHint = unsafeCoerce dhint
   dhint :: forall i. String -> Prop i
   dhint = Attr Nothing (attrName "data-hint")
 
-seconds :: Milliseconds -> Number
-seconds (Milliseconds n) = n / 1000.0
+secondsMS :: Milliseconds -> Number
+secondsMS (Milliseconds n) = n / 1000.0
 
-minutes :: Milliseconds -> Number
-minutes n = seconds n / 60.0
+minutesMS :: Milliseconds -> Number
+minutesMS n = secondsMS n / 60.0
 
-hours :: Milliseconds -> Number
-hours n = minutes n / 60.0
+hoursMS :: Milliseconds -> Number
+hoursMS n = minutesMS n / 60.0
 
-days :: Milliseconds -> Number
-days n = hours n / 24.0
+daysMS :: Milliseconds -> Number
+daysMS n = hoursMS n / 24.0

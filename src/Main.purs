@@ -17,6 +17,7 @@ import Data.String (null)
 import Data.Functor ((<$))
 import Data.Date (nowEpochMilliseconds)
 
+--import Control.Monad (when)
 import Control.Monad.Aff (Aff(), runAff, later)
 import Control.Monad.Eff (Eff())
 import Control.Monad.Eff.Class (liftEff)
@@ -175,7 +176,8 @@ eval (Autoclick next) = next <$ do
   savedTime <- gets _.now
   savedCPS <- gets _.cps
   currentTime <- liftEff' nowEpochMilliseconds
-  let summand = calculateTimeDifferential (currentTime - savedTime) savedCPS
+  let delta = currentTime - savedTime
+      summand = calculateTimeDifferential delta savedCPS
   modify $ (currentClicks +~ summand)
        <<< (totalClicks +~ summand)
        <<< (now .~ currentTime)

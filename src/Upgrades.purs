@@ -25,13 +25,13 @@ upgradeCost :: Upgrade -> Clicks
 upgradeCost (Misc1 n)    = Clicks (upgradeCostPolynomial 10.0 n)
 upgradeCost (Misc2 n)    = Clicks (upgradeCostPolynomial 500.0 n)
 upgradeCost (Tech1 n)    = Clicks (upgradeCostPolynomial 7500.0 n)
-upgradeCost (Tech2 n)    = Clicks (upgradeCostPolynomial 95000.0 n)
-upgradeCost (Phil1 n)    = Clicks (upgradeCostPolynomial 825000.0 n)
-upgradeCost (Phil2 n)    = Clicks (upgradeCostPolynomial 5200000.0 n)
-upgradeCost (Poli1 n)    = Clicks (upgradeCostPolynomial 60000000.0 n)
-upgradeCost (Poli2 n)    = Clicks (upgradeCostPolynomial 850000000.0 n)
-upgradeCost (Science1 n) = Clicks (upgradeCostPolynomial 8500000000.0 n)
-upgradeCost (Science2 n) = Clicks (upgradeCostPolynomial 75000000000.0 n)
+upgradeCost (Tech2 n)    = Clicks (upgradeCostPolynomial 950000.0 n)
+upgradeCost (Phil1 n)    = Clicks (upgradeCostPolynomial 8250000.0 n)
+upgradeCost (Phil2 n)    = Clicks (upgradeCostPolynomial 52000000.0 n)
+upgradeCost (Poli1 n)    = Clicks (upgradeCostPolynomial 800000000.0 n)
+upgradeCost (Poli2 n)    = Clicks (upgradeCostPolynomial 80500000000.0 n)
+upgradeCost (Science1 n) = Clicks (upgradeCostPolynomial 8005000000000.0 n)
+upgradeCost (Science2 n) = Clicks (upgradeCostPolynomial 750000000000000.0 n)
 
 upgradeCostPolynomial :: Number -> Int -> Number
 upgradeCostPolynomial coeff level = upgradeCostModifier level * coeff * 1.2 ^ (toNumber level)
@@ -92,14 +92,14 @@ canBuyUpgrade state optic =
 upgradeBoost :: Upgrade -> Number
 upgradeBoost (Misc1 n)    = 0.5 * upgradeBoostModifier n
 upgradeBoost (Misc2 n)    = 4.0 * upgradeBoostModifier n
-upgradeBoost (Tech1 n)    = 40.0 * upgradeBoostModifier n
-upgradeBoost (Tech2 n)    = 600.0 * upgradeBoostModifier n
-upgradeBoost (Phil1 n)    = 8000.0 * upgradeBoostModifier n
-upgradeBoost (Phil2 n)    = 122820.5 * upgradeBoostModifier n
-upgradeBoost (Poli1 n)    = 3141592.6 * upgradeBoostModifier n
-upgradeBoost (Poli2 n)    = 27182818.2 * upgradeBoostModifier n
-upgradeBoost (Science1 n) = 590000000.0 * upgradeBoostModifier n
-upgradeBoost (Science2 n) = 10000000000.0 * upgradeBoostModifier n
+upgradeBoost (Tech1 n)    = 30.0 * upgradeBoostModifier n
+upgradeBoost (Tech2 n)    = 400.0 * upgradeBoostModifier n
+upgradeBoost (Phil1 n)    = 6000.0 * upgradeBoostModifier n
+upgradeBoost (Phil2 n)    = 12220.5 * upgradeBoostModifier n
+upgradeBoost (Poli1 n)    = 214592.6 * upgradeBoostModifier n
+upgradeBoost (Poli2 n)    = 1712818.2 * upgradeBoostModifier n
+upgradeBoost (Science1 n) = 49000000.0 * upgradeBoostModifier n
+upgradeBoost (Science2 n) = 100000000.0 * upgradeBoostModifier n
 
 upgradeBoostModifier :: Int -> Number
 upgradeBoostModifier n
@@ -114,35 +114,35 @@ isInflectionUpgrade :: Upgrade -> Boolean
 isInflectionUpgrade up = (up ^. viewLevel) `elem` [10, 25, 50, 75, 100]
 
 buyUpgrade :: Upgrade -> State -> State
-buyUpgrade up@(Misc1 _) = installUpgrade up burstNumber 0.4
-                      <<< installUpgrade up cpsNumber 0.75
+buyUpgrade up@(Misc1 _) = installUpgrade up cpsNumber 0.75
+                      <<< installUpgrade up burstNumber 0.3
                       <<< recordPurchase up misc1
 buyUpgrade up@(Misc2 _) = installUpgrade up cpsNumber 0.75
                       <<< installUpgrade up burstNumber 0.3
                       <<< recordPurchase up misc2
 buyUpgrade up@(Tech1 _) = installUpgrade up cpsNumber 0.75
-                      <<< installUpgrade up burstNumber 0.2
+                      <<< installUpgrade up burstNumber 0.3
                       <<< recordPurchase up tech1
 buyUpgrade up@(Tech2 _) = installUpgrade up cpsNumber 0.75
-                      <<< installUpgrade up burstNumber 0.1
+                      <<< installUpgrade up burstNumber 0.3
                       <<< recordPurchase up tech2
 buyUpgrade up@(Phil1 _) = installUpgrade up cpsNumber 0.75
-                      <<< installUpgrade up burstNumber 0.2
+                      <<< installUpgrade up burstNumber 0.3
                       <<< recordPurchase up phil1
 buyUpgrade up@(Phil2 _) = installUpgrade up cpsNumber 0.75
                       <<< installUpgrade up burstNumber 0.3
                       <<< recordPurchase up phil2
 buyUpgrade up@(Poli1 _) = installUpgrade up cpsNumber 0.75
-                      <<< installUpgrade up burstNumber 0.4
+                      <<< installUpgrade up burstNumber 0.3
                       <<< recordPurchase up poli1
 buyUpgrade up@(Poli2 _) = installUpgrade up cpsNumber 0.75
                       <<< installUpgrade up burstNumber 0.3
                       <<< recordPurchase up poli2
 buyUpgrade up@(Science1 _) = installUpgrade up cpsNumber 0.75
-                         <<< installUpgrade up burstNumber 0.2
+                         <<< installUpgrade up burstNumber 0.3
                          <<< recordPurchase up science1
 buyUpgrade up@(Science2 _) = installUpgrade up cpsNumber 0.75
-                         <<< installUpgrade up burstNumber 0.1
+                         <<< installUpgrade up burstNumber 0.3
                          <<< recordPurchase up science2
 
 recordPurchase :: Upgrade -> LensP Upgrades Upgrade -> State -> State
