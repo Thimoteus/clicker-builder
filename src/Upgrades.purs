@@ -104,14 +104,11 @@ upgradeBoost (Science2 n) = 100000000.0 * upgradeBoostModifier n
 upgradeBoostModifier :: Int -> Number
 upgradeBoostModifier n
   | n <= 10 = 1.0
-  | n <= 25 = 1.5
-  | n <= 50 = 3.0
-  | n <= 75 = 5.0
-  | n <= 100 = 10.0
-  | otherwise = 15.0
-
-isInflectionUpgrade :: Upgrade -> Boolean
-isInflectionUpgrade up = (up ^. viewLevel) `elem` [10, 25, 50, 75, 100]
+  | n <= 25 = 4.0
+  | n <= 50 = 16.0
+  | n <= 75 = 64.0
+  | n <= 100 = 256.0
+  | otherwise = 1024.0
 
 buyUpgrade :: Upgrade -> State -> State
 buyUpgrade up@(Misc1 _) = installUpgrade up cpsNumber 0.75
@@ -151,6 +148,9 @@ recordPurchase up optic = (currentClicks -~ upgradeCost up)
 
 installUpgrade :: Upgrade -> LensP State Number -> Number -> State -> State
 installUpgrade up optic coeff = optic +~ coeff * upgradeBoost up
+
+isInflectionUpgrade :: Upgrade -> Boolean
+isInflectionUpgrade up = (up ^. viewLevel) `elem` [10, 25, 50, 75, 100]
 
 inflectionUpgradeMessage :: Upgrade -> Age -> String
 inflectionUpgradeMessage up age = upgradeName up age ++ " cost down, boost up"
