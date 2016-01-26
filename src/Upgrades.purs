@@ -29,9 +29,9 @@ upgradeCost (Tech2 n)    = Clicks (upgradeCostPolynomial 950000.0 n)
 upgradeCost (Phil1 n)    = Clicks (upgradeCostPolynomial 8250000.0 n)
 upgradeCost (Phil2 n)    = Clicks (upgradeCostPolynomial 52000000.0 n)
 upgradeCost (Poli1 n)    = Clicks (upgradeCostPolynomial 800000000.0 n)
-upgradeCost (Poli2 n)    = Clicks (upgradeCostPolynomial 80500000000.0 n)
-upgradeCost (Science1 n) = Clicks (upgradeCostPolynomial 8005000000000.0 n)
-upgradeCost (Science2 n) = Clicks (upgradeCostPolynomial 750000000000000.0 n)
+upgradeCost (Poli2 n)    = Clicks (upgradeCostPolynomial 6050000000.0 n)
+upgradeCost (Science1 n) = Clicks (upgradeCostPolynomial 600500004000.0 n)
+upgradeCost (Science2 n) = Clicks (upgradeCostPolynomial 6500007000080.0 n)
 
 upgradeCostPolynomial :: Number -> Int -> Number
 upgradeCostPolynomial coeff level = upgradeCostModifier level * coeff * 1.2 ^ (toNumber level)
@@ -67,7 +67,7 @@ upgradeDescription (Phil2 _) Stone = "You're no Picasso, but your paintings will
 upgradeDescription (Poli1 _) Stone = "Fishing for landsharks?"
 upgradeDescription (Poli2 _) Stone = "Can I interest you in some delicious BEETS?"
 upgradeDescription (Science1 _) Stone = "A Clickonian's best friend."
-upgradeDescription (Science2 _) Stone = "You've discovered that two clicks and two dogs both share 'twoness.' You also almost discovered the ultrafilter lemma, but you couldn't write it down fast enough."
+upgradeDescription (Science2 _) Stone = "You've discovered that two clicks and two dogs both share 'twoness.' You also almost discovered the ultrafilter lemma, but you couldn't write it down fast enough. Because you haven't discovered writing yet."
 
 nextUpgrade :: Upgrade -> Upgrade
 nextUpgrade (Misc1 n) = Misc1 (n + 1)
