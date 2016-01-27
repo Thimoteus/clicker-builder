@@ -12,7 +12,7 @@ module Upgrades
   ) where
 
 import Prelude
-import Data.Foldable (elem, sum, foldl)
+import Data.Foldable (elem, foldl)
 import Data.Array (concat)
 import Data.Int (toNumber)
 import Data.Lens (LensP(), (^.), (+~), (-~), (.~), view)
@@ -57,6 +57,7 @@ upgradeName (Poli2 _) Stone = "rudimentary farming"
 upgradeName (Science1 _) Stone = "dog domestication"
 upgradeName (Science2 _) Stone = "bronze smelting"
 upgradeName (Science1 _) Bronze = "abstract numbers"
+upgradeName _ _ = "Not implemented"
 
 upgradeDescription :: Upgrade -> Age -> String
 upgradeDescription (Misc1 _) Stone = "No more grunt-and-point for you!"
@@ -70,6 +71,7 @@ upgradeDescription (Poli2 _) Stone = "Can I interest you in some delicious BEETS
 upgradeDescription (Science1 _) Stone = "A Clickonian's best friend."
 upgradeDescription (Science2 _) Stone = "The holy grail of the Stone Age, except the real holy grail was made out of wood."
 upgradeDescription (Science1 _) Bronze = "You've discovered that two clicks and two dogs both share 'twoness.' You also almost discovered the ultrafilter lemma, but you couldn't write it down fast enough. Because you haven't discovered writing yet."
+upgradeDescription _ _ = "Not implemented"
 
 nextUpgrade :: Upgrade -> Upgrade
 nextUpgrade (Misc1 n) = Misc1 (n + 1)

@@ -77,16 +77,16 @@ h3 {
 
 #side {
   .transparent-bg();
-  min-width: 200px;
-  float: left;
   font-size: 0.9em;
   text-align: center;
+  flex-grow: 1;
 }
 
 #main {
-  float: left;
-  margin-left: 5px;
   .transparent-bg();
+  margin-left: 5px;
+  width: 275px * 2;
+  flex-grow: 2;
 }
 
 #clicker-wrapper {
@@ -112,8 +112,7 @@ h3 {
 
 #the-button a {
   display: block;
-  float: left;
-  width: 100%;
+  //width: 100%;
   padding-top: 50%;
   padding-bottom: 50%;
   line-height: 0.8em;
@@ -125,15 +124,25 @@ h3 {
   text-decoration: none;
 }
 
-.upgrades {
-  //width: 275px;
-  -webkit-columns: 275px 2;
-  -moz-columns: 275px 2;
-  columns: 250px 2;
+.tab {
+  .button();
+}
+
+.tab-view {
+  -webkit-columns: 2;
+  -moz-columns: 2;
+  columns: 2;
   overflow: hidden;
 }
 
-#upgrades .title {
+.upgrades, .heroes, {
+  .tab-view();
+}
+
+.advance, .techTree {
+}
+
+#view .title {
   //width: 100%;
   margin-bottom: 5px;
   padding-bottom: 2px;
@@ -174,14 +183,12 @@ h3 {
 #bottom {
   .transparent-bg();
   margin-top: 5px;
-  float: left;
   color: lighten(@bg-color, 70%);
 }
 
 .messages {
   .noselect();
   margin-top: 15px;
-  float: left;
   font-style: italic;
   color: @fg-color;
   opacity: 1;
@@ -192,4 +199,9 @@ h3 {
 
 .current-clicks {
   font-size: 1.5em;
+}
+
+.divide {
+  color: lighten(@bg-color, 40%);
+  .noselect();
 }

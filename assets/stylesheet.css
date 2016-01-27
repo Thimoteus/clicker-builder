@@ -67,18 +67,18 @@ h3 {
   box-shadow: 5px 5px 9px black;
   padding: 5px;
   border: 1px solid #3e3e3e;
-  min-width: 200px;
-  float: left;
   font-size: 0.9em;
   text-align: center;
+  flex-grow: 1;
 }
 #main {
-  float: left;
-  margin-left: 5px;
   background: rgba(62, 62, 62, 0.6);
   box-shadow: 5px 5px 9px black;
   padding: 5px;
   border: 1px solid #3e3e3e;
+  margin-left: 5px;
+  width: 550px;
+  flex-grow: 2;
 }
 #clicker-wrapper {
   width: 50px;
@@ -100,8 +100,6 @@ h3 {
 }
 #the-button a {
   display: block;
-  float: left;
-  width: 100%;
   padding-top: 50%;
   padding-bottom: 50%;
   line-height: 0.8em;
@@ -112,13 +110,31 @@ h3 {
   font-size: 1.2em;
   text-decoration: none;
 }
-.upgrades {
-  -webkit-columns: 275px 2;
-  -moz-columns: 275px 2;
-  columns: 250px 2;
+.tab {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: default;
+  cursor: pointer;
+  font-weight: bold;
+}
+.tab-view {
+  -webkit-columns: 2;
+  -moz-columns: 2;
+  columns: 2;
   overflow: hidden;
 }
-#upgrades .title {
+.upgrades,
+.heroes {
+  -webkit-columns: 2;
+  -moz-columns: 2;
+  columns: 2;
+  overflow: hidden;
+}
+#view .title {
   margin-bottom: 5px;
   padding-bottom: 2px;
   border-bottom: 1px solid #3e3e3e;
@@ -170,7 +186,6 @@ h3 {
   padding: 5px;
   border: 1px solid #3e3e3e;
   margin-top: 5px;
-  float: left;
   color: #d6d6d6;
 }
 .messages {
@@ -182,7 +197,6 @@ h3 {
   user-select: none;
   cursor: default;
   margin-top: 15px;
-  float: left;
   font-style: italic;
   color: #e8df28;
   opacity: 1;
@@ -192,4 +206,14 @@ h3 {
 }
 .current-clicks {
   font-size: 1.5em;
+}
+.divide {
+  color: #8a8a8a;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: default;
 }

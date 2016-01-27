@@ -52,6 +52,7 @@ getSavedState = do
          , cps: _cps
          , burst: _burst
          , now: currentTime
+         , view: UpgradesTab
          }
 
 -- | abstraction of a function that helps parse strings to state values
