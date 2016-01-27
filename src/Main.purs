@@ -16,6 +16,7 @@ import Data.Tuple (Tuple(..))
 import Data.String (null)
 import Data.Functor ((<$))
 import Data.Date (nowEpochMilliseconds)
+import Data.Void (Void())
 
 --import Control.Monad (when)
 import Control.Monad.Aff (Aff(), runAff, later)
@@ -30,9 +31,10 @@ import Halogen
   , runUI, modify, action, get, gets, liftEff', liftAff'
   )
 import Halogen.Util (appendToBody, onLoad)
+import Halogen.HTML.Core (HTML())
 import Halogen.HTML.Indexed (div, div_, h1, h3_, h3, text, br_, a, i, span, p_, img)
 import Halogen.HTML.Events.Indexed (onMouseDown, input_)
-import Halogen.HTML.Properties.Indexed (id_, href, title, src, alt)
+import Halogen.HTML.Properties.Indexed (I(), IProp(), id_, href, title, src, alt)
 
 interface :: Component State Action (Aff AppEffects)
 interface = component render eval
@@ -104,17 +106,18 @@ render state =
       div
         [ id_ "main" ]
         [ div
-          [ id_ "upgrades" ]
-          [ h3 [ mkClass "title" ] [ text "Upgrades" ]
-          , upgradesComponent state ]
-          , if null state.message
-               then
-                 div_
-                   []
-               else
-                 div
-                   [ mkClass "fade messages" ]
-                   [ text state.message ]
+          [ id_ "view" ]
+          [ unlockViewTabs state
+          , viewTabs state
+          ]
+        , if null state.message
+             then
+               div_
+                 []
+             else
+               div
+                 [ mkClass "fade messages" ]
+                 [ text state.message ]
         ]
     bottom = div [ id_ "bottom" ]
       [ h3_ [ text "About" ]
@@ -127,6 +130,72 @@ render state =
       , renderParagraphs
         [ "Font: Silkscreen by Jason Kottke.", "Icons: fontawesome by Dave Gandy.", "Ideas and feedback: Himrin." ]
       ]
+
+unlockViewTabs :: Render State Action
+unlockViewTabs state =
+  h3 [ mkClass "title" ]
+  ([ span
+    [ mkClass "tab"
+    , onMouseDown $ input_ $ View UpgradesTab ]
+    [ text $ show UpgradesTab ]
+  , divider
+  , span
+    [ mkClass "tab"
+    , onMouseDown $ input_ $ View AdvanceTab ]
+    [ text $ show AdvanceTab ]] ++ tabByAge state.age)
+      where
+      tabByAge :: Age -> Array (HTML Void (Action Unit))
+      tabByAge Stone = []
+      tabByAge Bronze = [ divider
+                        , span [ mkClass "tab" ] [ text $ show PopulationTab ]]
+      tabByAge _ = tabByAge Bronze
+                ++ [ divider
+                   , span [ mkClass "tab" ] [ text $ show TechTreeTab ]]
+
+divider :: HTML Void (Action Unit)
+divider = span [ mkClass "divide" ] [ text " | " ]
+
+viewTabs :: Render State Action
+viewTabs state =
+  case state.view of
+       UpgradesTab -> upgradesComponent state
+       AdvanceTab -> advanceComponent state
+       PopulationTab -> populationComponent state
+       HeroesTab -> heroesComponent state
+       TechTreeTab -> techTreeComponent state
+
+populationComponent :: Render State Action
+populationComponent state =
+  div_
+    [ div [ mkClass "population" ]
+      [ text ""
+      ]
+    ]
+
+heroesComponent :: Render State Action
+heroesComponent state =
+  div_
+    [ div [ mkClass "heroes" ]
+      [ text ""
+      ]
+    ]
+
+techTreeComponent :: Render State Action
+techTreeComponent state =
+  div_
+    [ div [ mkClass "techTree" ]
+      [ text ""
+      ]
+    ]
+
+advanceComponent :: Render State Action
+advanceComponent state =
+  div_
+    [ div [ mkClass "advance" ]
+      [ div [ onMouseDown $ input_ Advance ]
+        [ text "Advance" ]
+      ]
+    ]
 
 upgradesComponent :: Render State Action
 upgradesComponent state =
@@ -157,7 +226,7 @@ upgradeButton uplens state =
       [ text $ prettify $ upgradeCost $ nextUpgrade $ state ^. upgrades <<< uplens ]
     ]
 
-upgradeProps :: LensP Upgrades Upgrade -> State -> Array _
+upgradeProps :: forall e. LensP Upgrades Upgrade -> State -> Array (IProp (class :: I, onMouseDown :: I, title :: I | e) (Action Unit))
 upgradeProps uplens state =
   let clickAction =
         onMouseDown $ input_ $ Buy $ nextUpgrade $ state ^. upgrades <<< uplens
@@ -196,7 +265,10 @@ eval (Buy upgrade next) = next <$ do
      then modify \ state -> set message (inflectionUpgradeMessage upgrade state.age) state
      else modify \ state -> set message ("Upgraded " ++ upgradeName upgrade state.age) state
 eval (Suffer disaster next) = next <$ modify (suffer disaster)
-eval (Unmessage next) = next <$ modify (set message "")
+eval (View t next) = next <$ modify (set tab t)
+eval (Advance next) = next <$ do
+  currentState <- get
+  modify $ set age $ nextAge currentState.age
 
 main :: Eff AppEffects Unit
 main = runAff throwException (const $ pure unit) do
