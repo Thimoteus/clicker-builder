@@ -107,9 +107,10 @@ tagDisaster5 :: TagDisaster5
 tagDisaster5 = unsafeCoerce unit
 
 data Tab = UpgradesTab
+         | AdvanceTab
+         | PopulationTab
          | HeroesTab
          | TechTreeTab
-         | AdvanceTab
 
 instance showView :: Show Tab where
   show UpgradesTab = "Upgrades"

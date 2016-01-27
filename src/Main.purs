@@ -34,7 +34,7 @@ import Halogen.Util (appendToBody, onLoad)
 import Halogen.HTML.Core (HTML())
 import Halogen.HTML.Indexed (div, div_, h1, h3_, h3, text, br_, a, i, span, p_, img)
 import Halogen.HTML.Events.Indexed (onMouseDown, input_)
-import Halogen.HTML.Properties.Indexed (id_, href, title, src, alt)
+import Halogen.HTML.Properties.Indexed (I(), IProp(), id_, href, title, src, alt)
 
 interface :: Component State Action (Aff AppEffects)
 interface = component render eval
@@ -110,7 +110,6 @@ render state =
           [ unlockViewTabs state
           , viewTabs state
           ]
-          -- , h3 [ mkClass "title" ] [ text $ show HeroesTab ]
         , if null state.message
              then
                div_
@@ -143,15 +142,14 @@ unlockViewTabs state =
   , span
     [ mkClass "tab"
     , onMouseDown $ input_ $ View AdvanceTab ]
-    [ text $ show AdvanceTab ]] ++
-  case state.age of
-       Stone -> []
-       Bronze -> [ divider
-                 , span [ mkClass "tab" ] [ text $ show HeroesTab ]]
-       _ -> [ divider
-            , span [ mkClass "tab" ] [ text $ show HeroesTab ]
-            , divider
-            , span [ mkClass "tab" ] [ text $ show TechTreeTab ]])
+    [ text $ show AdvanceTab ]] ++ tabByAge state.age) where
+      tabByAge :: Age -> Array (HTML Void (Action Unit))
+      tabByAge Stone = []
+      tabByAge Bronze = [ divider
+                        , span [ mkClass "tab" ] [ text $ show PopulationTab ]]
+      tabByAge _ = tabByAge Bronze
+                ++ [ divider
+                   , span [ mkClass "tab" ] [ text $ show TechTreeTab ]]
 
 divider :: HTML Void (Action Unit)
 divider = span [ mkClass "divide" ] [ text " | " ]
@@ -161,8 +159,17 @@ viewTabs state =
   case state.view of
        UpgradesTab -> upgradesComponent state
        AdvanceTab -> advanceComponent state
+       PopulationTab -> populationComponent state
        HeroesTab -> heroesComponent state
        TechTreeTab -> techTreeComponent state
+
+populationComponent :: Render State Action
+populationComponent state =
+  div_
+    [ div [ mkClass "population" ]
+      [ text ""
+      ]
+    ]
 
 heroesComponent :: Render State Action
 heroesComponent state =
@@ -217,7 +224,7 @@ upgradeButton uplens state =
       [ text $ prettify $ upgradeCost $ nextUpgrade $ state ^. upgrades <<< uplens ]
     ]
 
-upgradeProps :: LensP Upgrades Upgrade -> State -> Array _
+upgradeProps :: forall e. LensP Upgrades Upgrade -> State -> Array (IProp (class :: I, onMouseDown :: I, title :: I | e) (Action Unit))
 upgradeProps uplens state =
   let clickAction =
         onMouseDown $ input_ $ Buy $ nextUpgrade $ state ^. upgrades <<< uplens
