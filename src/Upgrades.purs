@@ -55,7 +55,8 @@ upgradeName (Phil2 _) Stone = "cave paintings"
 upgradeName (Poli1 _) Stone = "basic fishing"
 upgradeName (Poli2 _) Stone = "rudimentary farming"
 upgradeName (Science1 _) Stone = "dog domestication"
-upgradeName (Science2 _) Stone = "abstract numbers"
+upgradeName (Science2 _) Stone = "bronze smelting"
+upgradeName (Science1 _) Bronze = "abstract numbers"
 
 upgradeDescription :: Upgrade -> Age -> String
 upgradeDescription (Misc1 _) Stone = "No more grunt-and-point for you!"
@@ -67,7 +68,8 @@ upgradeDescription (Phil2 _) Stone = "You're no Picasso, but your paintings will
 upgradeDescription (Poli1 _) Stone = "Fishing for landsharks?"
 upgradeDescription (Poli2 _) Stone = "Can I interest you in some delicious BEETS?"
 upgradeDescription (Science1 _) Stone = "A Clickonian's best friend."
-upgradeDescription (Science2 _) Stone = "You've discovered that two clicks and two dogs both share 'twoness.' You also almost discovered the ultrafilter lemma, but you couldn't write it down fast enough. Because you haven't discovered writing yet."
+upgradeDescription (Science2 _) Stone = "The holy grail of the Stone Age, except the real holy grail was made out of wood."
+upgradeDescription (Science1 _) Bronze = "You've discovered that two clicks and two dogs both share 'twoness.' You also almost discovered the ultrafilter lemma, but you couldn't write it down fast enough. Because you haven't discovered writing yet."
 
 nextUpgrade :: Upgrade -> Upgrade
 nextUpgrade (Misc1 n) = Misc1 (n + 1)
