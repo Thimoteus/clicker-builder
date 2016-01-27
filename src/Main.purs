@@ -142,7 +142,8 @@ unlockViewTabs state =
   , span
     [ mkClass "tab"
     , onMouseDown $ input_ $ View AdvanceTab ]
-    [ text $ show AdvanceTab ]] ++ tabByAge state.age) where
+    [ text $ show AdvanceTab ]] ++ tabByAge state.age)
+      where
       tabByAge :: Age -> Array (HTML Void (Action Unit))
       tabByAge Stone = []
       tabByAge Bronze = [ divider
@@ -191,7 +192,8 @@ advanceComponent :: Render State Action
 advanceComponent state =
   div_
     [ div [ mkClass "advance" ]
-      [ text ""
+      [ div [ onMouseDown $ input_ Advance ]
+        [ text "Advance" ]
       ]
     ]
 
@@ -263,8 +265,10 @@ eval (Buy upgrade next) = next <$ do
      then modify \ state -> set message (inflectionUpgradeMessage upgrade state.age) state
      else modify \ state -> set message ("Upgraded " ++ upgradeName upgrade state.age) state
 eval (Suffer disaster next) = next <$ modify (suffer disaster)
-eval (Unmessage next) = next <$ modify (set message "")
 eval (View t next) = next <$ modify (set tab t)
+eval (Advance next) = next <$ do
+  currentState <- get
+  modify $ set age $ nextAge currentState.age
 
 main :: Eff AppEffects Unit
 main = runAff throwException (const $ pure unit) do

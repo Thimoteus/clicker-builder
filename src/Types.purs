@@ -21,8 +21,8 @@ data Action a = Click a
               | Save a
               | Buy Upgrade a
               | Suffer Disaster a
-              | Unmessage a
               | View Tab a
+              | Advance a
 
 type State = { currentClicks :: Clicks
              , totalClicks :: Clicks
