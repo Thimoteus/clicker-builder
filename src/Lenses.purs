@@ -92,3 +92,6 @@ viewLevel = to viewLevel'
     viewLevel' (Poli2 n) = n
     viewLevel' (Science1 n) = n
     viewLevel' (Science2 n) = n
+
+tab :: LensP State Tab
+tab = lens _.view (_ { view = _ })

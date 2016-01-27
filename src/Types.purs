@@ -22,6 +22,7 @@ data Action a = Click a
               | Buy Upgrade a
               | Suffer Disaster a
               | Unmessage a
+              | View Tab a
 
 type State = { currentClicks :: Clicks
              , totalClicks :: Clicks
@@ -31,6 +32,7 @@ type State = { currentClicks :: Clicks
              , upgrades :: Upgrades
              , message :: String
              , now :: Milliseconds
+             , view :: Tab
              }
 
 newtype Clicks = Clicks Number
@@ -103,6 +105,17 @@ tagDisaster4 = unsafeCoerce unit
 
 tagDisaster5 :: TagDisaster5
 tagDisaster5 = unsafeCoerce unit
+
+data Tab = UpgradesTab
+         | HeroesTab
+         | TechTreeTab
+         | AdvanceTab
+
+instance showView :: Show Tab where
+  show UpgradesTab = "Upgrades"
+  show HeroesTab = "Heroes"
+  show TechTreeTab = "Tech Tree"
+  show AdvanceTab = "Advance"
 
 data Upgrade = Misc1 Int
              | Misc2 Int
@@ -291,6 +304,7 @@ initialState = { currentClicks: Clicks 0.0
                , upgrades: initialUpgrades
                , message: welcomeMessage
                , now: zero
+               , view: UpgradesTab
                }
 
 welcomeMessage :: String
