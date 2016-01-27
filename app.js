@@ -4509,7 +4509,9 @@ var PS = { };
 
   // module Math
 
-  exports.abs = Math.abs;    
+  exports.abs = Math.abs;
+
+  exports.floor = Math.floor;
 
   exports.log = Math.log;
 
@@ -4526,6 +4528,7 @@ var PS = { };
   var $foreign = PS["Math"];
   exports["pow"] = $foreign.pow;
   exports["log"] = $foreign.log;
+  exports["floor"] = $foreign.floor;
   exports["abs"] = $foreign.abs;;
  
 })(PS["Math"] = PS["Math"] || {});
@@ -8966,6 +8969,41 @@ var PS = { };
       };
       return Science2;
   })();
+  var UpgradesTab = (function () {
+      function UpgradesTab() {
+
+      };
+      UpgradesTab.value = new UpgradesTab();
+      return UpgradesTab;
+  })();
+  var AdvanceTab = (function () {
+      function AdvanceTab() {
+
+      };
+      AdvanceTab.value = new AdvanceTab();
+      return AdvanceTab;
+  })();
+  var PopulationTab = (function () {
+      function PopulationTab() {
+
+      };
+      PopulationTab.value = new PopulationTab();
+      return PopulationTab;
+  })();
+  var HeroesTab = (function () {
+      function HeroesTab() {
+
+      };
+      HeroesTab.value = new HeroesTab();
+      return HeroesTab;
+  })();
+  var TechTreeTab = (function () {
+      function TechTreeTab() {
+
+      };
+      TechTreeTab.value = new TechTreeTab();
+      return TechTreeTab;
+  })();
   var Clicks = function (x) {
       return x;
   };
@@ -9127,14 +9165,26 @@ var PS = { };
       };
       return Suffer;
   })();
-  var Unmessage = (function () {
-      function Unmessage(value0) {
+  var View = (function () {
+      function View(value0, value1) {
+          this.value0 = value0;
+          this.value1 = value1;
+      };
+      View.create = function (value0) {
+          return function (value1) {
+              return new View(value0, value1);
+          };
+      };
+      return View;
+  })();
+  var Advance = (function () {
+      function Advance(value0) {
           this.value0 = value0;
       };
-      Unmessage.create = function (value0) {
-          return new Unmessage(value0);
+      Advance.create = function (value0) {
+          return new Advance(value0);
       };
-      return Unmessage;
+      return Advance;
   })();
   var Pretty = function (prettify) {
       this.prettify = prettify;
@@ -9142,53 +9192,68 @@ var PS = { };
   var Serialize = function (serialize) {
       this.serialize = serialize;
   };
-  var welcomeMessage = "";                                            
+  var welcomeMessage = "";                                    
+  var showView = new Prelude.Show(function (_31) {
+      if (_31 instanceof UpgradesTab) {
+          return "Upgrades";
+      };
+      if (_31 instanceof HeroesTab) {
+          return "Heroes";
+      };
+      if (_31 instanceof TechTreeTab) {
+          return "Tech Tree";
+      };
+      if (_31 instanceof AdvanceTab) {
+          return "Advance";
+      };
+      throw new Error("Failed pattern match at Types line 115, column 1 - line 121, column 1: " + [ _31.constructor.name ]);
+  });                                                                 
   var serializeNumber = new Serialize(Util.oneDecimal);
   var serializeInt = new Serialize(Prelude.show(Prelude.showInt));
   var serialize = function (dict) {
       return dict.serialize;
   };
-  var serializeClicks = new Serialize(function (_35) {
-      return serialize(serializeNumber)(_35);
+  var serializeClicks = new Serialize(function (_36) {
+      return serialize(serializeNumber)(_36);
   });
-  var serializeMilliseconds = new Serialize(function (_39) {
-      return serialize(serializeNumber)(_39);
+  var serializeMilliseconds = new Serialize(function (_40) {
+      return serialize(serializeNumber)(_40);
   });
-  var serializeUpgrade = new Serialize(function (_37) {
-      if (_37 instanceof Misc1) {
-          return serialize(serializeInt)(_37.value0);
+  var serializeUpgrade = new Serialize(function (_38) {
+      if (_38 instanceof Misc1) {
+          return serialize(serializeInt)(_38.value0);
       };
-      if (_37 instanceof Misc2) {
-          return serialize(serializeInt)(_37.value0);
+      if (_38 instanceof Misc2) {
+          return serialize(serializeInt)(_38.value0);
       };
-      if (_37 instanceof Tech1) {
-          return serialize(serializeInt)(_37.value0);
+      if (_38 instanceof Tech1) {
+          return serialize(serializeInt)(_38.value0);
       };
-      if (_37 instanceof Tech2) {
-          return serialize(serializeInt)(_37.value0);
+      if (_38 instanceof Tech2) {
+          return serialize(serializeInt)(_38.value0);
       };
-      if (_37 instanceof Phil1) {
-          return serialize(serializeInt)(_37.value0);
+      if (_38 instanceof Phil1) {
+          return serialize(serializeInt)(_38.value0);
       };
-      if (_37 instanceof Phil2) {
-          return serialize(serializeInt)(_37.value0);
+      if (_38 instanceof Phil2) {
+          return serialize(serializeInt)(_38.value0);
       };
-      if (_37 instanceof Poli1) {
-          return serialize(serializeInt)(_37.value0);
+      if (_38 instanceof Poli1) {
+          return serialize(serializeInt)(_38.value0);
       };
-      if (_37 instanceof Poli2) {
-          return serialize(serializeInt)(_37.value0);
+      if (_38 instanceof Poli2) {
+          return serialize(serializeInt)(_38.value0);
       };
-      if (_37 instanceof Science1) {
-          return serialize(serializeInt)(_37.value0);
+      if (_38 instanceof Science1) {
+          return serialize(serializeInt)(_38.value0);
       };
-      if (_37 instanceof Science2) {
-          return serialize(serializeInt)(_37.value0);
+      if (_38 instanceof Science2) {
+          return serialize(serializeInt)(_38.value0);
       };
-      throw new Error("Failed pattern match at Types line 257, column 1 - line 269, column 1: " + [ _37.constructor.name ]);
+      throw new Error("Failed pattern match at Types line 271, column 1 - line 283, column 1: " + [ _38.constructor.name ]);
   });
-  var serializeUpgrades = new Serialize(function (_38) {
-      return "{ \"misc1\": " + (serialize(serializeUpgrade)(_38.misc1) + (", \"misc2\": " + (serialize(serializeUpgrade)(_38.misc2) + (", \"tech1\": " + (serialize(serializeUpgrade)(_38.tech1) + (", \"tech2\": " + (serialize(serializeUpgrade)(_38.tech2) + (", \"phil1\": " + (serialize(serializeUpgrade)(_38.phil1) + (", \"phil2\": " + (serialize(serializeUpgrade)(_38.phil2) + (", \"poli1\": " + (serialize(serializeUpgrade)(_38.poli1) + (", \"poli2\": " + (serialize(serializeUpgrade)(_38.poli2) + (", \"science1\": " + (serialize(serializeUpgrade)(_38.science1) + (", \"science2\": " + (serialize(serializeUpgrade)(_38.science2) + "}")))))))))))))))))));
+  var serializeUpgrades = new Serialize(function (_39) {
+      return "{ \"misc1\": " + (serialize(serializeUpgrade)(_39.misc1) + (", \"misc2\": " + (serialize(serializeUpgrade)(_39.misc2) + (", \"tech1\": " + (serialize(serializeUpgrade)(_39.tech1) + (", \"tech2\": " + (serialize(serializeUpgrade)(_39.tech2) + (", \"phil1\": " + (serialize(serializeUpgrade)(_39.phil1) + (", \"phil2\": " + (serialize(serializeUpgrade)(_39.phil2) + (", \"poli1\": " + (serialize(serializeUpgrade)(_39.poli1) + (", \"poli2\": " + (serialize(serializeUpgrade)(_39.poli2) + (", \"science1\": " + (serialize(serializeUpgrade)(_39.science1) + (", \"science2\": " + (serialize(serializeUpgrade)(_39.science2) + "}")))))))))))))))))));
   });      
   var semiringClicks = new Prelude.Semiring(function (_20) {
       return function (_21) {
@@ -9270,16 +9335,16 @@ var PS = { };
       if (Prelude.otherwise) {
           return "Your civilization can't count this high!";
       };
-      throw new Error("Failed pattern match at Types line 200, column 1 - line 224, column 1: " + [ n.constructor.name ]);
+      throw new Error("Failed pattern match at Types line 214, column 1 - line 238, column 1: " + [ n.constructor.name ]);
   });                                                       
   var prettify = function (dict) {
       return dict.prettify;
   }; 
-  var prettyClicks = new Pretty(function (_33) {
-      return prettify(prettyNumber)(_33) + " c";
+  var prettyClicks = new Pretty(function (_34) {
+      return prettify(prettyNumber)(_34) + " c";
   });
-  var prettyClicksPerSecond = new Pretty(function (_34) {
-      return prettify(prettyNumber)(_34) + " cps";
+  var prettyClicksPerSecond = new Pretty(function (_35) {
+      return prettify(prettyNumber)(_35) + " cps";
   });
   var prettyPopulation = new Pretty(function (_30) {
       return prettify(prettyNumber)(_30) + " Clickonians";
@@ -9338,7 +9403,8 @@ var PS = { };
       burst: 1.0, 
       upgrades: initialUpgrades, 
       message: welcomeMessage, 
-      now: Prelude.zero(Data_Time.semiringMilliseconds)
+      now: Prelude.zero(Data_Time.semiringMilliseconds), 
+      view: UpgradesTab.value
   }; 
   var eqClicks = new Prelude.Eq(function (_10) {
       return function (_11) {
@@ -9352,50 +9418,50 @@ var PS = { };
           return Prelude.compare(Prelude.ordNumber)(_14)(_15);
       };
   });
-  var ageShow = new Prelude.Show(function (_31) {
-      if (_31 instanceof Stone) {
+  var ageShow = new Prelude.Show(function (_32) {
+      if (_32 instanceof Stone) {
           return "Stone";
       };
-      if (_31 instanceof Bronze) {
+      if (_32 instanceof Bronze) {
           return "Bronze";
       };
-      if (_31 instanceof Iron) {
+      if (_32 instanceof Iron) {
           return "Iron";
       };
-      if (_31 instanceof Classical) {
+      if (_32 instanceof Classical) {
           return "Classical";
       };
-      if (_31 instanceof Dark) {
+      if (_32 instanceof Dark) {
           return "Dark";
       };
-      if (_31 instanceof Medieval) {
+      if (_32 instanceof Medieval) {
           return "Medieval";
       };
-      if (_31 instanceof Renaissance) {
+      if (_32 instanceof Renaissance) {
           return "Renaissance";
       };
-      if (_31 instanceof Imperial) {
+      if (_32 instanceof Imperial) {
           return "Imperial";
       };
-      if (_31 instanceof Industrial) {
+      if (_32 instanceof Industrial) {
           return "Industrial";
       };
-      if (_31 instanceof Nuclear) {
+      if (_32 instanceof Nuclear) {
           return "Nuclear";
       };
-      if (_31 instanceof Information) {
+      if (_32 instanceof Information) {
           return "Information";
       };
-      if (_31 instanceof Global) {
+      if (_32 instanceof Global) {
           return "Global";
       };
-      if (_31 instanceof Space) {
+      if (_32 instanceof Space) {
           return "Space";
       };
-      if (_31 instanceof Solar) {
+      if (_32 instanceof Solar) {
           return "Solar";
       };
-      throw new Error("Failed pattern match at Types line 169, column 1 - line 185, column 1: " + [ _31.constructor.name ]);
+      throw new Error("Failed pattern match at Types line 183, column 1 - line 199, column 1: " + [ _32.constructor.name ]);
   });                                               
   var serializeAge = new Serialize(Prelude.show(ageShow));
   exports["Stone"] = Stone;
@@ -9422,6 +9488,11 @@ var PS = { };
   exports["Poli2"] = Poli2;
   exports["Science1"] = Science1;
   exports["Science2"] = Science2;
+  exports["UpgradesTab"] = UpgradesTab;
+  exports["AdvanceTab"] = AdvanceTab;
+  exports["PopulationTab"] = PopulationTab;
+  exports["HeroesTab"] = HeroesTab;
+  exports["TechTreeTab"] = TechTreeTab;
   exports["Clicks"] = Clicks;
   exports["Click"] = Click;
   exports["Autoclick"] = Autoclick;
@@ -9429,7 +9500,8 @@ var PS = { };
   exports["Save"] = Save;
   exports["Buy"] = Buy;
   exports["Suffer"] = Suffer;
-  exports["Unmessage"] = Unmessage;
+  exports["View"] = View;
+  exports["Advance"] = Advance;
   exports["Serialize"] = Serialize;
   exports["Pretty"] = Pretty;
   exports["initialUpgrades"] = initialUpgrades;
@@ -9442,6 +9514,7 @@ var PS = { };
   exports["semiringClicks"] = semiringClicks;
   exports["ringClicks"] = ringClicks;
   exports["prettyPopulation"] = prettyPopulation;
+  exports["showView"] = showView;
   exports["isForeignUpgrades"] = isForeignUpgrades;
   exports["ageShow"] = ageShow;
   exports["prettyNumber"] = prettyNumber;
@@ -9461,12 +9534,55 @@ var PS = { };
   "use strict";
   var Prelude = PS["Prelude"];
   var Types = PS["Types"];     
+  var nextAge = function (_1) {
+      if (_1 instanceof Types.Stone) {
+          return Types.Bronze.value;
+      };
+      if (_1 instanceof Types.Bronze) {
+          return Types.Iron.value;
+      };
+      if (_1 instanceof Types.Iron) {
+          return Types.Classical.value;
+      };
+      if (_1 instanceof Types.Classical) {
+          return Types.Dark.value;
+      };
+      if (_1 instanceof Types.Dark) {
+          return Types.Medieval.value;
+      };
+      if (_1 instanceof Types.Medieval) {
+          return Types.Renaissance.value;
+      };
+      if (_1 instanceof Types.Renaissance) {
+          return Types.Imperial.value;
+      };
+      if (_1 instanceof Types.Imperial) {
+          return Types.Industrial.value;
+      };
+      if (_1 instanceof Types.Industrial) {
+          return Types.Nuclear.value;
+      };
+      if (_1 instanceof Types.Nuclear) {
+          return Types.Information.value;
+      };
+      if (_1 instanceof Types.Information) {
+          return Types.Global.value;
+      };
+      if (_1 instanceof Types.Global) {
+          return Types.Space.value;
+      };
+      return Types.Solar.value;
+  };
   var ageDescription = function (_0) {
       if (_0 instanceof Types.Stone) {
           return [ "You are a member of the hardy but technologically primitive Clickonian\n  people. The other Clickonians generally defer to you when it comes to making\n  important decisions. It is your task to shepherd your people through the\n  Stone Age into a brighter, more prosperous future.", "The tribe must develop various technologies and cultural achievements\n  to stand any hope of surviving more than a few years." ];
       };
-      throw new Error("Failed pattern match at Age line 8, column 1 - line 9, column 1: " + [ _0.constructor.name ]);
+      if (_0 instanceof Types.Bronze) {
+          return [ "Earthquake! While you and your tribe have developed enough as a society\n  to discover bronze's superiority as a material, perils still beset you.", "In the aftermath of the tremors, you notice a previously-traversable path\n  has transformed into an impassable barrier of rock. Unfortunately, the barrier\n  now separates you and a small group of Clickonians from the rest of the tribe.\n  ", "Your reduced population means everyone must work harder to survive. At\n  nights, your fellow survivors whisper to each other in the hopes that they'll\n  reunite with their lost friends and family on the other side ... " ];
+      };
+      return [ "Not implemented yet." ];
   };
+  exports["nextAge"] = nextAge;
   exports["ageDescription"] = ageDescription;;
  
 })(PS["Age"] = PS["Age"] || {});
@@ -10418,38 +10534,38 @@ var PS = { };
   var Types = PS["Types"];
   var Data_Const = PS["Data.Const"];     
   var viewLevel = (function () {
-      var viewLevel$prime = function (_49) {
-          if (_49 instanceof Types.Misc1) {
-              return _49.value0;
+      var viewLevel$prime = function (_52) {
+          if (_52 instanceof Types.Misc1) {
+              return _52.value0;
           };
-          if (_49 instanceof Types.Misc2) {
-              return _49.value0;
+          if (_52 instanceof Types.Misc2) {
+              return _52.value0;
           };
-          if (_49 instanceof Types.Tech1) {
-              return _49.value0;
+          if (_52 instanceof Types.Tech1) {
+              return _52.value0;
           };
-          if (_49 instanceof Types.Tech2) {
-              return _49.value0;
+          if (_52 instanceof Types.Tech2) {
+              return _52.value0;
           };
-          if (_49 instanceof Types.Phil1) {
-              return _49.value0;
+          if (_52 instanceof Types.Phil1) {
+              return _52.value0;
           };
-          if (_49 instanceof Types.Phil2) {
-              return _49.value0;
+          if (_52 instanceof Types.Phil2) {
+              return _52.value0;
           };
-          if (_49 instanceof Types.Poli1) {
-              return _49.value0;
+          if (_52 instanceof Types.Poli1) {
+              return _52.value0;
           };
-          if (_49 instanceof Types.Poli2) {
-              return _49.value0;
+          if (_52 instanceof Types.Poli2) {
+              return _52.value0;
           };
-          if (_49 instanceof Types.Science1) {
-              return _49.value0;
+          if (_52 instanceof Types.Science1) {
+              return _52.value0;
           };
-          if (_49 instanceof Types.Science2) {
-              return _49.value0;
+          if (_52 instanceof Types.Science2) {
+              return _52.value0;
           };
-          throw new Error("Failed pattern match at Lenses line 85, column 5 - line 86, column 5: " + [ _49.constructor.name ]);
+          throw new Error("Failed pattern match at Lenses line 85, column 5 - line 86, column 5: " + [ _52.constructor.name ]);
       };
       return Data_Lens_Getter.to(Data_Const.contravariantConst)(viewLevel$prime);
   })();
@@ -10458,14 +10574,14 @@ var PS = { };
           return _21.upgrades;
       })(function (_22) {
           return function (_23) {
-              var _61 = {};
-              for (var _62 in _22) {
-                  if (_22.hasOwnProperty(_62)) {
-                      _61[_62] = _22[_62];
+              var _64 = {};
+              for (var _65 in _22) {
+                  if (_22.hasOwnProperty(_65)) {
+                      _64[_65] = _22[_65];
                   };
               };
-              _61.upgrades = _23;
-              return _61;
+              _64.upgrades = _23;
+              return _64;
           };
       })(__dict_Strong_0);
   };
@@ -10474,318 +10590,351 @@ var PS = { };
           return _3.totalClicks;
       })(function (_4) {
           return function (_5) {
-              var _63 = {};
-              for (var _64 in _4) {
-                  if (_4.hasOwnProperty(_64)) {
-                      _63[_64] = _4[_64];
+              var _66 = {};
+              for (var _67 in _4) {
+                  if (_4.hasOwnProperty(_67)) {
+                      _66[_67] = _4[_67];
                   };
               };
-              _63.totalClicks = _5;
-              return _63;
+              _66.totalClicks = _5;
+              return _66;
           };
       })(__dict_Strong_1);
   };
-  var runUpgrades = function (_48) {
-      return _48;
-  };
-  var science1 = function (__dict_Strong_2) {
-      return Data_Lens_Lens.lens(function (_112) {
-          return (function (_32) {
-              return _32.science1;
-          })(runUpgrades(_112));
-      })(function (_46) {
-          return function (v) {
-              var _67 = {};
-              for (var _68 in _46) {
-                  if (_46.hasOwnProperty(_68)) {
-                      _67[_68] = _46[_68];
+  var tab = function (__dict_Strong_2) {
+      return Data_Lens_Lens.lens(function (_34) {
+          return _34.view;
+      })(function (_35) {
+          return function (_36) {
+              var _68 = {};
+              for (var _69 in _35) {
+                  if (_35.hasOwnProperty(_69)) {
+                      _68[_69] = _35[_69];
                   };
               };
-              _67.science1 = v;
-              return _67;
+              _68.view = _36;
+              return _68;
           };
       })(__dict_Strong_2);
   };
-  var science2 = function (__dict_Strong_3) {
-      return Data_Lens_Lens.lens(function (_113) {
-          return (function (_33) {
-              return _33.science2;
-          })(runUpgrades(_113));
-      })(function (_47) {
+  var runUpgrades = function (_51) {
+      return _51;
+  };
+  var science1 = function (__dict_Strong_3) {
+      return Data_Lens_Lens.lens(function (_117) {
+          return (function (_32) {
+              return _32.science1;
+          })(runUpgrades(_117));
+      })(function (_49) {
           return function (v) {
-              var _70 = {};
-              for (var _71 in _47) {
-                  if (_47.hasOwnProperty(_71)) {
-                      _70[_71] = _47[_71];
+              var _72 = {};
+              for (var _73 in _49) {
+                  if (_49.hasOwnProperty(_73)) {
+                      _72[_73] = _49[_73];
                   };
               };
-              _70.science2 = v;
-              return _70;
+              _72.science1 = v;
+              return _72;
           };
       })(__dict_Strong_3);
   };
-  var tech1 = function (__dict_Strong_4) {
-      return Data_Lens_Lens.lens(function (_114) {
-          return (function (_26) {
-              return _26.tech1;
-          })(runUpgrades(_114));
-      })(function (_40) {
+  var science2 = function (__dict_Strong_4) {
+      return Data_Lens_Lens.lens(function (_118) {
+          return (function (_33) {
+              return _33.science2;
+          })(runUpgrades(_118));
+      })(function (_50) {
           return function (v) {
-              var _73 = {};
-              for (var _74 in _40) {
-                  if (_40.hasOwnProperty(_74)) {
-                      _73[_74] = _40[_74];
+              var _75 = {};
+              for (var _76 in _50) {
+                  if (_50.hasOwnProperty(_76)) {
+                      _75[_76] = _50[_76];
                   };
               };
-              _73.tech1 = v;
-              return _73;
+              _75.science2 = v;
+              return _75;
           };
       })(__dict_Strong_4);
   };
-  var tech2 = function (__dict_Strong_5) {
-      return Data_Lens_Lens.lens(function (_115) {
-          return (function (_27) {
-              return _27.tech2;
-          })(runUpgrades(_115));
-      })(function (_41) {
+  var tech1 = function (__dict_Strong_5) {
+      return Data_Lens_Lens.lens(function (_119) {
+          return (function (_26) {
+              return _26.tech1;
+          })(runUpgrades(_119));
+      })(function (_43) {
           return function (v) {
-              var _76 = {};
-              for (var _77 in _41) {
-                  if (_41.hasOwnProperty(_77)) {
-                      _76[_77] = _41[_77];
+              var _78 = {};
+              for (var _79 in _43) {
+                  if (_43.hasOwnProperty(_79)) {
+                      _78[_79] = _43[_79];
                   };
               };
-              _76.tech2 = v;
-              return _76;
+              _78.tech1 = v;
+              return _78;
           };
       })(__dict_Strong_5);
   };
-  var poli2 = function (__dict_Strong_6) {
-      return Data_Lens_Lens.lens(function (_116) {
-          return (function (_31) {
-              return _31.poli2;
-          })(runUpgrades(_116));
-      })(function (_45) {
+  var tech2 = function (__dict_Strong_6) {
+      return Data_Lens_Lens.lens(function (_120) {
+          return (function (_27) {
+              return _27.tech2;
+          })(runUpgrades(_120));
+      })(function (_44) {
           return function (v) {
-              var _79 = {};
-              for (var _80 in _45) {
-                  if (_45.hasOwnProperty(_80)) {
-                      _79[_80] = _45[_80];
+              var _81 = {};
+              for (var _82 in _44) {
+                  if (_44.hasOwnProperty(_82)) {
+                      _81[_82] = _44[_82];
                   };
               };
-              _79.poli2 = v;
-              return _79;
+              _81.tech2 = v;
+              return _81;
           };
       })(__dict_Strong_6);
   };
-  var poli1 = function (__dict_Strong_7) {
-      return Data_Lens_Lens.lens(function (_117) {
-          return (function (_30) {
-              return _30.poli1;
-          })(runUpgrades(_117));
-      })(function (_44) {
+  var poli2 = function (__dict_Strong_7) {
+      return Data_Lens_Lens.lens(function (_121) {
+          return (function (_31) {
+              return _31.poli2;
+          })(runUpgrades(_121));
+      })(function (_48) {
           return function (v) {
-              var _82 = {};
-              for (var _83 in _44) {
-                  if (_44.hasOwnProperty(_83)) {
-                      _82[_83] = _44[_83];
+              var _84 = {};
+              for (var _85 in _48) {
+                  if (_48.hasOwnProperty(_85)) {
+                      _84[_85] = _48[_85];
                   };
               };
-              _82.poli1 = v;
-              return _82;
+              _84.poli2 = v;
+              return _84;
           };
       })(__dict_Strong_7);
   };
-  var phil2 = function (__dict_Strong_8) {
-      return Data_Lens_Lens.lens(function (_118) {
-          return (function (_29) {
-              return _29.phil2;
-          })(runUpgrades(_118));
-      })(function (_43) {
+  var poli1 = function (__dict_Strong_8) {
+      return Data_Lens_Lens.lens(function (_122) {
+          return (function (_30) {
+              return _30.poli1;
+          })(runUpgrades(_122));
+      })(function (_47) {
           return function (v) {
-              var _85 = {};
-              for (var _86 in _43) {
-                  if (_43.hasOwnProperty(_86)) {
-                      _85[_86] = _43[_86];
+              var _87 = {};
+              for (var _88 in _47) {
+                  if (_47.hasOwnProperty(_88)) {
+                      _87[_88] = _47[_88];
                   };
               };
-              _85.phil2 = v;
-              return _85;
+              _87.poli1 = v;
+              return _87;
           };
       })(__dict_Strong_8);
   };
-  var phil1 = function (__dict_Strong_9) {
-      return Data_Lens_Lens.lens(function (_119) {
-          return (function (_28) {
-              return _28.phil1;
-          })(runUpgrades(_119));
-      })(function (_42) {
+  var phil2 = function (__dict_Strong_9) {
+      return Data_Lens_Lens.lens(function (_123) {
+          return (function (_29) {
+              return _29.phil2;
+          })(runUpgrades(_123));
+      })(function (_46) {
           return function (v) {
-              var _88 = {};
-              for (var _89 in _42) {
-                  if (_42.hasOwnProperty(_89)) {
-                      _88[_89] = _42[_89];
+              var _90 = {};
+              for (var _91 in _46) {
+                  if (_46.hasOwnProperty(_91)) {
+                      _90[_91] = _46[_91];
                   };
               };
-              _88.phil1 = v;
-              return _88;
+              _90.phil2 = v;
+              return _90;
           };
       })(__dict_Strong_9);
   };
-  var now = function (__dict_Strong_10) {
+  var phil1 = function (__dict_Strong_10) {
+      return Data_Lens_Lens.lens(function (_124) {
+          return (function (_28) {
+              return _28.phil1;
+          })(runUpgrades(_124));
+      })(function (_45) {
+          return function (v) {
+              var _93 = {};
+              for (var _94 in _45) {
+                  if (_45.hasOwnProperty(_94)) {
+                      _93[_94] = _45[_94];
+                  };
+              };
+              _93.phil1 = v;
+              return _93;
+          };
+      })(__dict_Strong_10);
+  };
+  var now = function (__dict_Strong_11) {
       return Data_Lens_Lens.lens(function (_18) {
           return _18.now;
       })(function (_19) {
           return function (_20) {
-              var _90 = {};
-              for (var _91 in _19) {
-                  if (_19.hasOwnProperty(_91)) {
-                      _90[_91] = _19[_91];
+              var _95 = {};
+              for (var _96 in _19) {
+                  if (_19.hasOwnProperty(_96)) {
+                      _95[_96] = _19[_96];
                   };
               };
-              _90.now = _20;
-              return _90;
-          };
-      })(__dict_Strong_10);
-  };
-  var misc2 = function (__dict_Strong_11) {
-      return Data_Lens_Lens.lens(function (_120) {
-          return (function (_25) {
-              return _25.misc2;
-          })(runUpgrades(_120));
-      })(function (_39) {
-          return function (v) {
-              var _93 = {};
-              for (var _94 in _39) {
-                  if (_39.hasOwnProperty(_94)) {
-                      _93[_94] = _39[_94];
-                  };
-              };
-              _93.misc2 = v;
-              return _93;
+              _95.now = _20;
+              return _95;
           };
       })(__dict_Strong_11);
   };
-  var misc1 = function (__dict_Strong_12) {
-      return Data_Lens_Lens.lens(function (_121) {
-          return (function (_24) {
-              return _24.misc1;
-          })(runUpgrades(_121));
-      })(function (_38) {
+  var misc2 = function (__dict_Strong_12) {
+      return Data_Lens_Lens.lens(function (_125) {
+          return (function (_25) {
+              return _25.misc2;
+          })(runUpgrades(_125));
+      })(function (_42) {
           return function (v) {
-              var _96 = {};
-              for (var _97 in _38) {
-                  if (_38.hasOwnProperty(_97)) {
-                      _96[_97] = _38[_97];
+              var _98 = {};
+              for (var _99 in _42) {
+                  if (_42.hasOwnProperty(_99)) {
+                      _98[_99] = _42[_99];
                   };
               };
-              _96.misc1 = v;
-              return _96;
+              _98.misc2 = v;
+              return _98;
           };
       })(__dict_Strong_12);
   };
-  var message = function (__dict_Strong_13) {
+  var misc1 = function (__dict_Strong_13) {
+      return Data_Lens_Lens.lens(function (_126) {
+          return (function (_24) {
+              return _24.misc1;
+          })(runUpgrades(_126));
+      })(function (_41) {
+          return function (v) {
+              var _101 = {};
+              for (var _102 in _41) {
+                  if (_41.hasOwnProperty(_102)) {
+                      _101[_102] = _41[_102];
+                  };
+              };
+              _101.misc1 = v;
+              return _101;
+          };
+      })(__dict_Strong_13);
+  };
+  var message = function (__dict_Strong_14) {
       return Data_Lens_Lens.lens(function (_15) {
           return _15.message;
       })(function (_16) {
           return function (_17) {
-              var _98 = {};
-              for (var _99 in _16) {
-                  if (_16.hasOwnProperty(_99)) {
-                      _98[_99] = _16[_99];
+              var _103 = {};
+              for (var _104 in _16) {
+                  if (_16.hasOwnProperty(_104)) {
+                      _103[_104] = _16[_104];
                   };
               };
-              _98.message = _17;
-              return _98;
+              _103.message = _17;
+              return _103;
           };
-      })(__dict_Strong_13);
+      })(__dict_Strong_14);
   };
-  var currentClicks = function (__dict_Strong_14) {
+  var currentClicks = function (__dict_Strong_15) {
       return Data_Lens_Lens.lens(function (_0) {
           return _0.currentClicks;
       })(function (_1) {
           return function (_2) {
-              var _100 = {};
-              for (var _101 in _1) {
-                  if (_1.hasOwnProperty(_101)) {
-                      _100[_101] = _1[_101];
+              var _105 = {};
+              for (var _106 in _1) {
+                  if (_1.hasOwnProperty(_106)) {
+                      _105[_106] = _1[_106];
                   };
               };
-              _100.currentClicks = _2;
-              return _100;
+              _105.currentClicks = _2;
+              return _105;
           };
-      })(__dict_Strong_14);
+      })(__dict_Strong_15);
   };
-  var cps = function (__dict_Strong_15) {
+  var cps = function (__dict_Strong_16) {
       return Data_Lens_Lens.lens(function (_6) {
           return _6.cps;
       })(function (_7) {
           return function (_8) {
-              var _102 = {};
-              for (var _103 in _7) {
-                  if (_7.hasOwnProperty(_103)) {
-                      _102[_103] = _7[_103];
+              var _107 = {};
+              for (var _108 in _7) {
+                  if (_7.hasOwnProperty(_108)) {
+                      _107[_108] = _7[_108];
                   };
               };
-              _102.cps = _8;
-              return _102;
-          };
-      })(__dict_Strong_15);
-  };
-  var clicksPerSecond = function (__dict_Strong_16) {
-      return Data_Lens_Lens.lens(function (_36) {
-          return _36;
-      })(function (_37) {
-          return function (m) {
-              return m;
+              _107.cps = _8;
+              return _107;
           };
       })(__dict_Strong_16);
   };
-  var cpsNumber = function (__dict_Strong_17) {
-      return function (_122) {
-          return cps(__dict_Strong_17)(clicksPerSecond(__dict_Strong_17)(_122));
-      };
-  };
-  var clicks = function (__dict_Strong_18) {
-      return Data_Lens_Lens.lens(function (_34) {
-          return _34;
-      })(function (_35) {
+  var clicksPerSecond = function (__dict_Strong_17) {
+      return Data_Lens_Lens.lens(function (_39) {
+          return _39;
+      })(function (_40) {
           return function (m) {
               return m;
           };
-      })(__dict_Strong_18);
+      })(__dict_Strong_17);
   };
-  var currentClicksNumber = function (__dict_Strong_19) {
-      return function (_123) {
-          return currentClicks(__dict_Strong_19)(clicks(__dict_Strong_19)(_123));
+  var cpsNumber = function (__dict_Strong_18) {
+      return function (_127) {
+          return cps(__dict_Strong_18)(clicksPerSecond(__dict_Strong_18)(_127));
       };
   };
-  var totalClicksNumber = function (__dict_Strong_20) {
-      return function (_124) {
-          return totalClicks(__dict_Strong_20)(clicks(__dict_Strong_20)(_124));
+  var clicks = function (__dict_Strong_19) {
+      return Data_Lens_Lens.lens(function (_37) {
+          return _37;
+      })(function (_38) {
+          return function (m) {
+              return m;
+          };
+      })(__dict_Strong_19);
+  };
+  var currentClicksNumber = function (__dict_Strong_20) {
+      return function (_128) {
+          return currentClicks(__dict_Strong_20)(clicks(__dict_Strong_20)(_128));
       };
   };
-  var burst = function (__dict_Strong_21) {
+  var totalClicksNumber = function (__dict_Strong_21) {
+      return function (_129) {
+          return totalClicks(__dict_Strong_21)(clicks(__dict_Strong_21)(_129));
+      };
+  };
+  var burst = function (__dict_Strong_22) {
       return Data_Lens_Lens.lens(function (_9) {
           return _9.burst;
       })(function (_10) {
           return function (_11) {
-              var _108 = {};
-              for (var _109 in _10) {
-                  if (_10.hasOwnProperty(_109)) {
-                      _108[_109] = _10[_109];
+              var _113 = {};
+              for (var _114 in _10) {
+                  if (_10.hasOwnProperty(_114)) {
+                      _113[_114] = _10[_114];
                   };
               };
-              _108.burst = _11;
-              return _108;
+              _113.burst = _11;
+              return _113;
           };
-      })(__dict_Strong_21);
+      })(__dict_Strong_22);
   };
-  var burstNumber = function (__dict_Strong_22) {
-      return function (_125) {
-          return burst(__dict_Strong_22)(clicks(__dict_Strong_22)(_125));
+  var burstNumber = function (__dict_Strong_23) {
+      return function (_130) {
+          return burst(__dict_Strong_23)(clicks(__dict_Strong_23)(_130));
       };
   };
+  var age = function (__dict_Strong_24) {
+      return Data_Lens_Lens.lens(function (_12) {
+          return _12.age;
+      })(function (_13) {
+          return function (_14) {
+              var _115 = {};
+              for (var _116 in _13) {
+                  if (_13.hasOwnProperty(_116)) {
+                      _115[_116] = _13[_116];
+                  };
+              };
+              _115.age = _14;
+              return _115;
+          };
+      })(__dict_Strong_24);
+  };
+  exports["tab"] = tab;
   exports["viewLevel"] = viewLevel;
   exports["science2"] = science2;
   exports["science1"] = science1;
@@ -10801,6 +10950,7 @@ var PS = { };
   exports["upgrades"] = upgrades;
   exports["now"] = now;
   exports["message"] = message;
+  exports["age"] = age;
   exports["burstNumber"] = burstNumber;
   exports["burst"] = burst;
   exports["cpsNumber"] = cpsNumber;
@@ -10859,9 +11009,12 @@ var PS = { };
               return "dog domestication";
           };
           if (_1 instanceof Types.Science2 && _2 instanceof Types.Stone) {
+              return "bronze smelting";
+          };
+          if (_1 instanceof Types.Science1 && _2 instanceof Types.Bronze) {
               return "abstract numbers";
           };
-          throw new Error("Failed pattern match at Upgrades line 48, column 1 - line 49, column 1: " + [ _1.constructor.name, _2.constructor.name ]);
+          return "Not implemented";
       };
   };
   var upgradeDescription = function (_3) {
@@ -10894,9 +11047,12 @@ var PS = { };
               return "A Clickonian's best friend.";
           };
           if (_3 instanceof Types.Science2 && _4 instanceof Types.Stone) {
+              return "The holy grail of the Stone Age, except the real holy grail was made out of wood.";
+          };
+          if (_3 instanceof Types.Science1 && _4 instanceof Types.Bronze) {
               return "You've discovered that two clicks and two dogs both share 'twoness.' You also almost discovered the ultrafilter lemma, but you couldn't write it down fast enough. Because you haven't discovered writing yet.";
           };
-          throw new Error("Failed pattern match at Upgrades line 60, column 1 - line 61, column 1: " + [ _3.constructor.name, _4.constructor.name ]);
+          return "Not implemented";
       };
   };
   var upgradeCostModifier = function (n) {
@@ -10977,7 +11133,7 @@ var PS = { };
       if (Prelude.otherwise) {
           return 1024.0;
       };
-      throw new Error("Failed pattern match at Upgrades line 104, column 1 - line 105, column 1: " + [ n.constructor.name ]);
+      throw new Error("Failed pattern match at Upgrades line 108, column 1 - line 109, column 1: " + [ n.constructor.name ]);
   };
   var upgradeBoost = function (_6) {
       if (_6 instanceof Types.Misc1) {
@@ -11010,14 +11166,14 @@ var PS = { };
       if (_6 instanceof Types.Science2) {
           return 1.0e8 * upgradeBoostModifier(_6.value0);
       };
-      throw new Error("Failed pattern match at Upgrades line 92, column 1 - line 93, column 1: " + [ _6.constructor.name ]);
+      throw new Error("Failed pattern match at Upgrades line 96, column 1 - line 97, column 1: " + [ _6.constructor.name ]);
   };
   var recordPurchase = function (up) {
       return function (optic) {
-          return function (_78) {
-              return Data_Lens_Setter["-~"](Types.ringClicks)(Lenses.currentClicks(Data_Profunctor_Strong.strongFn))(upgradeCost(up))(Data_Lens_Setter[".~"](function (_79) {
-                  return Lenses.upgrades(Data_Profunctor_Strong.strongFn)(optic(Data_Profunctor_Strong.strongFn)(_79));
-              })(up)(_78));
+          return function (_80) {
+              return Data_Lens_Setter["-~"](Types.ringClicks)(Lenses.currentClicks(Data_Profunctor_Strong.strongFn))(upgradeCost(up))(Data_Lens_Setter[".~"](function (_81) {
+                  return Lenses.upgrades(Data_Profunctor_Strong.strongFn)(optic(Data_Profunctor_Strong.strongFn)(_81));
+              })(up)(_80));
           };
       };
   };
@@ -11052,7 +11208,7 @@ var PS = { };
       if (_5 instanceof Types.Science2) {
           return new Types.Science2(_5.value0 + 1 | 0);
       };
-      throw new Error("Failed pattern match at Upgrades line 72, column 1 - line 73, column 1: " + [ _5.constructor.name ]);
+      throw new Error("Failed pattern match at Upgrades line 76, column 1 - line 77, column 1: " + [ _5.constructor.name ]);
   };
   var isInflectionUpgrade = function (up) {
       return Data_Foldable.elem(Data_Foldable.foldableArray)(Prelude.eqInt)(Data_Lens_Getter["^."](up)(Lenses.viewLevel))([ 10, 25, 50, 75, 100 ]);
@@ -11071,8 +11227,8 @@ var PS = { };
   };
   var canBuyUpgrade = function (state) {
       return function (optic) {
-          var currUpgrade = Data_Lens_Getter["^."](state)(function (_80) {
-              return Lenses.upgrades(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(optic(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(_80));
+          var currUpgrade = Data_Lens_Getter["^."](state)(function (_82) {
+              return Lenses.upgrades(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(optic(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(_82));
           });
           var next = nextUpgrade(currUpgrade);
           var nextCost = upgradeCost(next);
@@ -11082,156 +11238,156 @@ var PS = { };
   };
   var buyUpgrade = function (_7) {
       if (_7 instanceof Types.Misc1) {
-          return function (_81) {
+          return function (_83) {
               return installUpgrade(_7)(function (__dict_Strong_0) {
                   return Lenses.cpsNumber(__dict_Strong_0);
               })(0.75)(installUpgrade(_7)(function (__dict_Strong_1) {
                   return Lenses.burstNumber(__dict_Strong_1);
               })(0.3)(recordPurchase(_7)(function (__dict_Strong_2) {
                   return Lenses.misc1(__dict_Strong_2);
-              })(_81)));
+              })(_83)));
           };
       };
       if (_7 instanceof Types.Misc2) {
-          return function (_82) {
+          return function (_84) {
               return installUpgrade(_7)(function (__dict_Strong_3) {
                   return Lenses.cpsNumber(__dict_Strong_3);
               })(0.75)(installUpgrade(_7)(function (__dict_Strong_4) {
                   return Lenses.burstNumber(__dict_Strong_4);
               })(0.3)(recordPurchase(_7)(function (__dict_Strong_5) {
                   return Lenses.misc2(__dict_Strong_5);
-              })(_82)));
+              })(_84)));
           };
       };
       if (_7 instanceof Types.Tech1) {
-          return function (_83) {
+          return function (_85) {
               return installUpgrade(_7)(function (__dict_Strong_6) {
                   return Lenses.cpsNumber(__dict_Strong_6);
               })(0.75)(installUpgrade(_7)(function (__dict_Strong_7) {
                   return Lenses.burstNumber(__dict_Strong_7);
               })(0.3)(recordPurchase(_7)(function (__dict_Strong_8) {
                   return Lenses.tech1(__dict_Strong_8);
-              })(_83)));
+              })(_85)));
           };
       };
       if (_7 instanceof Types.Tech2) {
-          return function (_84) {
+          return function (_86) {
               return installUpgrade(_7)(function (__dict_Strong_9) {
                   return Lenses.cpsNumber(__dict_Strong_9);
               })(0.75)(installUpgrade(_7)(function (__dict_Strong_10) {
                   return Lenses.burstNumber(__dict_Strong_10);
               })(0.3)(recordPurchase(_7)(function (__dict_Strong_11) {
                   return Lenses.tech2(__dict_Strong_11);
-              })(_84)));
+              })(_86)));
           };
       };
       if (_7 instanceof Types.Phil1) {
-          return function (_85) {
+          return function (_87) {
               return installUpgrade(_7)(function (__dict_Strong_12) {
                   return Lenses.cpsNumber(__dict_Strong_12);
               })(0.75)(installUpgrade(_7)(function (__dict_Strong_13) {
                   return Lenses.burstNumber(__dict_Strong_13);
               })(0.3)(recordPurchase(_7)(function (__dict_Strong_14) {
                   return Lenses.phil1(__dict_Strong_14);
-              })(_85)));
+              })(_87)));
           };
       };
       if (_7 instanceof Types.Phil2) {
-          return function (_86) {
+          return function (_88) {
               return installUpgrade(_7)(function (__dict_Strong_15) {
                   return Lenses.cpsNumber(__dict_Strong_15);
               })(0.75)(installUpgrade(_7)(function (__dict_Strong_16) {
                   return Lenses.burstNumber(__dict_Strong_16);
               })(0.3)(recordPurchase(_7)(function (__dict_Strong_17) {
                   return Lenses.phil2(__dict_Strong_17);
-              })(_86)));
+              })(_88)));
           };
       };
       if (_7 instanceof Types.Poli1) {
-          return function (_87) {
+          return function (_89) {
               return installUpgrade(_7)(function (__dict_Strong_18) {
                   return Lenses.cpsNumber(__dict_Strong_18);
               })(0.75)(installUpgrade(_7)(function (__dict_Strong_19) {
                   return Lenses.burstNumber(__dict_Strong_19);
               })(0.3)(recordPurchase(_7)(function (__dict_Strong_20) {
                   return Lenses.poli1(__dict_Strong_20);
-              })(_87)));
+              })(_89)));
           };
       };
       if (_7 instanceof Types.Poli2) {
-          return function (_88) {
+          return function (_90) {
               return installUpgrade(_7)(function (__dict_Strong_21) {
                   return Lenses.cpsNumber(__dict_Strong_21);
               })(0.75)(installUpgrade(_7)(function (__dict_Strong_22) {
                   return Lenses.burstNumber(__dict_Strong_22);
               })(0.3)(recordPurchase(_7)(function (__dict_Strong_23) {
                   return Lenses.poli2(__dict_Strong_23);
-              })(_88)));
+              })(_90)));
           };
       };
       if (_7 instanceof Types.Science1) {
-          return function (_89) {
+          return function (_91) {
               return installUpgrade(_7)(function (__dict_Strong_24) {
                   return Lenses.cpsNumber(__dict_Strong_24);
               })(0.75)(installUpgrade(_7)(function (__dict_Strong_25) {
                   return Lenses.burstNumber(__dict_Strong_25);
               })(0.3)(recordPurchase(_7)(function (__dict_Strong_26) {
                   return Lenses.science1(__dict_Strong_26);
-              })(_89)));
+              })(_91)));
           };
       };
       if (_7 instanceof Types.Science2) {
-          return function (_90) {
+          return function (_92) {
               return installUpgrade(_7)(function (__dict_Strong_27) {
                   return Lenses.cpsNumber(__dict_Strong_27);
               })(0.75)(installUpgrade(_7)(function (__dict_Strong_28) {
                   return Lenses.burstNumber(__dict_Strong_28);
               })(0.3)(recordPurchase(_7)(function (__dict_Strong_29) {
                   return Lenses.science2(__dict_Strong_29);
-              })(_90)));
+              })(_92)));
           };
       };
-      throw new Error("Failed pattern match at Upgrades line 113, column 1 - line 114, column 1: " + [ _7.constructor.name ]);
+      throw new Error("Failed pattern match at Upgrades line 117, column 1 - line 118, column 1: " + [ _7.constructor.name ]);
   };
   var makeUpgradedState = function (u) {
-      var tech2arr = Prelude["<$>"](Prelude.functorArray)(Types.Tech2.create)(Util["..."](1)(Data_Lens_Getter["^."](u)(function (_91) {
-          return Lenses.tech2(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(Lenses.viewLevel(_91));
+      var tech2arr = Prelude["<$>"](Prelude.functorArray)(Types.Tech2.create)(Util["..."](1)(Data_Lens_Getter["^."](u)(function (_93) {
+          return Lenses.tech2(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(Lenses.viewLevel(_93));
       })));
-      var tech1arr = Prelude["<$>"](Prelude.functorArray)(Types.Tech1.create)(Util["..."](1)(Data_Lens_Getter["^."](u)(function (_92) {
-          return Lenses.tech1(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(Lenses.viewLevel(_92));
+      var tech1arr = Prelude["<$>"](Prelude.functorArray)(Types.Tech1.create)(Util["..."](1)(Data_Lens_Getter["^."](u)(function (_94) {
+          return Lenses.tech1(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(Lenses.viewLevel(_94));
       })));
-      var science2arr = Prelude["<$>"](Prelude.functorArray)(Types.Science2.create)(Util["..."](1)(Data_Lens_Getter["^."](u)(function (_93) {
-          return Lenses.science2(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(Lenses.viewLevel(_93));
+      var science2arr = Prelude["<$>"](Prelude.functorArray)(Types.Science2.create)(Util["..."](1)(Data_Lens_Getter["^."](u)(function (_95) {
+          return Lenses.science2(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(Lenses.viewLevel(_95));
       })));
-      var science1arr = Prelude["<$>"](Prelude.functorArray)(Types.Science1.create)(Util["..."](1)(Data_Lens_Getter["^."](u)(function (_94) {
-          return Lenses.science1(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(Lenses.viewLevel(_94));
+      var science1arr = Prelude["<$>"](Prelude.functorArray)(Types.Science1.create)(Util["..."](1)(Data_Lens_Getter["^."](u)(function (_96) {
+          return Lenses.science1(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(Lenses.viewLevel(_96));
       })));
-      var poli2arr = Prelude["<$>"](Prelude.functorArray)(Types.Poli2.create)(Util["..."](1)(Data_Lens_Getter["^."](u)(function (_95) {
-          return Lenses.poli2(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(Lenses.viewLevel(_95));
+      var poli2arr = Prelude["<$>"](Prelude.functorArray)(Types.Poli2.create)(Util["..."](1)(Data_Lens_Getter["^."](u)(function (_97) {
+          return Lenses.poli2(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(Lenses.viewLevel(_97));
       })));
-      var poli1arr = Prelude["<$>"](Prelude.functorArray)(Types.Poli1.create)(Util["..."](1)(Data_Lens_Getter["^."](u)(function (_96) {
-          return Lenses.poli1(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(Lenses.viewLevel(_96));
+      var poli1arr = Prelude["<$>"](Prelude.functorArray)(Types.Poli1.create)(Util["..."](1)(Data_Lens_Getter["^."](u)(function (_98) {
+          return Lenses.poli1(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(Lenses.viewLevel(_98));
       })));
-      var phil2arr = Prelude["<$>"](Prelude.functorArray)(Types.Phil2.create)(Util["..."](1)(Data_Lens_Getter["^."](u)(function (_97) {
-          return Lenses.phil2(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(Lenses.viewLevel(_97));
+      var phil2arr = Prelude["<$>"](Prelude.functorArray)(Types.Phil2.create)(Util["..."](1)(Data_Lens_Getter["^."](u)(function (_99) {
+          return Lenses.phil2(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(Lenses.viewLevel(_99));
       })));
-      var phil1arr = Prelude["<$>"](Prelude.functorArray)(Types.Phil1.create)(Util["..."](1)(Data_Lens_Getter["^."](u)(function (_98) {
-          return Lenses.phil1(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(Lenses.viewLevel(_98));
+      var phil1arr = Prelude["<$>"](Prelude.functorArray)(Types.Phil1.create)(Util["..."](1)(Data_Lens_Getter["^."](u)(function (_100) {
+          return Lenses.phil1(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(Lenses.viewLevel(_100));
       })));
-      var misc2arr = Prelude["<$>"](Prelude.functorArray)(Types.Misc2.create)(Util["..."](1)(Data_Lens_Getter["^."](u)(function (_99) {
-          return Lenses.misc2(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(Lenses.viewLevel(_99));
+      var misc2arr = Prelude["<$>"](Prelude.functorArray)(Types.Misc2.create)(Util["..."](1)(Data_Lens_Getter["^."](u)(function (_101) {
+          return Lenses.misc2(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(Lenses.viewLevel(_101));
       })));
-      var misc1arr = Prelude["<$>"](Prelude.functorArray)(Types.Misc1.create)(Util["..."](1)(Data_Lens_Getter["^."](u)(function (_100) {
-          return Lenses.misc1(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(Lenses.viewLevel(_100));
+      var misc1arr = Prelude["<$>"](Prelude.functorArray)(Types.Misc1.create)(Util["..."](1)(Data_Lens_Getter["^."](u)(function (_102) {
+          return Lenses.misc1(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(Lenses.viewLevel(_102));
       })));
       var upArray = Data_Array.concat([ misc1arr, misc2arr, tech1arr, tech2arr, phil1arr, phil2arr, poli1arr, poli2arr, science1arr, science2arr ]);
       return Data_Foldable.foldl(Data_Foldable.foldableArray)(Prelude.flip(buyUpgrade))(Types.initialState)(upArray);
   };
-  var cpsFromUpgrades = function (_101) {
-      return Data_Lens_Getter.view(Lenses.cps(Data_Profunctor_Star.strongStar(Data_Const.functorConst)))(makeUpgradedState(_101));
+  var cpsFromUpgrades = function (_103) {
+      return Data_Lens_Getter.view(Lenses.cps(Data_Profunctor_Star.strongStar(Data_Const.functorConst)))(makeUpgradedState(_103));
   };
-  var burstFromUpgrades = function (_102) {
-      return Data_Lens_Getter.view(Lenses.burst(Data_Profunctor_Star.strongStar(Data_Const.functorConst)))(makeUpgradedState(_102));
+  var burstFromUpgrades = function (_104) {
+      return Data_Lens_Getter.view(Lenses.burst(Data_Profunctor_Star.strongStar(Data_Const.functorConst)))(makeUpgradedState(_104));
   };
   exports["burstFromUpgrades"] = burstFromUpgrades;
   exports["cpsFromUpgrades"] = cpsFromUpgrades;
@@ -11408,7 +11564,7 @@ var PS = { };
               if (Prelude.otherwise) {
                   return clickDebt * 0.5;
               };
-              throw new Error("Failed pattern match at Save line 126, column 1 - line 127, column 1: " + [ t.constructor.name ]);
+              throw new Error("Failed pattern match at Save line 127, column 1 - line 128, column 1: " + [ t.constructor.name ]);
           };
           return f(delta);
       };
@@ -11443,7 +11599,8 @@ var PS = { };
               message: Types.welcomeMessage, 
               cps: _cps, 
               burst: _burst, 
-              now: _4
+              now: _4, 
+              view: Types.UpgradesTab.value
           });
       })()();
   };
@@ -11483,18 +11640,27 @@ var PS = { };
   var sumUpgrades = function (u) {
       var g = function (acc) {
           return function (uplens) {
-              return acc + Data_Lens_Getter["^."](u)(function (_0) {
-                  return uplens(Lenses.viewLevel(_0));
+              return acc + Data_Lens_Getter["^."](u)(function (_1) {
+                  return uplens(Lenses.viewLevel(_1));
               }) | 0;
           };
       };
       var $$int = Data_Foldable.foldl(Data_Foldable.foldableArray)(g)(0)([ Lenses.misc1(Data_Profunctor_Star.strongStar(Data_Const.functorConst)), Lenses.misc2(Data_Profunctor_Star.strongStar(Data_Const.functorConst)), Lenses.tech1(Data_Profunctor_Star.strongStar(Data_Const.functorConst)), Lenses.tech2(Data_Profunctor_Star.strongStar(Data_Const.functorConst)), Lenses.phil1(Data_Profunctor_Star.strongStar(Data_Const.functorConst)), Lenses.phil2(Data_Profunctor_Star.strongStar(Data_Const.functorConst)), Lenses.poli1(Data_Profunctor_Star.strongStar(Data_Const.functorConst)), Lenses.poli2(Data_Profunctor_Star.strongStar(Data_Const.functorConst)), Lenses.science1(Data_Profunctor_Star.strongStar(Data_Const.functorConst)), Lenses.science2(Data_Profunctor_Star.strongStar(Data_Const.functorConst)) ]);
       return Data_Int.toNumber($$int);
   };
-  var population = function (state) {
+  var populationAtStone = function (state) {
       var c = sumUpgrades(state.upgrades);
       var a = $$Math.log($$Math.log(1.0 + Data_Lens_Getter["^."](state)(Lenses.totalClicksNumber(Data_Profunctor_Star.strongStar(Data_Const.functorConst)))) + 1.0);
-      return 2.0 * a + c + 2.0;
+      return $$Math.floor(2.0 * a + c + 2.0);
+  };
+  var populationAfterStone = function (state) {
+      return 10.0;
+  };
+  var population = function (state) {
+      if (state.age instanceof Types.Stone) {
+          return populationAtStone(state);
+      };
+      return populationAfterStone(state);
   };
   exports["population"] = population;;
  
@@ -11526,6 +11692,7 @@ var PS = { };
   var Data_String = PS["Data.String"];
   var Data_Functor = PS["Data.Functor"];
   var Data_Date = PS["Data.Date"];
+  var Data_Void = PS["Data.Void"];
   var Control_Monad_Aff = PS["Control.Monad.Aff"];
   var Control_Monad_Eff = PS["Control.Monad.Eff"];
   var Control_Monad_Eff_Class = PS["Control.Monad.Eff.Class"];
@@ -11533,6 +11700,7 @@ var PS = { };
   var Control_Monad_Eff_Console = PS["Control.Monad.Eff.Console"];
   var Halogen = PS["Halogen"];
   var Halogen_Util = PS["Halogen.Util"];
+  var Halogen_HTML_Core = PS["Halogen.HTML.Core"];
   var Halogen_HTML_Indexed = PS["Halogen.HTML.Indexed"];
   var Halogen_HTML_Events_Indexed = PS["Halogen.HTML.Events.Indexed"];
   var Halogen_HTML_Properties_Indexed = PS["Halogen.HTML.Properties.Indexed"];
@@ -11546,25 +11714,25 @@ var PS = { };
       return function (state) {
           var hoverText = function (state_1) {
               return function (uplens_1) {
-                  return [ Halogen_HTML_Properties_Indexed.title(Upgrades.upgradeDescription(Data_Lens_Getter["^."](state_1)(function (_28) {
-                      return Lenses.upgrades(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(uplens_1(_28));
+                  return [ Halogen_HTML_Properties_Indexed.title(Upgrades.upgradeDescription(Data_Lens_Getter["^."](state_1)(function (_35) {
+                      return Lenses.upgrades(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(uplens_1(_35));
                   }))(state_1.age)) ];
               };
           };
-          var clickAction = Halogen_HTML_Events_Indexed.onMouseDown(Halogen_HTML_Events.input_(Types.Buy.create(Upgrades.nextUpgrade(Data_Lens_Getter["^."](state)(function (_29) {
-              return Lenses.upgrades(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(uplens(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(_29));
+          var clickAction = Halogen_HTML_Events_Indexed.onMouseDown(Halogen_HTML_Events.input_(Types.Buy.create(Upgrades.nextUpgrade(Data_Lens_Getter["^."](state)(function (_36) {
+              return Lenses.upgrades(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(uplens(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(_36));
           })))));
           return Prelude["++"](Prelude.semigroupArray)(hoverText(state)(uplens(Data_Profunctor_Star.strongStar(Data_Const.functorConst))))((function () {
-              var _9 = Upgrades.canBuyUpgrade(state)(function (__dict_Strong_0) {
+              var _11 = Upgrades.canBuyUpgrade(state)(function (__dict_Strong_0) {
                   return uplens(__dict_Strong_0);
               });
-              if (_9) {
+              if (_11) {
                   return [ clickAction, Util.mkClass("upgrade") ];
               };
-              if (!_9) {
+              if (!_11) {
                   return [ Util.mkClass("upgrade disabled") ];
               };
-              throw new Error("Failed pattern match at Main line 160, column 1 - line 161, column 1: " + [ _9.constructor.name ]);
+              throw new Error("Failed pattern match at Main line 229, column 1 - line 230, column 1: " + [ _11.constructor.name ]);
           })());
       };
   };
@@ -11572,12 +11740,12 @@ var PS = { };
       return function (state) {
           return Halogen_HTML_Elements_Indexed.div(upgradeProps(function (__dict_Strong_1) {
               return uplens(__dict_Strong_1);
-          })(state))([ Halogen_HTML_Elements_Indexed.div([ Util.mkClass("name") ])([ Halogen_HTML.text(Upgrades.upgradeName(Data_Lens_Getter["^."](state)(function (_30) {
-              return Lenses.upgrades(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(uplens(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(_30));
-          }))(state.age)), Halogen_HTML_Elements_Indexed.span([ Util.mkClass("level") ])([ Halogen_HTML.text(" " + Prelude.show(Prelude.showInt)(Data_Lens_Getter["^."](state)(function (_31) {
-              return Lenses.upgrades(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(uplens(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(Lenses.viewLevel(_31)));
-          }))) ]) ]), Halogen_HTML_Elements_Indexed.div([ Util.mkClass("cost") ])([ Halogen_HTML.text(Types.prettify(Types.prettyClicks)(Upgrades.upgradeCost(Upgrades.nextUpgrade(Data_Lens_Getter["^."](state)(function (_32) {
-              return Lenses.upgrades(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(uplens(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(_32));
+          })(state))([ Halogen_HTML_Elements_Indexed.div([ Util.mkClass("name") ])([ Halogen_HTML.text(Upgrades.upgradeName(Data_Lens_Getter["^."](state)(function (_37) {
+              return Lenses.upgrades(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(uplens(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(_37));
+          }))(state.age)), Halogen_HTML_Elements_Indexed.span([ Util.mkClass("level") ])([ Halogen_HTML.text(" " + Prelude.show(Prelude.showInt)(Data_Lens_Getter["^."](state)(function (_38) {
+              return Lenses.upgrades(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(uplens(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(Lenses.viewLevel(_38)));
+          }))) ]) ]), Halogen_HTML_Elements_Indexed.div([ Util.mkClass("cost") ])([ Halogen_HTML.text(Types.prettify(Types.prettyClicks)(Upgrades.upgradeCost(Upgrades.nextUpgrade(Data_Lens_Getter["^."](state)(function (_39) {
+              return Lenses.upgrades(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(uplens(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(_39));
           }))))) ]) ]);
       };
   };
@@ -11604,30 +11772,23 @@ var PS = { };
           return Lenses.science2(__dict_Strong_11);
       })(state) ]) ]);
   };
-  var render = function (state) {
-      var top = Halogen_HTML_Elements_Indexed.h1([ Halogen_HTML_Properties_Indexed.id_("title") ])([ Halogen_HTML.text("clicker builder: the "), Halogen_HTML_Elements_Indexed.span([ Util.mkClass(Prelude.show(Types.ageShow)(state.age)) ])([ Halogen_HTML.text(Prelude.show(Types.ageShow)(state.age)) ]), Halogen_HTML.text(" Age.") ]);
-      var side = Halogen_HTML_Elements_Indexed.div([ Halogen_HTML_Properties_Indexed.id_("side") ])([ Halogen_HTML_Elements.div_([ Halogen_HTML.text("Current clicks:"), Halogen_HTML_Elements.br_, Halogen_HTML_Elements_Indexed.span([ Util.mkClass("current-clicks bold") ])([ Halogen_HTML.text(Types.prettify(Types.prettyClicks)(state.currentClicks)) ]), Halogen_HTML_Elements.br_, Halogen_HTML.text("Total clicks:"), Halogen_HTML_Elements.br_, Halogen_HTML.text(Types.prettify(Types.prettyClicks)(state.totalClicks)), Halogen_HTML_Elements.br_, Halogen_HTML.text("My click power:"), Halogen_HTML_Elements.br_, Halogen_HTML.text(Types.prettify(Types.prettyClicks)(state.burst)), Halogen_HTML_Elements.br_, Halogen_HTML.text("Tribal click power:"), Halogen_HTML_Elements.br_, Halogen_HTML.text(Types.prettify(Types.prettyClicksPerSecond)(state.cps)), Halogen_HTML_Elements.br_, Halogen_HTML.text("Population:"), Halogen_HTML_Elements.br_, Halogen_HTML.text(Types.prettify(Types.prettyPopulation)(Population.population(state))) ]), Halogen_HTML_Elements.br_, Halogen_HTML_Elements_Indexed.div([ Halogen_HTML_Properties_Indexed.id_("clicker-wrapper") ])([ Halogen_HTML_Elements_Indexed.div([ Halogen_HTML_Events_Indexed.onMouseDown(Halogen_HTML_Events.input_(Types.Click.create)), Halogen_HTML_Properties_Indexed.id_("the-button") ])([ Halogen_HTML_Elements_Indexed.a([ Halogen_HTML_Properties_Indexed.href("#") ])([ Halogen_HTML_Elements_Indexed.i([ Util.mkClass("fa fa-hand-pointer-o") ])([  ]) ]) ]) ]), Halogen_HTML_Elements.br_, Halogen_HTML_Elements_Indexed.span([ Halogen_HTML_Events_Indexed.onMouseDown(Halogen_HTML_Events.input_(Types.Save.create)), Util.mkClass("button") ])([ Halogen_HTML.text("Save") ]), Halogen_HTML.text(" | "), Halogen_HTML_Elements_Indexed.span([ Halogen_HTML_Events_Indexed.onMouseDown(Halogen_HTML_Events.input_(Types.Reset.create)), Util.mkClass("button") ])([ Halogen_HTML.text("Reset") ]) ]);
-      var main$prime = Halogen_HTML_Elements_Indexed.div([ Halogen_HTML_Properties_Indexed.id_("main") ])([ Halogen_HTML_Elements_Indexed.div([ Halogen_HTML_Properties_Indexed.id_("upgrades") ])([ Halogen_HTML_Elements_Indexed.h3([ Util.mkClass("title") ])([ Halogen_HTML.text("Upgrades") ]), upgradesComponent(state) ]), (function () {
-          var _10 = Data_String["null"](state.message);
-          if (_10) {
-              return Halogen_HTML_Elements.div_([  ]);
-          };
-          if (!_10) {
-              return Halogen_HTML_Elements_Indexed.div([ Util.mkClass("fade messages") ])([ Halogen_HTML.text(state.message) ]);
-          };
-          throw new Error("Failed pattern match at Main line 40, column 1 - line 41, column 1: " + [ _10.constructor.name ]);
-      })() ]);
-      var bottom = Halogen_HTML_Elements_Indexed.div([ Halogen_HTML_Properties_Indexed.id_("bottom") ])([ Halogen_HTML_Elements.h3_([ Halogen_HTML.text("About") ]), Util.renderParagraphs(Age.ageDescription(state.age)), Halogen_HTML_Elements.h3_([ Halogen_HTML.text("Changelog") ]), Halogen_HTML_Elements.p_([ Halogen_HTML.text("First beta!") ]), Halogen_HTML_Elements.h3_([ Halogen_HTML.text("Upcoming") ]), Halogen_HTML_Elements.p_([ Halogen_HTML.text("Bronze Age, population, disasters, graphical representation.") ]), Halogen_HTML_Elements.h3_([ Halogen_HTML.text("Credits") ]), Util.renderParagraphs([ "Font: Silkscreen by Jason Kottke.", "Icons: fontawesome by Dave Gandy.", "Ideas and feedback: Himrin." ]) ]);
-      return Halogen_HTML_Elements_Indexed.div([ Halogen_HTML_Properties_Indexed.id_("body"), Util.mkClass(Prelude.show(Types.ageShow)(state.age)) ])([ Halogen_HTML_Elements_Indexed.a([ Halogen_HTML_Properties_Indexed.href("https://github.com/thimoteus/clicker-builder"), Halogen_HTML_Properties_Indexed.id_("fork-me") ])([ Halogen_HTML_Elements_Indexed.img([ Halogen_HTML_Properties_Indexed.src("https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67"), Halogen_HTML_Properties_Indexed.alt("Fork me on Github") ]) ]), Halogen_HTML_Elements_Indexed.div([ Halogen_HTML_Properties_Indexed.id_("container") ])([ top, side, main$prime, bottom ]) ]);
+  var techTreeComponent = function (state) {
+      return Halogen_HTML_Elements.div_([ Halogen_HTML_Elements_Indexed.div([ Util.mkClass("techTree") ])([ Halogen_HTML.text("") ]) ]);
   };
-  var $$eval = function (_8) {
-      if (_8 instanceof Types.Click) {
-          return Data_Functor["<$"](Control_Monad_Free.freeFunctor)(_8.value0)(Halogen_Query.modify(function (state) {
+  var populationComponent = function (state) {
+      return Halogen_HTML_Elements.div_([ Halogen_HTML_Elements_Indexed.div([ Util.mkClass("population") ])([ Halogen_HTML.text("") ]) ]);
+  };
+  var heroesComponent = function (state) {
+      return Halogen_HTML_Elements.div_([ Halogen_HTML_Elements_Indexed.div([ Util.mkClass("heroes") ])([ Halogen_HTML.text("") ]) ]);
+  };
+  var $$eval = function (_9) {
+      if (_9 instanceof Types.Click) {
+          return Data_Functor["<$"](Control_Monad_Free.freeFunctor)(_9.value0)(Halogen_Query.modify(function (state) {
               return Data_Lens_Setter["+~"](Prelude.semiringNumber)(Lenses.currentClicksNumber(Data_Profunctor_Strong.strongFn))(Data_Lens_Getter["^."](state)(Lenses.burstNumber(Data_Profunctor_Star.strongStar(Data_Const.functorConst))))(Data_Lens_Setter["+~"](Prelude.semiringNumber)(Lenses.totalClicksNumber(Data_Profunctor_Strong.strongFn))(Data_Lens_Getter["^."](state)(Lenses.burstNumber(Data_Profunctor_Star.strongStar(Data_Const.functorConst))))(state));
           }));
       };
-      if (_8 instanceof Types.Autoclick) {
-          return Data_Functor["<$"](Control_Monad_Free.freeFunctor)(_8.value0)(Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query.gets(function (_0) {
+      if (_9 instanceof Types.Autoclick) {
+          return Data_Functor["<$"](Control_Monad_Free.freeFunctor)(_9.value0)(Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query.gets(function (_0) {
               return _0.now;
           }))(function (_4) {
               return Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query.gets(function (_1) {
@@ -11636,58 +11797,113 @@ var PS = { };
                   return Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query["liftEff'"](Control_Monad_Aff.monadEffAff)(Data_Date.nowEpochMilliseconds))(function (_2) {
                       var delta = Prelude["-"](Data_Time.ringMilliseconds)(_2)(_4);
                       var summand = Save.calculateTimeDifferential(delta)(_3);
-                      return Halogen_Query.modify(function (_33) {
-                          return Data_Lens_Setter["+~"](Types.semiringClicks)(Lenses.currentClicks(Data_Profunctor_Strong.strongFn))(summand)(Data_Lens_Setter["+~"](Types.semiringClicks)(Lenses.totalClicks(Data_Profunctor_Strong.strongFn))(summand)(Data_Lens_Setter[".~"](Lenses.now(Data_Profunctor_Strong.strongFn))(_2)(_33)));
+                      return Halogen_Query.modify(function (_40) {
+                          return Data_Lens_Setter["+~"](Types.semiringClicks)(Lenses.currentClicks(Data_Profunctor_Strong.strongFn))(summand)(Data_Lens_Setter["+~"](Types.semiringClicks)(Lenses.totalClicks(Data_Profunctor_Strong.strongFn))(summand)(Data_Lens_Setter[".~"](Lenses.now(Data_Profunctor_Strong.strongFn))(_2)(_40)));
                       });
                   });
               });
           }));
       };
-      if (_8 instanceof Types.Reset) {
-          return Data_Functor["<$"](Control_Monad_Free.freeFunctor)(_8.value0)(Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query.modify(Reset.resetState))(function () {
+      if (_9 instanceof Types.Reset) {
+          return Data_Functor["<$"](Control_Monad_Free.freeFunctor)(_9.value0)(Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query.modify(Reset.resetState))(function () {
               return Halogen_Query["liftEff'"](Control_Monad_Aff.monadEffAff)(Reset.resetSave);
           }));
       };
-      if (_8 instanceof Types.Save) {
-          return Data_Functor["<$"](Control_Monad_Free.freeFunctor)(_8.value0)(Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query.get)(function (_5) {
+      if (_9 instanceof Types.Save) {
+          return Data_Functor["<$"](Control_Monad_Free.freeFunctor)(_9.value0)(Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query.get)(function (_5) {
               return Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query["liftEff'"](Control_Monad_Aff.monadEffAff)(Control_Monad_Eff_Console.log("Saving game ... ")))(function () {
                   return Halogen_Query["liftEff'"](Control_Monad_Aff.monadEffAff)(Save.saveState(_5));
               });
           }));
       };
-      if (_8 instanceof Types.Buy) {
-          return Data_Functor["<$"](Control_Monad_Free.freeFunctor)(_8.value1)(Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query.modify(Data_Lens_Setter.set(Lenses.message(Data_Profunctor_Strong.strongFn))("")))(function () {
+      if (_9 instanceof Types.Buy) {
+          return Data_Functor["<$"](Control_Monad_Free.freeFunctor)(_9.value1)(Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query.modify(Data_Lens_Setter.set(Lenses.message(Data_Profunctor_Strong.strongFn))("")))(function () {
               return Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query["liftAff'"](Control_Monad_Aff_Class.monadAffAff)(Control_Monad_Aff.later(Prelude.pure(Control_Monad_Aff.applicativeAff)(Prelude.unit))))(function () {
-                  return Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query.modify(Upgrades.buyUpgrade(_8.value0)))(function () {
-                      var _20 = Upgrades.isInflectionUpgrade(_8.value0);
-                      if (_20) {
+                  return Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query.modify(Upgrades.buyUpgrade(_9.value0)))(function () {
+                      var _21 = Upgrades.isInflectionUpgrade(_9.value0);
+                      if (_21) {
                           return Halogen_Query.modify(function (state) {
-                              return Data_Lens_Setter.set(Lenses.message(Data_Profunctor_Strong.strongFn))(Upgrades.inflectionUpgradeMessage(_8.value0)(state.age))(state);
+                              return Data_Lens_Setter.set(Lenses.message(Data_Profunctor_Strong.strongFn))(Upgrades.inflectionUpgradeMessage(_9.value0)(state.age))(state);
                           });
                       };
-                      if (!_20) {
+                      if (!_21) {
                           return Halogen_Query.modify(function (state) {
-                              return Data_Lens_Setter.set(Lenses.message(Data_Profunctor_Strong.strongFn))("Upgraded " + Upgrades.upgradeName(_8.value0)(state.age))(state);
+                              return Data_Lens_Setter.set(Lenses.message(Data_Profunctor_Strong.strongFn))("Upgraded " + Upgrades.upgradeName(_9.value0)(state.age))(state);
                           });
                       };
-                      throw new Error("Failed pattern match at Main line 171, column 1 - line 172, column 1: " + [ _20.constructor.name ]);
+                      throw new Error("Failed pattern match at Main line 240, column 1 - line 241, column 1: " + [ _21.constructor.name ]);
                   });
               });
           }));
       };
-      if (_8 instanceof Types.Suffer) {
-          return Data_Functor["<$"](Control_Monad_Free.freeFunctor)(_8.value1)(Halogen_Query.modify(Disaster.suffer(_8.value0)));
+      if (_9 instanceof Types.Suffer) {
+          return Data_Functor["<$"](Control_Monad_Free.freeFunctor)(_9.value1)(Halogen_Query.modify(Disaster.suffer(_9.value0)));
       };
-      if (_8 instanceof Types.Unmessage) {
-          return Data_Functor["<$"](Control_Monad_Free.freeFunctor)(_8.value0)(Halogen_Query.modify(Data_Lens_Setter.set(Lenses.message(Data_Profunctor_Strong.strongFn))("")));
+      if (_9 instanceof Types.View) {
+          return Data_Functor["<$"](Control_Monad_Free.freeFunctor)(_9.value1)(Halogen_Query.modify(Data_Lens_Setter.set(Lenses.tab(Data_Profunctor_Strong.strongFn))(_9.value0)));
       };
-      throw new Error("Failed pattern match at Main line 171, column 1 - line 172, column 1: " + [ _8.constructor.name ]);
+      if (_9 instanceof Types.Advance) {
+          return Data_Functor["<$"](Control_Monad_Free.freeFunctor)(_9.value0)(Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query.get)(function (_6) {
+              return Halogen_Query.modify(Data_Lens_Setter.set(Lenses.age(Data_Profunctor_Strong.strongFn))(Age.nextAge(_6.age)));
+          }));
+      };
+      throw new Error("Failed pattern match at Main line 240, column 1 - line 241, column 1: " + [ _9.constructor.name ]);
+  };
+  var divider = Halogen_HTML_Elements_Indexed.span([ Util.mkClass("divide") ])([ Halogen_HTML.text(" | ") ]);
+  var unlockViewTabs = function (state) {
+      var tabByAge = function (_10) {
+          if (_10 instanceof Types.Stone) {
+              return [  ];
+          };
+          if (_10 instanceof Types.Bronze) {
+              return [ divider, Halogen_HTML_Elements_Indexed.span([ Util.mkClass("tab") ])([ Halogen_HTML.text(Prelude.show(Types.showView)(Types.PopulationTab.value)) ]) ];
+          };
+          return Prelude["++"](Prelude.semigroupArray)(tabByAge(Types.Bronze.value))([ divider, Halogen_HTML_Elements_Indexed.span([ Util.mkClass("tab") ])([ Halogen_HTML.text(Prelude.show(Types.showView)(Types.TechTreeTab.value)) ]) ]);
+      };
+      return Halogen_HTML_Elements_Indexed.h3([ Util.mkClass("title") ])(Prelude["++"](Prelude.semigroupArray)([ Halogen_HTML_Elements_Indexed.span([ Util.mkClass("tab"), Halogen_HTML_Events_Indexed.onMouseDown(Halogen_HTML_Events.input_(Types.View.create(Types.UpgradesTab.value))) ])([ Halogen_HTML.text(Prelude.show(Types.showView)(Types.UpgradesTab.value)) ]), divider, Halogen_HTML_Elements_Indexed.span([ Util.mkClass("tab"), Halogen_HTML_Events_Indexed.onMouseDown(Halogen_HTML_Events.input_(Types.View.create(Types.AdvanceTab.value))) ])([ Halogen_HTML.text(Prelude.show(Types.showView)(Types.AdvanceTab.value)) ]) ])(tabByAge(state.age)));
+  };
+  var advanceComponent = function (state) {
+      return Halogen_HTML_Elements.div_([ Halogen_HTML_Elements_Indexed.div([ Util.mkClass("advance") ])([ Halogen_HTML_Elements_Indexed.div([ Halogen_HTML_Events_Indexed.onMouseDown(Halogen_HTML_Events.input_(Types.Advance.create)) ])([ Halogen_HTML.text("Advance") ]) ]) ]);
+  };
+  var viewTabs = function (state) {
+      if (state.view instanceof Types.UpgradesTab) {
+          return upgradesComponent(state);
+      };
+      if (state.view instanceof Types.AdvanceTab) {
+          return advanceComponent(state);
+      };
+      if (state.view instanceof Types.PopulationTab) {
+          return populationComponent(state);
+      };
+      if (state.view instanceof Types.HeroesTab) {
+          return heroesComponent(state);
+      };
+      if (state.view instanceof Types.TechTreeTab) {
+          return techTreeComponent(state);
+      };
+      throw new Error("Failed pattern match at Main line 158, column 1 - line 159, column 1: " + [ state.view.constructor.name ]);
+  };
+  var render = function (state) {
+      var top = Halogen_HTML_Elements_Indexed.h1([ Halogen_HTML_Properties_Indexed.id_("title") ])([ Halogen_HTML.text("clicker builder: the "), Halogen_HTML_Elements_Indexed.span([ Util.mkClass(Prelude.show(Types.ageShow)(state.age)) ])([ Halogen_HTML.text(Prelude.show(Types.ageShow)(state.age)) ]), Halogen_HTML.text(" Age.") ]);
+      var side = Halogen_HTML_Elements_Indexed.div([ Halogen_HTML_Properties_Indexed.id_("side") ])([ Halogen_HTML_Elements.div_([ Halogen_HTML.text("Current clicks:"), Halogen_HTML_Elements.br_, Halogen_HTML_Elements_Indexed.span([ Util.mkClass("current-clicks bold") ])([ Halogen_HTML.text(Types.prettify(Types.prettyClicks)(state.currentClicks)) ]), Halogen_HTML_Elements.br_, Halogen_HTML.text("Total clicks:"), Halogen_HTML_Elements.br_, Halogen_HTML.text(Types.prettify(Types.prettyClicks)(state.totalClicks)), Halogen_HTML_Elements.br_, Halogen_HTML.text("My click power:"), Halogen_HTML_Elements.br_, Halogen_HTML.text(Types.prettify(Types.prettyClicks)(state.burst)), Halogen_HTML_Elements.br_, Halogen_HTML.text("Tribal click power:"), Halogen_HTML_Elements.br_, Halogen_HTML.text(Types.prettify(Types.prettyClicksPerSecond)(state.cps)), Halogen_HTML_Elements.br_, Halogen_HTML.text("Population:"), Halogen_HTML_Elements.br_, Halogen_HTML.text(Types.prettify(Types.prettyPopulation)(Population.population(state))) ]), Halogen_HTML_Elements.br_, Halogen_HTML_Elements_Indexed.div([ Halogen_HTML_Properties_Indexed.id_("clicker-wrapper") ])([ Halogen_HTML_Elements_Indexed.div([ Halogen_HTML_Events_Indexed.onMouseDown(Halogen_HTML_Events.input_(Types.Click.create)), Halogen_HTML_Properties_Indexed.id_("the-button") ])([ Halogen_HTML_Elements_Indexed.a([ Halogen_HTML_Properties_Indexed.href("#") ])([ Halogen_HTML_Elements_Indexed.i([ Util.mkClass("fa fa-hand-pointer-o") ])([  ]) ]) ]) ]), Halogen_HTML_Elements.br_, Halogen_HTML_Elements_Indexed.span([ Halogen_HTML_Events_Indexed.onMouseDown(Halogen_HTML_Events.input_(Types.Save.create)), Util.mkClass("button") ])([ Halogen_HTML.text("Save") ]), Halogen_HTML.text(" | "), Halogen_HTML_Elements_Indexed.span([ Halogen_HTML_Events_Indexed.onMouseDown(Halogen_HTML_Events.input_(Types.Reset.create)), Util.mkClass("button") ])([ Halogen_HTML.text("Reset") ]) ]);
+      var main$prime = Halogen_HTML_Elements_Indexed.div([ Halogen_HTML_Properties_Indexed.id_("main") ])([ Halogen_HTML_Elements_Indexed.div([ Halogen_HTML_Properties_Indexed.id_("view") ])([ unlockViewTabs(state), viewTabs(state) ]), (function () {
+          var _32 = Data_String["null"](state.message);
+          if (_32) {
+              return Halogen_HTML_Elements.div_([  ]);
+          };
+          if (!_32) {
+              return Halogen_HTML_Elements_Indexed.div([ Util.mkClass("fade messages") ])([ Halogen_HTML.text(state.message) ]);
+          };
+          throw new Error("Failed pattern match at Main line 42, column 1 - line 43, column 1: " + [ _32.constructor.name ]);
+      })() ]);
+      var bottom = Halogen_HTML_Elements_Indexed.div([ Halogen_HTML_Properties_Indexed.id_("bottom") ])([ Halogen_HTML_Elements.h3_([ Halogen_HTML.text("About") ]), Util.renderParagraphs(Age.ageDescription(state.age)), Halogen_HTML_Elements.h3_([ Halogen_HTML.text("Changelog") ]), Halogen_HTML_Elements.p_([ Halogen_HTML.text("First beta!") ]), Halogen_HTML_Elements.h3_([ Halogen_HTML.text("Upcoming") ]), Halogen_HTML_Elements.p_([ Halogen_HTML.text("Bronze Age, population, disasters, graphical representation.") ]), Halogen_HTML_Elements.h3_([ Halogen_HTML.text("Credits") ]), Util.renderParagraphs([ "Font: Silkscreen by Jason Kottke.", "Icons: fontawesome by Dave Gandy.", "Ideas and feedback: Himrin." ]) ]);
+      return Halogen_HTML_Elements_Indexed.div([ Halogen_HTML_Properties_Indexed.id_("body"), Util.mkClass(Prelude.show(Types.ageShow)(state.age)) ])([ Halogen_HTML_Elements_Indexed.a([ Halogen_HTML_Properties_Indexed.href("https://github.com/thimoteus/clicker-builder"), Halogen_HTML_Properties_Indexed.id_("fork-me") ])([ Halogen_HTML_Elements_Indexed.img([ Halogen_HTML_Properties_Indexed.src("https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67"), Halogen_HTML_Properties_Indexed.alt("Fork me on Github") ]) ]), Halogen_HTML_Elements_Indexed.div([ Halogen_HTML_Properties_Indexed.id_("container") ])([ top, side, main$prime, bottom ]) ]);
   };
   var $$interface = Halogen_Component.component(render)($$eval);
-  var main = Control_Monad_Aff.runAff(Control_Monad_Eff_Exception.throwException)(Prelude["const"](Prelude.pure(Control_Monad_Eff.applicativeEff)(Prelude.unit)))(Prelude.bind(Control_Monad_Aff.bindAff)(Control_Monad_Eff_Class.liftEff(Control_Monad_Aff.monadEffAff)(Save.getSavedState))(function (_7) {
-      return Prelude.bind(Control_Monad_Aff.bindAff)(Halogen_Driver.runUI($$interface)(_7))(function (_6) {
-          return Prelude.bind(Control_Monad_Aff.bindAff)(Halogen_Util.onLoad(Control_Monad_Aff.monadEffAff)(Halogen_Util.appendToBody(Control_Monad_Eff_Class.monadEffEff)(_6.node)))(function () {
-              return Util.schedule([ Data_Tuple.Tuple.create(100)(_6.driver(Halogen_Query.action(Types.Autoclick.create))), Data_Tuple.Tuple.create(15000)(_6.driver(Halogen_Query.action(Types.Save.create))) ]);
+  var main = Control_Monad_Aff.runAff(Control_Monad_Eff_Exception.throwException)(Prelude["const"](Prelude.pure(Control_Monad_Eff.applicativeEff)(Prelude.unit)))(Prelude.bind(Control_Monad_Aff.bindAff)(Control_Monad_Eff_Class.liftEff(Control_Monad_Aff.monadEffAff)(Save.getSavedState))(function (_8) {
+      return Prelude.bind(Control_Monad_Aff.bindAff)(Halogen_Driver.runUI($$interface)(_8))(function (_7) {
+          return Prelude.bind(Control_Monad_Aff.bindAff)(Halogen_Util.onLoad(Control_Monad_Aff.monadEffAff)(Halogen_Util.appendToBody(Control_Monad_Eff_Class.monadEffEff)(_7.node)))(function () {
+              return Util.schedule([ Data_Tuple.Tuple.create(100)(_7.driver(Halogen_Query.action(Types.Autoclick.create))), Data_Tuple.Tuple.create(15000)(_7.driver(Halogen_Query.action(Types.Save.create))) ]);
           });
       });
   }));
@@ -11696,6 +11912,13 @@ var PS = { };
   exports["upgradeProps"] = upgradeProps;
   exports["upgradeButton"] = upgradeButton;
   exports["upgradesComponent"] = upgradesComponent;
+  exports["advanceComponent"] = advanceComponent;
+  exports["techTreeComponent"] = techTreeComponent;
+  exports["heroesComponent"] = heroesComponent;
+  exports["populationComponent"] = populationComponent;
+  exports["viewTabs"] = viewTabs;
+  exports["divider"] = divider;
+  exports["unlockViewTabs"] = unlockViewTabs;
   exports["render"] = render;
   exports["interface"] = $$interface;;
  
