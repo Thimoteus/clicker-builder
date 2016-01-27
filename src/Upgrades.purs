@@ -30,8 +30,8 @@ upgradeCost (Phil1 n)    = Clicks (upgradeCostPolynomial 8250000.0 n)
 upgradeCost (Phil2 n)    = Clicks (upgradeCostPolynomial 52000000.0 n)
 upgradeCost (Poli1 n)    = Clicks (upgradeCostPolynomial 800000000.0 n)
 upgradeCost (Poli2 n)    = Clicks (upgradeCostPolynomial 6050000000.0 n)
-upgradeCost (Science1 n) = Clicks (upgradeCostPolynomial 600500004000.0 n)
-upgradeCost (Science2 n) = Clicks (upgradeCostPolynomial 6500007000080.0 n)
+upgradeCost (Science1 n) = Clicks (upgradeCostPolynomial 60050000400.0 n)
+upgradeCost (Science2 n) = Clicks (upgradeCostPolynomial 650000700000.0 n)
 
 upgradeCostPolynomial :: Number -> Int -> Number
 upgradeCostPolynomial coeff level = upgradeCostModifier level * coeff * 1.2 ^ (toNumber level)
