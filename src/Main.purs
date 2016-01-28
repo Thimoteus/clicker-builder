@@ -208,7 +208,13 @@ eval (Reset next) = next <$ do
   liftEff' resetSave
 eval (Save next) = next <$ do
   currentState <- get
-  liftEff' $ log "Saving game ... "
+  modify $ set message ""
+  liftAff' $ later $ pure unit :: Aff AppEffects Unit
+  liftEff' $ saveState currentState
+  modify $ set message "Game saved"
+eval (Autosave next) = next <$ do
+  currentState <- get
+  liftEff' $ log "Autosaving game ... "
   liftEff' $ saveState currentState
 eval (View t next) = next <$ modify (set tab t)
 eval (Advance next) = next <$ do
@@ -221,5 +227,5 @@ main = runAff throwException (const $ pure unit) do
   app <- runUI interface savedState
   onLoad $ appendToBody app.node
   schedule [ Tuple 100 $ app.driver $ action Autoclick
-           , Tuple 15000 $ app.driver $ action Save ]
+           , Tuple 15000 $ app.driver $ action Autosave ]
 
