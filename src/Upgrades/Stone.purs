@@ -11,7 +11,7 @@ module Upgrades.Stone
   , burstFromUpgrades
   ) where
 
-import Prelude
+import Prelude hiding (div)
 import Data.Foldable (elem, foldl)
 import Data.Array (concat)
 import Data.Int (toNumber)
@@ -56,7 +56,6 @@ upgradeName (Poli1 _) = "basic fishing"
 upgradeName (Poli2 _) = "rudimentary farming"
 upgradeName (Science1 _) = "dog domestication"
 upgradeName (Science2 _) = "bronze smelting"
-upgradeName _ = "Not implemented"
 
 upgradeDescription :: Upgrade -> String
 upgradeDescription (Misc1 _) = "No more grunt-and-point for you!"
@@ -69,7 +68,6 @@ upgradeDescription (Poli1 _) = "Fishing for landsharks?"
 upgradeDescription (Poli2 _) = "Can I interest you in some delicious BEETS?"
 upgradeDescription (Science1 _) = "A Clickonian's best friend."
 upgradeDescription (Science2 _) = "The holy grail of the Stone Age, except the real holy grail was made out of wood."
-upgradeDescription _ = "Not implemented"
 
 nextUpgrade :: Upgrade -> Upgrade
 nextUpgrade (Misc1 n) = Misc1 (n + 1)

@@ -1,7 +1,7 @@
-module Save (
-  getSavedState,
-  saveState,
-  calculateTimeDifferential
+module Save
+  ( getSavedState
+  , saveState
+  , calculateTimeDifferential
   ) where
 
 import Prelude
@@ -41,8 +41,8 @@ getSavedState = do
       _totalClicks = stateValueMaker _.totalClicks parseTotalClicks "totalClicks" arr
       _age = stateValueMaker _.age parseAge "age" arr
       _now = stateValueMaker _.now parseNow "now" arr
-      _cps = cpsFromUpgrades _upgrades
-      _burst = burstFromUpgrades _upgrades
+      _cps = cpsFromUpgrades _age _upgrades
+      _burst = burstFromUpgrades _age _upgrades
       _cc = calculateTimeDifferential (_now - currentTime) _cps
   pure $ { currentClicks: _currentClicks + _cc
          , totalClicks: _totalClicks + _cc

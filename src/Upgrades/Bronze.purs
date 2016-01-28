@@ -3,6 +3,8 @@ module Upgrades.Bronze
   , upgradeDescription
   ) where
 
+import Types
+
 upgradeName :: Upgrade -> String
 upgradeName (Science1 _) = "abstract numbers"
 

@@ -128,7 +128,7 @@ mkClass = class_ <<< className
 dataHint :: forall i r. String -> IProp r i
 dataHint = unsafeCoerce dhint
   where
-  dhint :: forall i. String -> Prop i
+  dhint :: String -> Prop i
   dhint = Attr Nothing (attrName "data-hint")
 
 secondsMS :: Milliseconds -> Number

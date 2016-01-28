@@ -5,7 +5,6 @@ import Prelude
 import Control.Monad.Eff.Console (CONSOLE())
 import Control.Monad.Eff.Random (RANDOM())
 
-import Data.Array (take)
 import Data.Foreign.Class (IsForeign, readProp)
 import Data.Date (Now())
 import Data.Time (Milliseconds(..))
