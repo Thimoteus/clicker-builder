@@ -9103,6 +9103,15 @@ var PS = { };
       };
       return Save;
   })();
+  var Autosave = (function () {
+      function Autosave(value0) {
+          this.value0 = value0;
+      };
+      Autosave.create = function (value0) {
+          return new Autosave(value0);
+      };
+      return Autosave;
+  })();
   var Buy = (function () {
       function Buy(value0, value1) {
           this.value0 = value0;
@@ -9185,7 +9194,7 @@ var PS = { };
       if (_37 instanceof Science2) {
           return serialize(serializeInt)(_37.value0);
       };
-      throw new Error("Failed pattern match at Types line 257, column 1 - line 269, column 1: " + [ _37.constructor.name ]);
+      throw new Error("Failed pattern match at Types line 258, column 1 - line 270, column 1: " + [ _37.constructor.name ]);
   });
   var serializeUpgrades = new Serialize(function (_38) {
       return "{ \"misc1\": " + (serialize(serializeUpgrade)(_38.misc1) + (", \"misc2\": " + (serialize(serializeUpgrade)(_38.misc2) + (", \"tech1\": " + (serialize(serializeUpgrade)(_38.tech1) + (", \"tech2\": " + (serialize(serializeUpgrade)(_38.tech2) + (", \"phil1\": " + (serialize(serializeUpgrade)(_38.phil1) + (", \"phil2\": " + (serialize(serializeUpgrade)(_38.phil2) + (", \"poli1\": " + (serialize(serializeUpgrade)(_38.poli1) + (", \"poli2\": " + (serialize(serializeUpgrade)(_38.poli2) + (", \"science1\": " + (serialize(serializeUpgrade)(_38.science1) + (", \"science2\": " + (serialize(serializeUpgrade)(_38.science2) + "}")))))))))))))))))));
@@ -9270,7 +9279,7 @@ var PS = { };
       if (Prelude.otherwise) {
           return "Your civilization can't count this high!";
       };
-      throw new Error("Failed pattern match at Types line 200, column 1 - line 224, column 1: " + [ n.constructor.name ]);
+      throw new Error("Failed pattern match at Types line 201, column 1 - line 225, column 1: " + [ n.constructor.name ]);
   });                                                       
   var prettify = function (dict) {
       return dict.prettify;
@@ -9395,7 +9404,7 @@ var PS = { };
       if (_31 instanceof Solar) {
           return "Solar";
       };
-      throw new Error("Failed pattern match at Types line 169, column 1 - line 185, column 1: " + [ _31.constructor.name ]);
+      throw new Error("Failed pattern match at Types line 170, column 1 - line 186, column 1: " + [ _31.constructor.name ]);
   });                                               
   var serializeAge = new Serialize(Prelude.show(ageShow));
   exports["Stone"] = Stone;
@@ -9427,6 +9436,7 @@ var PS = { };
   exports["Autoclick"] = Autoclick;
   exports["Reset"] = Reset;
   exports["Save"] = Save;
+  exports["Autosave"] = Autosave;
   exports["Buy"] = Buy;
   exports["Suffer"] = Suffer;
   exports["Unmessage"] = Unmessage;
@@ -11546,25 +11556,25 @@ var PS = { };
       return function (state) {
           var hoverText = function (state_1) {
               return function (uplens_1) {
-                  return [ Halogen_HTML_Properties_Indexed.title(Upgrades.upgradeDescription(Data_Lens_Getter["^."](state_1)(function (_28) {
-                      return Lenses.upgrades(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(uplens_1(_28));
+                  return [ Halogen_HTML_Properties_Indexed.title(Upgrades.upgradeDescription(Data_Lens_Getter["^."](state_1)(function (_31) {
+                      return Lenses.upgrades(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(uplens_1(_31));
                   }))(state_1.age)) ];
               };
           };
-          var clickAction = Halogen_HTML_Events_Indexed.onMouseDown(Halogen_HTML_Events.input_(Types.Buy.create(Upgrades.nextUpgrade(Data_Lens_Getter["^."](state)(function (_29) {
-              return Lenses.upgrades(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(uplens(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(_29));
+          var clickAction = Halogen_HTML_Events_Indexed.onMouseDown(Halogen_HTML_Events.input_(Types.Buy.create(Upgrades.nextUpgrade(Data_Lens_Getter["^."](state)(function (_32) {
+              return Lenses.upgrades(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(uplens(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(_32));
           })))));
           return Prelude["++"](Prelude.semigroupArray)(hoverText(state)(uplens(Data_Profunctor_Star.strongStar(Data_Const.functorConst))))((function () {
-              var _9 = Upgrades.canBuyUpgrade(state)(function (__dict_Strong_0) {
+              var _10 = Upgrades.canBuyUpgrade(state)(function (__dict_Strong_0) {
                   return uplens(__dict_Strong_0);
               });
-              if (_9) {
+              if (_10) {
                   return [ clickAction, Util.mkClass("upgrade") ];
               };
-              if (!_9) {
+              if (!_10) {
                   return [ Util.mkClass("upgrade disabled") ];
               };
-              throw new Error("Failed pattern match at Main line 160, column 1 - line 161, column 1: " + [ _9.constructor.name ]);
+              throw new Error("Failed pattern match at Main line 160, column 1 - line 161, column 1: " + [ _10.constructor.name ]);
           })());
       };
   };
@@ -11572,12 +11582,12 @@ var PS = { };
       return function (state) {
           return Halogen_HTML_Elements_Indexed.div(upgradeProps(function (__dict_Strong_1) {
               return uplens(__dict_Strong_1);
-          })(state))([ Halogen_HTML_Elements_Indexed.div([ Util.mkClass("name") ])([ Halogen_HTML.text(Upgrades.upgradeName(Data_Lens_Getter["^."](state)(function (_30) {
-              return Lenses.upgrades(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(uplens(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(_30));
-          }))(state.age)), Halogen_HTML_Elements_Indexed.span([ Util.mkClass("level") ])([ Halogen_HTML.text(" " + Prelude.show(Prelude.showInt)(Data_Lens_Getter["^."](state)(function (_31) {
-              return Lenses.upgrades(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(uplens(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(Lenses.viewLevel(_31)));
-          }))) ]) ]), Halogen_HTML_Elements_Indexed.div([ Util.mkClass("cost") ])([ Halogen_HTML.text(Types.prettify(Types.prettyClicks)(Upgrades.upgradeCost(Upgrades.nextUpgrade(Data_Lens_Getter["^."](state)(function (_32) {
-              return Lenses.upgrades(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(uplens(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(_32));
+          })(state))([ Halogen_HTML_Elements_Indexed.div([ Util.mkClass("name") ])([ Halogen_HTML.text(Upgrades.upgradeName(Data_Lens_Getter["^."](state)(function (_33) {
+              return Lenses.upgrades(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(uplens(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(_33));
+          }))(state.age)), Halogen_HTML_Elements_Indexed.span([ Util.mkClass("level") ])([ Halogen_HTML.text(" " + Prelude.show(Prelude.showInt)(Data_Lens_Getter["^."](state)(function (_34) {
+              return Lenses.upgrades(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(uplens(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(Lenses.viewLevel(_34)));
+          }))) ]) ]), Halogen_HTML_Elements_Indexed.div([ Util.mkClass("cost") ])([ Halogen_HTML.text(Types.prettify(Types.prettyClicks)(Upgrades.upgradeCost(Upgrades.nextUpgrade(Data_Lens_Getter["^."](state)(function (_35) {
+              return Lenses.upgrades(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(uplens(Data_Profunctor_Star.strongStar(Data_Const.functorConst))(_35));
           }))))) ]) ]);
       };
   };
@@ -11608,26 +11618,26 @@ var PS = { };
       var top = Halogen_HTML_Elements_Indexed.h1([ Halogen_HTML_Properties_Indexed.id_("title") ])([ Halogen_HTML.text("clicker builder: the "), Halogen_HTML_Elements_Indexed.span([ Util.mkClass(Prelude.show(Types.ageShow)(state.age)) ])([ Halogen_HTML.text(Prelude.show(Types.ageShow)(state.age)) ]), Halogen_HTML.text(" Age.") ]);
       var side = Halogen_HTML_Elements_Indexed.div([ Halogen_HTML_Properties_Indexed.id_("side") ])([ Halogen_HTML_Elements.div_([ Halogen_HTML.text("Current clicks:"), Halogen_HTML_Elements.br_, Halogen_HTML_Elements_Indexed.span([ Util.mkClass("current-clicks bold") ])([ Halogen_HTML.text(Types.prettify(Types.prettyClicks)(state.currentClicks)) ]), Halogen_HTML_Elements.br_, Halogen_HTML.text("Total clicks:"), Halogen_HTML_Elements.br_, Halogen_HTML.text(Types.prettify(Types.prettyClicks)(state.totalClicks)), Halogen_HTML_Elements.br_, Halogen_HTML.text("My click power:"), Halogen_HTML_Elements.br_, Halogen_HTML.text(Types.prettify(Types.prettyClicks)(state.burst)), Halogen_HTML_Elements.br_, Halogen_HTML.text("Tribal click power:"), Halogen_HTML_Elements.br_, Halogen_HTML.text(Types.prettify(Types.prettyClicksPerSecond)(state.cps)), Halogen_HTML_Elements.br_, Halogen_HTML.text("Population:"), Halogen_HTML_Elements.br_, Halogen_HTML.text(Types.prettify(Types.prettyPopulation)(Population.population(state))) ]), Halogen_HTML_Elements.br_, Halogen_HTML_Elements_Indexed.div([ Halogen_HTML_Properties_Indexed.id_("clicker-wrapper") ])([ Halogen_HTML_Elements_Indexed.div([ Halogen_HTML_Events_Indexed.onMouseDown(Halogen_HTML_Events.input_(Types.Click.create)), Halogen_HTML_Properties_Indexed.id_("the-button") ])([ Halogen_HTML_Elements_Indexed.a([ Halogen_HTML_Properties_Indexed.href("#") ])([ Halogen_HTML_Elements_Indexed.i([ Util.mkClass("fa fa-hand-pointer-o") ])([  ]) ]) ]) ]), Halogen_HTML_Elements.br_, Halogen_HTML_Elements_Indexed.span([ Halogen_HTML_Events_Indexed.onMouseDown(Halogen_HTML_Events.input_(Types.Save.create)), Util.mkClass("button") ])([ Halogen_HTML.text("Save") ]), Halogen_HTML.text(" | "), Halogen_HTML_Elements_Indexed.span([ Halogen_HTML_Events_Indexed.onMouseDown(Halogen_HTML_Events.input_(Types.Reset.create)), Util.mkClass("button") ])([ Halogen_HTML.text("Reset") ]) ]);
       var main$prime = Halogen_HTML_Elements_Indexed.div([ Halogen_HTML_Properties_Indexed.id_("main") ])([ Halogen_HTML_Elements_Indexed.div([ Halogen_HTML_Properties_Indexed.id_("upgrades") ])([ Halogen_HTML_Elements_Indexed.h3([ Util.mkClass("title") ])([ Halogen_HTML.text("Upgrades") ]), upgradesComponent(state) ]), (function () {
-          var _10 = Data_String["null"](state.message);
-          if (_10) {
+          var _11 = Data_String["null"](state.message);
+          if (_11) {
               return Halogen_HTML_Elements.div_([  ]);
           };
-          if (!_10) {
+          if (!_11) {
               return Halogen_HTML_Elements_Indexed.div([ Util.mkClass("fade messages") ])([ Halogen_HTML.text(state.message) ]);
           };
-          throw new Error("Failed pattern match at Main line 40, column 1 - line 41, column 1: " + [ _10.constructor.name ]);
+          throw new Error("Failed pattern match at Main line 40, column 1 - line 41, column 1: " + [ _11.constructor.name ]);
       })() ]);
       var bottom = Halogen_HTML_Elements_Indexed.div([ Halogen_HTML_Properties_Indexed.id_("bottom") ])([ Halogen_HTML_Elements.h3_([ Halogen_HTML.text("About") ]), Util.renderParagraphs(Age.ageDescription(state.age)), Halogen_HTML_Elements.h3_([ Halogen_HTML.text("Changelog") ]), Halogen_HTML_Elements.p_([ Halogen_HTML.text("First beta!") ]), Halogen_HTML_Elements.h3_([ Halogen_HTML.text("Upcoming") ]), Halogen_HTML_Elements.p_([ Halogen_HTML.text("Bronze Age, population, disasters, graphical representation.") ]), Halogen_HTML_Elements.h3_([ Halogen_HTML.text("Credits") ]), Util.renderParagraphs([ "Font: Silkscreen by Jason Kottke.", "Icons: fontawesome by Dave Gandy.", "Ideas and feedback: Himrin." ]) ]);
       return Halogen_HTML_Elements_Indexed.div([ Halogen_HTML_Properties_Indexed.id_("body"), Util.mkClass(Prelude.show(Types.ageShow)(state.age)) ])([ Halogen_HTML_Elements_Indexed.a([ Halogen_HTML_Properties_Indexed.href("https://github.com/thimoteus/clicker-builder"), Halogen_HTML_Properties_Indexed.id_("fork-me") ])([ Halogen_HTML_Elements_Indexed.img([ Halogen_HTML_Properties_Indexed.src("https://camo.githubusercontent.com/365986a132ccd6a44c23a9169022c0b5c890c387/68747470733a2f2f73332e616d617a6f6e6177732e636f6d2f6769746875622f726962626f6e732f666f726b6d655f72696768745f7265645f6161303030302e706e67"), Halogen_HTML_Properties_Indexed.alt("Fork me on Github") ]) ]), Halogen_HTML_Elements_Indexed.div([ Halogen_HTML_Properties_Indexed.id_("container") ])([ top, side, main$prime, bottom ]) ]);
   };
-  var $$eval = function (_8) {
-      if (_8 instanceof Types.Click) {
-          return Data_Functor["<$"](Control_Monad_Free.freeFunctor)(_8.value0)(Halogen_Query.modify(function (state) {
+  var $$eval = function (_9) {
+      if (_9 instanceof Types.Click) {
+          return Data_Functor["<$"](Control_Monad_Free.freeFunctor)(_9.value0)(Halogen_Query.modify(function (state) {
               return Data_Lens_Setter["+~"](Prelude.semiringNumber)(Lenses.currentClicksNumber(Data_Profunctor_Strong.strongFn))(Data_Lens_Getter["^."](state)(Lenses.burstNumber(Data_Profunctor_Star.strongStar(Data_Const.functorConst))))(Data_Lens_Setter["+~"](Prelude.semiringNumber)(Lenses.totalClicksNumber(Data_Profunctor_Strong.strongFn))(Data_Lens_Getter["^."](state)(Lenses.burstNumber(Data_Profunctor_Star.strongStar(Data_Const.functorConst))))(state));
           }));
       };
-      if (_8 instanceof Types.Autoclick) {
-          return Data_Functor["<$"](Control_Monad_Free.freeFunctor)(_8.value0)(Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query.gets(function (_0) {
+      if (_9 instanceof Types.Autoclick) {
+          return Data_Functor["<$"](Control_Monad_Free.freeFunctor)(_9.value0)(Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query.gets(function (_0) {
               return _0.now;
           }))(function (_4) {
               return Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query.gets(function (_1) {
@@ -11636,58 +11646,69 @@ var PS = { };
                   return Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query["liftEff'"](Control_Monad_Aff.monadEffAff)(Data_Date.nowEpochMilliseconds))(function (_2) {
                       var delta = Prelude["-"](Data_Time.ringMilliseconds)(_2)(_4);
                       var summand = Save.calculateTimeDifferential(delta)(_3);
-                      return Halogen_Query.modify(function (_33) {
-                          return Data_Lens_Setter["+~"](Types.semiringClicks)(Lenses.currentClicks(Data_Profunctor_Strong.strongFn))(summand)(Data_Lens_Setter["+~"](Types.semiringClicks)(Lenses.totalClicks(Data_Profunctor_Strong.strongFn))(summand)(Data_Lens_Setter[".~"](Lenses.now(Data_Profunctor_Strong.strongFn))(_2)(_33)));
+                      return Halogen_Query.modify(function (_36) {
+                          return Data_Lens_Setter["+~"](Types.semiringClicks)(Lenses.currentClicks(Data_Profunctor_Strong.strongFn))(summand)(Data_Lens_Setter["+~"](Types.semiringClicks)(Lenses.totalClicks(Data_Profunctor_Strong.strongFn))(summand)(Data_Lens_Setter[".~"](Lenses.now(Data_Profunctor_Strong.strongFn))(_2)(_36)));
                       });
                   });
               });
           }));
       };
-      if (_8 instanceof Types.Reset) {
-          return Data_Functor["<$"](Control_Monad_Free.freeFunctor)(_8.value0)(Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query.modify(Reset.resetState))(function () {
+      if (_9 instanceof Types.Reset) {
+          return Data_Functor["<$"](Control_Monad_Free.freeFunctor)(_9.value0)(Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query.modify(Reset.resetState))(function () {
               return Halogen_Query["liftEff'"](Control_Monad_Aff.monadEffAff)(Reset.resetSave);
           }));
       };
-      if (_8 instanceof Types.Save) {
-          return Data_Functor["<$"](Control_Monad_Free.freeFunctor)(_8.value0)(Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query.get)(function (_5) {
-              return Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query["liftEff'"](Control_Monad_Aff.monadEffAff)(Control_Monad_Eff_Console.log("Saving game ... ")))(function () {
-                  return Halogen_Query["liftEff'"](Control_Monad_Aff.monadEffAff)(Save.saveState(_5));
-              });
-          }));
-      };
-      if (_8 instanceof Types.Buy) {
-          return Data_Functor["<$"](Control_Monad_Free.freeFunctor)(_8.value1)(Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query.modify(Data_Lens_Setter.set(Lenses.message(Data_Profunctor_Strong.strongFn))("")))(function () {
-              return Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query["liftAff'"](Control_Monad_Aff_Class.monadAffAff)(Control_Monad_Aff.later(Prelude.pure(Control_Monad_Aff.applicativeAff)(Prelude.unit))))(function () {
-                  return Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query.modify(Upgrades.buyUpgrade(_8.value0)))(function () {
-                      var _20 = Upgrades.isInflectionUpgrade(_8.value0);
-                      if (_20) {
-                          return Halogen_Query.modify(function (state) {
-                              return Data_Lens_Setter.set(Lenses.message(Data_Profunctor_Strong.strongFn))(Upgrades.inflectionUpgradeMessage(_8.value0)(state.age))(state);
-                          });
-                      };
-                      if (!_20) {
-                          return Halogen_Query.modify(function (state) {
-                              return Data_Lens_Setter.set(Lenses.message(Data_Profunctor_Strong.strongFn))("Upgraded " + Upgrades.upgradeName(_8.value0)(state.age))(state);
-                          });
-                      };
-                      throw new Error("Failed pattern match at Main line 171, column 1 - line 172, column 1: " + [ _20.constructor.name ]);
+      if (_9 instanceof Types.Save) {
+          return Data_Functor["<$"](Control_Monad_Free.freeFunctor)(_9.value0)(Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query.get)(function (_5) {
+              return Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query.modify(Data_Lens_Setter.set(Lenses.message(Data_Profunctor_Strong.strongFn))("")))(function () {
+                  return Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query["liftAff'"](Control_Monad_Aff_Class.monadAffAff)(Control_Monad_Aff.later(Prelude.pure(Control_Monad_Aff.applicativeAff)(Prelude.unit))))(function () {
+                      return Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query["liftEff'"](Control_Monad_Aff.monadEffAff)(Save.saveState(_5)))(function () {
+                          return Halogen_Query.modify(Data_Lens_Setter.set(Lenses.message(Data_Profunctor_Strong.strongFn))("Game saved"));
+                      });
                   });
               });
           }));
       };
-      if (_8 instanceof Types.Suffer) {
-          return Data_Functor["<$"](Control_Monad_Free.freeFunctor)(_8.value1)(Halogen_Query.modify(Disaster.suffer(_8.value0)));
+      if (_9 instanceof Types.Autosave) {
+          return Data_Functor["<$"](Control_Monad_Free.freeFunctor)(_9.value0)(Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query.get)(function (_6) {
+              return Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query["liftEff'"](Control_Monad_Aff.monadEffAff)(Control_Monad_Eff_Console.log("Autosaving game ... ")))(function () {
+                  return Halogen_Query["liftEff'"](Control_Monad_Aff.monadEffAff)(Save.saveState(_6));
+              });
+          }));
       };
-      if (_8 instanceof Types.Unmessage) {
-          return Data_Functor["<$"](Control_Monad_Free.freeFunctor)(_8.value0)(Halogen_Query.modify(Data_Lens_Setter.set(Lenses.message(Data_Profunctor_Strong.strongFn))("")));
+      if (_9 instanceof Types.Buy) {
+          return Data_Functor["<$"](Control_Monad_Free.freeFunctor)(_9.value1)(Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query.modify(Data_Lens_Setter.set(Lenses.message(Data_Profunctor_Strong.strongFn))("")))(function () {
+              return Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query["liftAff'"](Control_Monad_Aff_Class.monadAffAff)(Control_Monad_Aff.later(Prelude.pure(Control_Monad_Aff.applicativeAff)(Prelude.unit))))(function () {
+                  return Prelude.bind(Control_Monad_Free.freeBind)(Halogen_Query.modify(Upgrades.buyUpgrade(_9.value0)))(function () {
+                      var _23 = Upgrades.isInflectionUpgrade(_9.value0);
+                      if (_23) {
+                          return Halogen_Query.modify(function (state) {
+                              return Data_Lens_Setter.set(Lenses.message(Data_Profunctor_Strong.strongFn))(Upgrades.inflectionUpgradeMessage(_9.value0)(state.age))(state);
+                          });
+                      };
+                      if (!_23) {
+                          return Halogen_Query.modify(function (state) {
+                              return Data_Lens_Setter.set(Lenses.message(Data_Profunctor_Strong.strongFn))("Upgraded " + Upgrades.upgradeName(_9.value0)(state.age))(state);
+                          });
+                      };
+                      throw new Error("Failed pattern match at Main line 171, column 1 - line 172, column 1: " + [ _23.constructor.name ]);
+                  });
+              });
+          }));
       };
-      throw new Error("Failed pattern match at Main line 171, column 1 - line 172, column 1: " + [ _8.constructor.name ]);
+      if (_9 instanceof Types.Suffer) {
+          return Data_Functor["<$"](Control_Monad_Free.freeFunctor)(_9.value1)(Halogen_Query.modify(Disaster.suffer(_9.value0)));
+      };
+      if (_9 instanceof Types.Unmessage) {
+          return Data_Functor["<$"](Control_Monad_Free.freeFunctor)(_9.value0)(Halogen_Query.modify(Data_Lens_Setter.set(Lenses.message(Data_Profunctor_Strong.strongFn))("")));
+      };
+      throw new Error("Failed pattern match at Main line 171, column 1 - line 172, column 1: " + [ _9.constructor.name ]);
   };
   var $$interface = Halogen_Component.component(render)($$eval);
-  var main = Control_Monad_Aff.runAff(Control_Monad_Eff_Exception.throwException)(Prelude["const"](Prelude.pure(Control_Monad_Eff.applicativeEff)(Prelude.unit)))(Prelude.bind(Control_Monad_Aff.bindAff)(Control_Monad_Eff_Class.liftEff(Control_Monad_Aff.monadEffAff)(Save.getSavedState))(function (_7) {
-      return Prelude.bind(Control_Monad_Aff.bindAff)(Halogen_Driver.runUI($$interface)(_7))(function (_6) {
-          return Prelude.bind(Control_Monad_Aff.bindAff)(Halogen_Util.onLoad(Control_Monad_Aff.monadEffAff)(Halogen_Util.appendToBody(Control_Monad_Eff_Class.monadEffEff)(_6.node)))(function () {
-              return Util.schedule([ Data_Tuple.Tuple.create(100)(_6.driver(Halogen_Query.action(Types.Autoclick.create))), Data_Tuple.Tuple.create(15000)(_6.driver(Halogen_Query.action(Types.Save.create))) ]);
+  var main = Control_Monad_Aff.runAff(Control_Monad_Eff_Exception.throwException)(Prelude["const"](Prelude.pure(Control_Monad_Eff.applicativeEff)(Prelude.unit)))(Prelude.bind(Control_Monad_Aff.bindAff)(Control_Monad_Eff_Class.liftEff(Control_Monad_Aff.monadEffAff)(Save.getSavedState))(function (_8) {
+      return Prelude.bind(Control_Monad_Aff.bindAff)(Halogen_Driver.runUI($$interface)(_8))(function (_7) {
+          return Prelude.bind(Control_Monad_Aff.bindAff)(Halogen_Util.onLoad(Control_Monad_Aff.monadEffAff)(Halogen_Util.appendToBody(Control_Monad_Eff_Class.monadEffEff)(_7.node)))(function () {
+              return Util.schedule([ Data_Tuple.Tuple.create(100)(_7.driver(Halogen_Query.action(Types.Autoclick.create))), Data_Tuple.Tuple.create(15000)(_7.driver(Halogen_Query.action(Types.Autosave.create))) ]);
           });
       });
   }));
