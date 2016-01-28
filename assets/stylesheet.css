@@ -5,6 +5,8 @@
 #body {
   font-family: "Silkscreen", sans-serif;
   display: flex;
+  justify-content: center;
+  align-items: flex-start;
   position: absolute;
   top: 0;
   left: 0;
@@ -20,7 +22,6 @@
 }
 #container {
   max-width: 800px;
-  margin: auto;
   display: flex;
   flex-flow: row wrap;
   justify-content: space-between;
@@ -39,13 +40,13 @@ h3 {
   opacity: 0.0 !important;
 }
 .transparent-bg {
-  background: rgba(62, 62, 62, 0.6);
+  background: rgba(62, 62, 62, 0.7);
   box-shadow: 5px 5px 9px black;
   padding: 5px;
   border: 1px solid #3e3e3e;
 }
 #title {
-  background: rgba(62, 62, 62, 0.6);
+  background: rgba(62, 62, 62, 0.7);
   box-shadow: 5px 5px 9px black;
   padding: 5px;
   border: 1px solid #3e3e3e;
@@ -61,7 +62,7 @@ h3 {
   color: #CD7F32;
 }
 #side {
-  background: rgba(62, 62, 62, 0.6);
+  background: rgba(62, 62, 62, 0.7);
   box-shadow: 5px 5px 9px black;
   padding: 5px;
   border: 1px solid #3e3e3e;
@@ -70,7 +71,7 @@ h3 {
   flex-grow: 1;
 }
 #main {
-  background: rgba(62, 62, 62, 0.6);
+  background: rgba(62, 62, 62, 0.7);
   box-shadow: 5px 5px 9px black;
   padding: 5px;
   border: 1px solid #3e3e3e;
@@ -88,13 +89,8 @@ h3 {
   height: 0;
   padding-bottom: 100%;
   border-radius: 50%;
-  border: 4px solid #e8df28;
   overflow: hidden;
-  background: #242424;
   box-shadow: 0 0 3px gray;
-}
-#the-button:hover {
-  background: #3e3e3e;
 }
 #the-button a {
   display: block;
@@ -103,7 +99,6 @@ h3 {
   line-height: 0.8em;
   margin-top: -0.5em;
   text-align: center;
-  color: #ff3e45;
   font-family: Verdana;
   font-size: 1.2em;
   text-decoration: none;
@@ -179,7 +174,7 @@ h3 {
   cursor: default;
 }
 #bottom {
-  background: rgba(62, 62, 62, 0.6);
+  background: rgba(62, 62, 62, 0.7);
   box-shadow: 5px 5px 9px black;
   padding: 5px;
   border: 1px solid #3e3e3e;
@@ -217,6 +212,16 @@ h3 {
   background: url('stone-pixel-bg.png');
   color: #ff3e45;
 }
+.Stone #the-button {
+  border: 4px solid #e8df28;
+  background: #242424;
+}
+.Stone #the-button a {
+  color: #ff3e45;
+}
+.Stone #the-button:hover {
+  background: #3e3e3e;
+}
 .Stone h3 {
   color: #f2ed84;
 }
@@ -233,6 +238,16 @@ h3 {
   background: url('bronze-pixel-bg.png');
   color: #c1ac96;
 }
+.Bronze #the-button {
+  border: 4px solid #CD7F32;
+  background: #231c16;
+}
+.Bronze #the-button a {
+  color: #c1ac96;
+}
+.Bronze #the-button:hover {
+  background: #42352a;
+}
 .Bronze h3 {
   color: #CD7F32;
 }
@@ -243,5 +258,5 @@ h3 {
   color: #f5e5d6;
 }
 .Bronze .upgrade.disabled {
-  color: #231c16;
+  color: #674019;
 }
