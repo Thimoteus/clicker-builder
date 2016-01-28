@@ -1,6 +1,7 @@
 module Render.Stone
   ( side
   , upgradesComponent
+  , advanceComponent
   ) where
 
 import Prelude hiding (div)
@@ -31,7 +32,7 @@ side state =
     , text $ prettify state.cps , br_
     , text "Population:" , br_
     , text $ prettify $ population state
-    , br_
+    , br_ ,br_
     , div
       [ id_ "clicker-wrapper" ]
       [ div
@@ -84,3 +85,12 @@ upgradeProps uplens state =
       if canBuyUpgrade state uplens
          then [ clickAction, mkClass "upgrade" ]
          else [ mkClass "upgrade disabled" ]
+
+advanceComponent :: Render State Action
+advanceComponent state =
+  div_
+    [ div [ mkClass "advance" ]
+      [ div [ onMouseDown $ input_ Advance ]
+        [ text "Advance" ]
+      ]
+    ]

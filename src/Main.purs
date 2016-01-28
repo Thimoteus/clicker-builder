@@ -160,12 +160,9 @@ populationComponent state =
 
 advanceComponent :: Render State Action
 advanceComponent state =
-  div_
-    [ div [ mkClass "advance" ]
-      [ div [ onMouseDown $ input_ Advance ]
-        [ text "Advance" ]
-      ]
-    ]
+  case state.age of
+       Stone -> Stone.advanceComponent state
+       _ -> Stone.advanceComponent state --FIXME
 
 heroesComponent :: Render State Action
 heroesComponent state =
