@@ -114,9 +114,10 @@ data Tab = UpgradesTab
 
 instance showView :: Show Tab where
   show UpgradesTab = "Upgrades"
+  show AdvanceTab = "Advance"
+  show PopulationTab = "Population"
   show HeroesTab = "Heroes"
   show TechTreeTab = "Tech Tree"
-  show AdvanceTab = "Advance"
 
 data Upgrade = Misc1 Int
              | Misc2 Int

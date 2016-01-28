@@ -1,7 +1,11 @@
-@text-color: #ff3e45; // red
-@fg-color: #e8df28; // yellow
-@bg-color: #242424; // black
-@border: 1px solid lighten(@bg-color, 10%);
+@red: #ff3e45;
+@yellow: #e8df28;
+@black: #242424;
+@bronze: #CD7F32;
+@brown: #ae9376;
+@dark-gray: #231c16;
+
+@border: 1px solid lighten(@black, 10%);
 
 @font-face {
   font-family: "Silkscreen";
@@ -10,8 +14,6 @@
 
 #body {
   font-family: "Silkscreen", sans-serif;
-  //background: @bg-color;
-  color: @text-color;
   display: flex;
   position: absolute;
   top: 0;
@@ -19,9 +21,6 @@
   width: 100%;
   min-height: 100%;
   z-index: 0;
-  &.Stone {
-    background: url('stone-pixel-bg.png');
-  }
 }
 
 #fork-me {
@@ -46,7 +45,6 @@ p {
 h3 {
   margin: 0;
   border-bottom: @border;
-  color: lighten(@fg-color, 20%);
 }
 
 .bold {
@@ -58,7 +56,7 @@ h3 {
 }
 
 .transparent-bg {
-  background: fade(lighten(@bg-color, 10%), 60%);
+  background: fade(lighten(@black, 10%), 60%);
   box-shadow: 5px 5px 9px black;
   padding: 5px;
   border: @border;
@@ -71,7 +69,10 @@ h3 {
   margin: 5px 0;
   width: 100%;
   .Stone {
-    color: lighten(@bg-color, 50%);
+    color: lighten(@stone-bg, 50%);
+  }
+  .Bronze {
+    color: @bronze-fg;
   }
 }
 
@@ -100,25 +101,24 @@ h3 {
   height: 0;
   padding-bottom: 100%;
   border-radius: 50%;
-  border: 4px solid @fg-color;
+  border: 4px solid @stone-fg;
   overflow: hidden;
-  background: @bg-color;
+  background: @stone-bg;
   box-shadow: 0 0 3px gray;
 }
 
 #the-button:hover {
-  background: lighten(@bg-color, 10%);
+  background: lighten(@stone-bg, 10%);
 }
 
 #the-button a {
   display: block;
-  //width: 100%;
   padding-top: 50%;
   padding-bottom: 50%;
   line-height: 0.8em;
   margin-top: -0.5em;
   text-align: center;
-  color: @text-color;
+  color: @stone-text;
   font-family: Verdana;
   font-size: 1.2em;
   text-decoration: none;
@@ -147,6 +147,7 @@ h3 {
   margin-bottom: 5px;
   padding-bottom: 2px;
   border-bottom: @border;
+  font-size: 0.9em;
 }
 
 .noselect {
@@ -177,20 +178,17 @@ h3 {
 
 .upgrade.disabled {
   cursor: default;
-  color: lighten(@bg-color, 50%);
 }
 
 #bottom {
   .transparent-bg();
   margin-top: 5px;
-  color: lighten(@bg-color, 70%);
 }
 
 .messages {
   .noselect();
   margin-top: 15px;
   font-style: italic;
-  color: @fg-color;
   opacity: 1;
   transition: opacity 5.0s ease-in-out;
   -moz-transition: opacity 5.0s ease-in-out;
@@ -202,6 +200,60 @@ h3 {
 }
 
 .divide {
-  color: lighten(@bg-color, 40%);
+  color: lighten(@stone-bg, 40%);
   .noselect();
+}
+
+///////////////////// PER AGE STUFF /////////////////////
+
+@stone-text: @red;
+@stone-fg: @yellow;
+@stone-bg: @black;
+
+@bronze-text: lighten(@brown, 10%);
+@bronze-fg: @bronze;
+@bronze-bg: @dark-gray;
+
+// Stone
+#body.Stone {
+  background: url('stone-pixel-bg.png');
+  color: @stone-text;
+}
+
+.Stone h3 {
+  color: lighten(@stone-fg, 20%);
+}
+
+.Stone #bottom {
+  color: lighten(@stone-bg, 70%);
+}
+
+.Stone .messages {
+  color: @stone-fg;
+}
+
+.Stone .upgrade.disabled {
+  color: lighten(@stone-bg, 50%);
+}
+
+// Bronze
+#body.Bronze {
+  background: url('bronze-pixel-bg.png');
+  color: @bronze-text;
+}
+
+.Bronze h3 {
+  color: @bronze-fg;
+}
+
+.Bronze #bottom {
+  color: lighten(@bronze-bg, 60%);
+}
+
+.Bronze .messages {
+  color: lighten(@bronze-fg, 40%);
+}
+
+.Bronze .upgrade.disabled {
+  color: lighten(@bronze-bg, 25%);
 }

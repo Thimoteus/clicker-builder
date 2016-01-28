@@ -123,9 +123,10 @@ render state =
       [ h3_ [ text "About" ]
       , renderParagraphs $ ageDescription state.age
       , h3_ [ text "Changelog" ]
-      , p_ [ text "First beta!" ]
+      , renderParagraphs
+        [ "Bronze age implemented, population, disasters, graphics" ]
       , h3_ [ text "Upcoming" ]
-      , p_ [ text "Bronze Age, population, disasters, graphical representation." ]
+      , p_ [ text "Iron Age, heroes." ]
       , h3_ [ text "Credits" ]
       , renderParagraphs
         [ "Font: Silkscreen by Jason Kottke.", "Icons: fontawesome by Dave Gandy.", "Ideas and feedback: Himrin." ]
