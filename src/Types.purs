@@ -19,6 +19,7 @@ data Action a = Click a
               | Autoclick a
               | Reset a
               | Save a
+              | Autosave a
               | Buy Upgrade a
               | Suffer Disaster a
               | Unmessage a
