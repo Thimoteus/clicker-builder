@@ -4,17 +4,15 @@
 }
 #body {
   font-family: "Silkscreen", sans-serif;
-  color: #ff3e45;
   display: flex;
+  justify-content: center;
+  align-items: flex-start;
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
   min-height: 100%;
   z-index: 0;
-}
-#body.Stone {
-  background: url('stone-pixel-bg.png');
 }
 #fork-me {
   position: absolute;
@@ -24,7 +22,6 @@
 }
 #container {
   max-width: 800px;
-  margin: auto;
   display: flex;
   flex-flow: row wrap;
   justify-content: space-between;
@@ -35,7 +32,6 @@ p {
 h3 {
   margin: 0;
   border-bottom: 1px solid #3e3e3e;
-  color: #f2ed84;
 }
 .bold {
   font-weight: bold;
@@ -44,13 +40,13 @@ h3 {
   opacity: 0.0 !important;
 }
 .transparent-bg {
-  background: rgba(62, 62, 62, 0.6);
+  background: rgba(62, 62, 62, 0.7);
   box-shadow: 5px 5px 9px black;
   padding: 5px;
   border: 1px solid #3e3e3e;
 }
 #title {
-  background: rgba(62, 62, 62, 0.6);
+  background: rgba(62, 62, 62, 0.7);
   box-shadow: 5px 5px 9px black;
   padding: 5px;
   border: 1px solid #3e3e3e;
@@ -62,8 +58,11 @@ h3 {
 #title .Stone {
   color: #a3a3a3;
 }
+#title .Bronze {
+  color: #CD7F32;
+}
 #side {
-  background: rgba(62, 62, 62, 0.6);
+  background: rgba(62, 62, 62, 0.7);
   box-shadow: 5px 5px 9px black;
   padding: 5px;
   border: 1px solid #3e3e3e;
@@ -72,7 +71,7 @@ h3 {
   flex-grow: 1;
 }
 #main {
-  background: rgba(62, 62, 62, 0.6);
+  background: rgba(62, 62, 62, 0.7);
   box-shadow: 5px 5px 9px black;
   padding: 5px;
   border: 1px solid #3e3e3e;
@@ -90,13 +89,8 @@ h3 {
   height: 0;
   padding-bottom: 100%;
   border-radius: 50%;
-  border: 4px solid #e8df28;
   overflow: hidden;
-  background: #242424;
   box-shadow: 0 0 3px gray;
-}
-#the-button:hover {
-  background: #3e3e3e;
 }
 #the-button a {
   display: block;
@@ -105,7 +99,6 @@ h3 {
   line-height: 0.8em;
   margin-top: -0.5em;
   text-align: center;
-  color: #ff3e45;
   font-family: Verdana;
   font-size: 1.2em;
   text-decoration: none;
@@ -138,6 +131,7 @@ h3 {
   margin-bottom: 5px;
   padding-bottom: 2px;
   border-bottom: 1px solid #3e3e3e;
+  font-size: 0.9em;
 }
 .noselect {
   -webkit-touch-callout: none;
@@ -178,15 +172,13 @@ h3 {
 }
 .upgrade.disabled {
   cursor: default;
-  color: #a3a3a3;
 }
 #bottom {
-  background: rgba(62, 62, 62, 0.6);
+  background: rgba(62, 62, 62, 0.7);
   box-shadow: 5px 5px 9px black;
   padding: 5px;
   border: 1px solid #3e3e3e;
   margin-top: 5px;
-  color: #d6d6d6;
 }
 .messages {
   -webkit-touch-callout: none;
@@ -198,7 +190,6 @@ h3 {
   cursor: default;
   margin-top: 15px;
   font-style: italic;
-  color: #e8df28;
   opacity: 1;
   transition: opacity 5s ease-in-out;
   -moz-transition: opacity 5s ease-in-out;
@@ -216,4 +207,56 @@ h3 {
   -ms-user-select: none;
   user-select: none;
   cursor: default;
+}
+#body.Stone {
+  background: url('stone-pixel-bg.png');
+  color: #ff3e45;
+}
+.Stone #the-button {
+  border: 4px solid #e8df28;
+  background: #242424;
+}
+.Stone #the-button a {
+  color: #ff3e45;
+}
+.Stone #the-button:hover {
+  background: #3e3e3e;
+}
+.Stone h3 {
+  color: #f2ed84;
+}
+.Stone #bottom {
+  color: #d6d6d6;
+}
+.Stone .messages {
+  color: #e8df28;
+}
+.Stone .upgrade.disabled {
+  color: #a3a3a3;
+}
+#body.Bronze {
+  background: url('bronze-pixel-bg.png');
+  color: #c1ac96;
+}
+.Bronze #the-button {
+  border: 4px solid #CD7F32;
+  background: #231c16;
+}
+.Bronze #the-button a {
+  color: #c1ac96;
+}
+.Bronze #the-button:hover {
+  background: #42352a;
+}
+.Bronze h3 {
+  color: #CD7F32;
+}
+.Bronze #bottom {
+  color: #c6b4a5;
+}
+.Bronze .messages {
+  color: #f5e5d6;
+}
+.Bronze .upgrade.disabled {
+  color: #674019;
 }

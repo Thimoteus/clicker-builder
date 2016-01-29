@@ -1,5 +1,6 @@
-module Age (
-  ageDescription
+module Age
+  ( ageDescription
+  , nextAge
   ) where
 
 import Prelude
@@ -24,3 +25,18 @@ ageDescription Bronze =
   nights, your fellow survivors whisper to each other in the hopes that they'll
   reunite with their lost friends and family on the other side ... """]
 ageDescription _ = [ "Not implemented yet." ]
+
+nextAge :: Age -> Age
+nextAge Stone = Bronze
+nextAge Bronze = Iron
+nextAge Iron = Classical
+nextAge Classical = Dark
+nextAge Dark = Medieval
+nextAge Medieval = Renaissance
+nextAge Renaissance = Imperial
+nextAge Imperial = Industrial
+nextAge Industrial = Nuclear
+nextAge Nuclear = Information
+nextAge Information = Global
+nextAge Global = Space
+nextAge _ = Solar

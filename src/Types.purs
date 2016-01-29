@@ -5,7 +5,6 @@ import Prelude
 import Control.Monad.Eff.Console (CONSOLE())
 import Control.Monad.Eff.Random (RANDOM())
 
-import Data.Array (take)
 import Data.Foreign.Class (IsForeign, readProp)
 import Data.Date (Now())
 import Data.Time (Milliseconds(..))
@@ -19,10 +18,11 @@ data Action a = Click a
               | Autoclick a
               | Reset a
               | Save a
+              | Autosave a
               | Buy Upgrade a
               | Suffer Disaster a
-              | Unmessage a
               | View Tab a
+              | Advance a
 
 type State = { currentClicks :: Clicks
              , totalClicks :: Clicks
@@ -114,9 +114,10 @@ data Tab = UpgradesTab
 
 instance showView :: Show Tab where
   show UpgradesTab = "Upgrades"
+  show AdvanceTab = "Advance"
+  show PopulationTab = "Population"
   show HeroesTab = "Heroes"
   show TechTreeTab = "Tech Tree"
-  show AdvanceTab = "Advance"
 
 data Upgrade = Misc1 Int
              | Misc2 Int

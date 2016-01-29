@@ -4,21 +4,17 @@ import Prelude hiding (div, top, bottom)
 import Types
 import Lenses
 import Save
-import Upgrades
 import Reset
 import Disaster
 import Age
 import Util
-import Population
 
-import Data.Lens (LensP(), (+~), (^.), set, (.~))
+import Data.Lens ((+~), set, (.~))
 import Data.Tuple (Tuple(..))
 import Data.String (null)
 import Data.Functor ((<$))
 import Data.Date (nowEpochMilliseconds)
-import Data.Void (Void())
 
---import Control.Monad (when)
 import Control.Monad.Aff (Aff(), runAff, later)
 import Control.Monad.Eff (Eff())
 import Control.Monad.Eff.Class (liftEff)
@@ -31,10 +27,13 @@ import Halogen
   , runUI, modify, action, get, gets, liftEff', liftAff'
   )
 import Halogen.Util (appendToBody, onLoad)
-import Halogen.HTML.Core (HTML())
-import Halogen.HTML.Indexed (div, div_, h1, h3_, h3, text, br_, a, i, span, p_, img)
+import Halogen.Component (ComponentHTML())
+import Halogen.HTML.Indexed (div, div_, h1, h3_, h3, text, br_, a, span, p_, img)
 import Halogen.HTML.Events.Indexed (onMouseDown, input_)
-import Halogen.HTML.Properties.Indexed (I(), IProp(), id_, href, title, src, alt)
+import Halogen.HTML.Properties.Indexed (id_, href, src, alt)
+
+import Age.Stone.Render as Stone
+import Age.Stone.Eval as Stone
 
 interface :: Component State Action (Aff AppEffects)
 interface = component render eval
@@ -67,36 +66,15 @@ render state =
     side =
       div
         [ id_ "side" ]
-        [ div_
-          [ text "Current clicks:" , br_
-          , span [ mkClass "current-clicks bold" ] [ text $ prettify state.currentClicks ], br_
-          , text "Total clicks:" , br_
-          , text $ prettify state.totalClicks, br_
-          , text "My click power:" , br_
-          , text $ prettify state.burst , br_
-          , text "Tribal click power:" , br_
-          , text $ prettify state.cps , br_
-          , text "Population:" , br_
-          , text $ prettify $ population state
-          ]
-        , br_
-        , div
-          [ id_ "clicker-wrapper" ]
-          [ div
-            [ onMouseDown $ input_ Click
-            , id_ "the-button"
-            ]
-            [ a
-              [ href "#" ]
-              [ i [ mkClass "fa fa-hand-pointer-o" ] [] ]
-            ]
-          ]
+        [ case state.age of
+               Stone -> Stone.side state
+               _ -> Stone.side state --FIXME
         , br_
         , span
           [ onMouseDown $ input_ Save
           , mkClass "button" ]
           [ text "Save" ]
-        , text " | "
+        , divider
         , span
           [ onMouseDown $ input_ Reset
           , mkClass "button" ]
@@ -123,9 +101,10 @@ render state =
       [ h3_ [ text "About" ]
       , renderParagraphs $ ageDescription state.age
       , h3_ [ text "Changelog" ]
-      , p_ [ text "First beta!" ]
+      , renderParagraphs
+        [ "Bronze age implemented, population, disasters, graphics" ]
       , h3_ [ text "Upcoming" ]
-      , p_ [ text "Bronze Age, population, disasters, graphical representation." ]
+      , p_ [ text "Iron Age, heroes." ]
       , h3_ [ text "Credits" ]
       , renderParagraphs
         [ "Font: Silkscreen by Jason Kottke.", "Icons: fontawesome by Dave Gandy.", "Ideas and feedback: Himrin." ]
@@ -142,8 +121,9 @@ unlockViewTabs state =
   , span
     [ mkClass "tab"
     , onMouseDown $ input_ $ View AdvanceTab ]
-    [ text $ show AdvanceTab ]] ++ tabByAge state.age) where
-      tabByAge :: Age -> Array (HTML Void (Action Unit))
+    [ text $ show AdvanceTab ]] ++ tabByAge state.age)
+      where
+      tabByAge :: Age -> Array (ComponentHTML Action)
       tabByAge Stone = []
       tabByAge Bronze = [ divider
                         , span [ mkClass "tab" ] [ text $ show PopulationTab ]]
@@ -151,7 +131,7 @@ unlockViewTabs state =
                 ++ [ divider
                    , span [ mkClass "tab" ] [ text $ show TechTreeTab ]]
 
-divider :: HTML Void (Action Unit)
+divider :: ComponentHTML Action
 divider = span [ mkClass "divide" ] [ text " | " ]
 
 viewTabs :: Render State Action
@@ -163,6 +143,12 @@ viewTabs state =
        HeroesTab -> heroesComponent state
        TechTreeTab -> techTreeComponent state
 
+upgradesComponent :: Render State Action
+upgradesComponent state =
+  case state.age of
+       Stone -> Stone.upgradesComponent state
+       _ -> Stone.upgradesComponent state -- FIXME
+
 populationComponent :: Render State Action
 populationComponent state =
   div_
@@ -170,6 +156,12 @@ populationComponent state =
       [ text ""
       ]
     ]
+
+advanceComponent :: Render State Action
+advanceComponent state =
+  case state.age of
+       Stone -> Stone.advanceComponent state
+       _ -> Stone.advanceComponent state --FIXME
 
 heroesComponent :: Render State Action
 heroesComponent state =
@@ -187,58 +179,20 @@ techTreeComponent state =
       ]
     ]
 
-advanceComponent :: Render State Action
-advanceComponent state =
-  div_
-    [ div [ mkClass "advance" ]
-      [ text ""
-      ]
-    ]
-
-upgradesComponent :: Render State Action
-upgradesComponent state =
-  div_
-    [ div [ mkClass "upgrades" ]
-      [ upgradeButton misc1 state
-      , upgradeButton misc2 state
-      , upgradeButton tech1 state
-      , upgradeButton tech2 state
-      , upgradeButton phil1 state
-      , upgradeButton phil2 state
-      , upgradeButton poli1 state
-      , upgradeButton poli2 state
-      , upgradeButton science1 state
-      , upgradeButton science2 state
-      ]
-    ]
-
-upgradeButton :: LensP Upgrades Upgrade -> Render State Action
-upgradeButton uplens state =
-  div (upgradeProps uplens state)
-    [ div [ mkClass "name" ]
-      [ text $ upgradeName (state ^. upgrades <<< uplens) state.age
-      , span [ mkClass "level" ]
-        [ text $ " " ++ (show $ state ^. upgrades <<< uplens <<< viewLevel) ]
-      ]
-    , div [ mkClass "cost" ]
-      [ text $ prettify $ upgradeCost $ nextUpgrade $ state ^. upgrades <<< uplens ]
-    ]
-
-upgradeProps :: forall e. LensP Upgrades Upgrade -> State -> Array (IProp (class :: I, onMouseDown :: I, title :: I | e) (Action Unit))
-upgradeProps uplens state =
-  let clickAction =
-        onMouseDown $ input_ $ Buy $ nextUpgrade $ state ^. upgrades <<< uplens
-      hoverText state uplens =
-        [ title $ upgradeDescription (state ^. upgrades <<< uplens) state.age ]
-   in hoverText state uplens ++
-      if canBuyUpgrade state uplens
-         then [ clickAction, mkClass "upgrade" ]
-         else [ mkClass "upgrade disabled" ]
-
 eval :: Eval Action State Action (Aff AppEffects)
 eval (Click next) = next <$ do
-  modify \ state -> ((currentClicksNumber +~ state ^. burstNumber)
-                 <<< (totalClicksNumber +~ state ^. burstNumber)) state
+  currentState <- get
+  modify case currentState.age of
+              Stone -> Stone.evalClick
+              _ -> Stone.evalClick --FIXME
+eval (Buy upgrade next) = next <$ do
+  modify $ set message ""
+  liftAff' $ later $ pure unit :: Aff AppEffects Unit
+  currentState <- get
+  modify case currentState.age of
+              Stone -> Stone.buyUpgrade upgrade
+              _ -> Stone.buyUpgrade upgrade --FIXME
+eval (Suffer disaster next) = next <$ modify (suffer disaster)
 eval (Autoclick next) = next <$ do
   savedTime <- gets _.now
   savedCPS <- gets _.cps
@@ -253,18 +207,18 @@ eval (Reset next) = next <$ do
   liftEff' resetSave
 eval (Save next) = next <$ do
   currentState <- get
-  liftEff' $ log "Saving game ... "
-  liftEff' $ saveState currentState
-eval (Buy upgrade next) = next <$ do
   modify $ set message ""
   liftAff' $ later $ pure unit :: Aff AppEffects Unit
-  modify $ buyUpgrade upgrade
-  if isInflectionUpgrade upgrade
-     then modify \ state -> set message (inflectionUpgradeMessage upgrade state.age) state
-     else modify \ state -> set message ("Upgraded " ++ upgradeName upgrade state.age) state
-eval (Suffer disaster next) = next <$ modify (suffer disaster)
-eval (Unmessage next) = next <$ modify (set message "")
+  liftEff' $ saveState currentState
+  modify $ set message "Game saved"
+eval (Autosave next) = next <$ do
+  currentState <- get
+  liftEff' $ log "Autosaving game ... "
+  liftEff' $ saveState currentState
 eval (View t next) = next <$ modify (set tab t)
+eval (Advance next) = next <$ do
+  currentState <- get
+  modify $ set age $ nextAge currentState.age
 
 main :: Eff AppEffects Unit
 main = runAff throwException (const $ pure unit) do
@@ -272,5 +226,5 @@ main = runAff throwException (const $ pure unit) do
   app <- runUI interface savedState
   onLoad $ appendToBody app.node
   schedule [ Tuple 100 $ app.driver $ action Autoclick
-           , Tuple 15000 $ app.driver $ action Save ]
+           , Tuple 15000 $ app.driver $ action Autosave ]
 
