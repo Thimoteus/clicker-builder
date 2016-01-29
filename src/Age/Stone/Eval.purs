@@ -1,4 +1,4 @@
-module Eval.Stone
+module Age.Stone.Eval
   ( evalClick
   , buyUpgrade
   ) where
@@ -9,7 +9,7 @@ import Lenses
 
 import Data.Lens ((+~), (^.), set)
 
-import Upgrades.Stone as Upgrades
+import Age.Stone.Upgrades as Upgrades
 
 evalClick :: State -> State
 evalClick state = ((currentClicksNumber +~ state ^. burstNumber)

@@ -1,4 +1,4 @@
-module Render.Stone
+module Age.Stone.Render
   ( side
   , upgradesComponent
   , advanceComponent
@@ -10,7 +10,7 @@ import Lenses
 import Population
 import Util
 
-import Upgrades.Stone
+import Age.Stone.Upgrades
 
 import Data.Lens (LensP(), (^.))
 

@@ -15,7 +15,6 @@ import Data.String (null)
 import Data.Functor ((<$))
 import Data.Date (nowEpochMilliseconds)
 
---import Control.Monad (when)
 import Control.Monad.Aff (Aff(), runAff, later)
 import Control.Monad.Eff (Eff())
 import Control.Monad.Eff.Class (liftEff)
@@ -33,8 +32,8 @@ import Halogen.HTML.Indexed (div, div_, h1, h3_, h3, text, br_, a, span, p_, img
 import Halogen.HTML.Events.Indexed (onMouseDown, input_)
 import Halogen.HTML.Properties.Indexed (id_, href, src, alt)
 
-import Render.Stone as Stone
-import Eval.Stone as Stone
+import Age.Stone.Render as Stone
+import Age.Stone.Eval as Stone
 
 interface :: Component State Action (Aff AppEffects)
 interface = component render eval

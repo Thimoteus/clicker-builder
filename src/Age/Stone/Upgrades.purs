@@ -1,4 +1,4 @@
-module Upgrades.Stone
+module Age.Stone.Upgrades
   ( upgradeCost
   , upgradeName
   , nextUpgrade

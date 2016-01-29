@@ -7,8 +7,8 @@ import Prelude
 
 import Types
 
-import Upgrades.Stone as Stone
-import Upgrades.Bronze as Bronze
+import Age.Stone.Upgrades as Stone
+import Age.Bronze.Upgrades as Bronze
 
 cpsFromUpgrades :: Age -> Upgrades -> ClicksPerSecond
 cpsFromUpgrades Stone = Stone.cpsFromUpgrades

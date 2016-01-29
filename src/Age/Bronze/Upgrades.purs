@@ -1,4 +1,4 @@
-module Upgrades.Bronze
+module Age.Bronze.Upgrades
   ( upgradeName
   , upgradeDescription
   ) where
