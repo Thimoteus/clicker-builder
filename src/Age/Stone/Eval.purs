@@ -1,11 +1,14 @@
 module Age.Stone.Eval
   ( evalClick
   , buyUpgrade
+  , advance
   ) where
 
 import Prelude
 import Types
 import Lenses
+import Age
+import Disaster
 
 import Data.Lens ((+~), (^.), set)
 
@@ -21,3 +24,5 @@ buyUpgrade up state
     Upgrades.buyUpgrade up $ set message (Upgrades.inflectionUpgradeMessage up) state
   | otherwise = Upgrades.buyUpgrade up $ set message ("Upgraded " ++ Upgrades.upgradeName up) state
 
+advance :: State -> State
+advance state = suffer Disaster1 $ set age (nextAge state.age) state

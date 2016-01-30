@@ -4,6 +4,9 @@ module Disaster (
 
 import Prelude
 import Types
+import Lenses
+
+import Data.Lens (set)
 
 suffer :: Disaster -> State -> State
-suffer _ = id
+suffer d = set suffering true

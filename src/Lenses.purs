@@ -44,6 +44,12 @@ message = lens _.message (_ { message = _ })
 now :: LensP State Milliseconds
 now = lens _.now (_ { now = _ })
 
+tab :: LensP State Tab
+tab = lens _.view (_ { view = _ })
+
+suffering :: LensP State Boolean
+suffering = lens _.suffering (_ { suffering = _ })
+
 upgrades :: LensP State Upgrades
 upgrades = lens _.upgrades (_ { upgrades = _ })
 
@@ -92,6 +98,3 @@ viewLevel = to viewLevel'
     viewLevel' (Poli2 n) = n
     viewLevel' (Science1 n) = n
     viewLevel' (Science2 n) = n
-
-tab :: LensP State Tab
-tab = lens _.view (_ { view = _ })

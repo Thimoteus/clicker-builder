@@ -53,6 +53,7 @@ getSavedState = do
          , burst: _burst
          , now: currentTime
          , view: UpgradesTab
+         , suffering: false
          }
 
 -- | abstraction of a function that helps parse strings to state values

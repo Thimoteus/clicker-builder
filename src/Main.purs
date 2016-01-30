@@ -34,6 +34,8 @@ import Halogen.HTML.Properties.Indexed (id_, href, src, alt)
 
 import Age.Stone.Render as Stone
 import Age.Stone.Eval as Stone
+import Age.Bronze.Eval as Bronze
+import Age.Bronze.Render as Bronze
 
 interface :: Component State Action (Aff AppEffects)
 interface = component render eval
@@ -41,7 +43,7 @@ interface = component render eval
 render :: Render State Action
 render state =
   div
-    [ id_ "body", mkClass (show state.age) ]
+    [ id_ "body", mkClass $ show state.age ]
     [ a
       [ href "https://github.com/thimoteus/clicker-builder"
       , id_ "fork-me" ]
@@ -66,9 +68,7 @@ render state =
     side =
       div
         [ id_ "side" ]
-        [ case state.age of
-               Stone -> Stone.side state
-               _ -> Stone.side state --FIXME
+        [ viewSide state
         , br_
         , span
           [ onMouseDown $ input_ Save
@@ -98,7 +98,7 @@ render state =
                  [ text state.message ]
         ]
     bottom = div [ id_ "bottom" ]
-      [ h3_ [ text "About" ]
+      [ h3_ [ text "The story so far:" ]
       , renderParagraphs $ ageDescription state.age
       , h3_ [ text "Changelog" ]
       , renderParagraphs
@@ -109,6 +109,13 @@ render state =
       , renderParagraphs
         [ "Font: Silkscreen by Jason Kottke.", "Icons: fontawesome by Dave Gandy.", "Ideas and feedback: Himrin." ]
       ]
+
+viewSide :: Render State Action
+viewSide state =
+  case state.age of
+       Stone -> Stone.side state
+       Bronze -> Bronze.side state
+       _ -> Stone.side state --FIXME
 
 unlockViewTabs :: Render State Action
 unlockViewTabs state =
@@ -147,6 +154,7 @@ upgradesComponent :: Render State Action
 upgradesComponent state =
   case state.age of
        Stone -> Stone.upgradesComponent state
+       --Bronze -> Bronze.upgradesComponent state
        _ -> Stone.upgradesComponent state -- FIXME
 
 populationComponent :: Render State Action
@@ -184,6 +192,7 @@ eval (Click next) = next <$ do
   currentState <- get
   modify case currentState.age of
               Stone -> Stone.evalClick
+              Bronze -> Bronze.evalClick
               _ -> Stone.evalClick --FIXME
 eval (Buy upgrade next) = next <$ do
   modify $ set message ""
@@ -217,8 +226,12 @@ eval (Autosave next) = next <$ do
   liftEff' $ saveState currentState
 eval (View t next) = next <$ modify (set tab t)
 eval (Advance next) = next <$ do
-  currentState <- get
-  modify $ set age $ nextAge currentState.age
+  currentAge <- gets _.age
+  modify case currentAge of
+              Stone -> Stone.advance
+              _ -> Stone.advance --FIXME
+  t <- gets _.suffering
+  liftEff' $ log $ show t
 
 main :: Eff AppEffects Unit
 main = runAff throwException (const $ pure unit) do
