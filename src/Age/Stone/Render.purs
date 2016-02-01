@@ -16,7 +16,7 @@ import Age.Stone.Upgrades
 import Age.Stone.Advance
 
 import Data.Lens (LensP(), (^.))
-import Data.String (fromCharArray)
+import Data.String (fromCharArray, null)
 import Data.Array (replicate)
 
 import Halogen (Render())
@@ -92,21 +92,20 @@ advanceComponent state =
       , span [ mkClass "advance unfilled" ] [ text unfilledBars ]
       , text " 100"
       ]
-    , advanceButton
-    , showAdvanceButton
+    , showAdvanceButton extraClass
     ]
       where
         l = perhalfcentAdvanced state
         filledBars = fromCharArray $ replicate l '|'
         unfilledBars = fromCharArray $ replicate (50 - l) '|'
-        advanceButton =
+        extraClass =
           if l >= 50
-             then showAdvanceButton
-             else text ""
+             then ""
+             else " disabled"
 
-showAdvanceButton :: ComponentHTML Action
-showAdvanceButton =
-  div [ mkClass "advanceButton" ]
-      [ div [ onClick $ input_ Advance ]
+showAdvanceButton :: String -> ComponentHTML Action
+showAdvanceButton extraClass =
+  div [ mkClass $ "advanceButton" ++ extraClass ]
+      [ div (if null extraClass then [ onClick $ input_ Advance ] else [])
         [ text "Advance" ]
       ]

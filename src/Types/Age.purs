@@ -2,6 +2,9 @@ module Types.Age where
 
 import Prelude
 import Types.Class
+import Types.Numbers
+
+import Data.Foldable (intercalate)
 
 data Age = Stone
          | Bronze
@@ -39,3 +42,16 @@ instance prettyAge :: Pretty Age where
 
 instance serializeAge :: Serialize Age where
   serialize = show
+
+type BronzeSRec = { population :: Population
+                  , disasterStack :: Int }
+data AgeState = BronzeS BronzeSRec
+              | NoAgeState
+
+instance serializeAgeState :: Serialize AgeState where
+  serialize NoAgeState = ""
+  serialize (BronzeS { population, disasterStack }) =
+    intercalate "," $ [ serialize population, serialize disasterStack ]
+
+class UnsafeBronze
+foreign import unsafeBronze :: forall a. (UnsafeBronze => a) -> a

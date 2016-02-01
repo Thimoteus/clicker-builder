@@ -44,6 +44,7 @@ type State = { currentClicks :: Clicks
              , cps :: ClicksPerSecond
              , burst :: Clicks
              , age :: Age
+             , ageState :: AgeState
              , upgrades :: Upgrades
              , message :: String
              , now :: Milliseconds
@@ -74,6 +75,7 @@ initialState = { currentClicks: Clicks 0.0
                , totalClicks: Clicks 0.0
                , cps: ClicksPerSecond 0.0
                , age: Stone
+               , ageState: NoAgeState
                , burst: Clicks 1.0
                , upgrades: initialUpgrades
                , message: welcomeMessage

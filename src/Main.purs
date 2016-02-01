@@ -34,6 +34,7 @@ import Halogen.HTML.Properties.Indexed (id_, href, src, alt)
 
 import Age.Stone.Render as Stone
 import Age.Stone.Eval as Stone
+import Age.Bronze as Bronze
 import Age.Bronze.Eval as Bronze
 import Age.Bronze.Render as Bronze
 

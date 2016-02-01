@@ -25,4 +25,7 @@ buyUpgrade up state
   | otherwise = Upgrades.buyUpgrade up $ set message ("Upgraded " ++ Upgrades.upgradeName up) state
 
 advance :: State -> State
-advance state = suffer Disaster1 $ set age (nextAge state.age) state
+advance state = suffer earthquake
+  <<< set age (nextAge state.age)
+  <<< set currentClicks (Clicks 10.0)
+    $ state

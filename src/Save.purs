@@ -12,8 +12,10 @@ import Control.Monad.Eff.Console (CONSOLE())
 
 import Browser.WebStorage (WebStorage(), getItem, localStorage, setItem)
 
+import Data.String (split)
 import Data.Bifunctor (bimap)
 import Data.Array (catMaybes, zip)
+import Data.Array.Unsafe (unsafeIndex)
 import Data.Maybe (maybe)
 import Data.Either (Either(..))
 import Data.Tuple (Tuple(..), uncurry, lookup)
@@ -21,7 +23,7 @@ import Data.Traversable (sequence)
 import Data.Foldable (traverse_)
 import Data.Foreign (Foreign())
 import Data.Foreign.Class (read)
-import Data.Foreign.Lens (PartialGetter(), json, number, get, getter)
+import Data.Foreign.Lens (PartialGetter(), json, number, int, get, getter)
 import Data.Lens (view, (^.))
 import Data.Date (Now(), nowEpochMilliseconds)
 import Data.Time(Milliseconds(..))
@@ -40,6 +42,7 @@ getSavedState = do
       _currentClicks = stateValueMaker _.currentClicks parseCurrentClicks "currentClicks" arr
       _totalClicks = stateValueMaker _.totalClicks parseTotalClicks "totalClicks" arr
       _age = stateValueMaker _.age parseAge "age" arr
+      _ageState = getAgeState _age arr
       _now = stateValueMaker _.now parseNow "now" arr
       _cps = cpsFromUpgrades _age _upgrades
       _burst = burstFromUpgrades _age _upgrades
@@ -48,6 +51,7 @@ getSavedState = do
          , totalClicks: _totalClicks + _cc
          , upgrades: _upgrades
          , age: _age
+         , ageState: _ageState
          , message: welcomeMessage
          , cps: _cps
          , burst: _burst
@@ -82,6 +86,9 @@ parseNow = Milliseconds <<< getNumber zero
 
 getNumber :: Number -> String -> Number
 getNumber default = maybe default id <<< get (json <<< number) <<< unscramble
+
+getInt :: Int -> String -> Int
+getInt default = maybe default id <<< get (json <<< int) <<< unscramble
 
 parseAge :: String -> Age
 parseAge = maybe initialState.age id <<< get (getter age) <<< unscramble
@@ -118,10 +125,11 @@ stateTuples state = [ makeTuple "currentClicks" state.currentClicks
                     , makeTuple "upgrades" state.upgrades
                     , makeTuple "age" state.age
                     , makeTuple "now" state.now
+                    , makeTuple "ageState" state.ageState
                     ]
   where
     makeTuple :: forall a. (Serialize a) => String -> a -> Tuple String String
-    makeTuple key = bimap scramble (scramble <<< serialize) <<< Tuple key
+    makeTuple key v = bimap scramble (scramble <<< serialize) $ Tuple key v
 
 -- | used to calculate how many clicks to add to currentclicks and totalclicks
 -- | after user has been away for a certain amount of time
@@ -138,3 +146,20 @@ calculateTimeDifferential delta (ClicksPerSecond c) = Clicks (f delta)
     | daysMS t < 1.0 = clickDebt * 0.6
     | otherwise = clickDebt * 0.5
 
+getAgeState :: Age -> Array (Tuple String String) -> AgeState
+getAgeState a xs = as where
+  str = getAgeStateCode a xs
+  as = case a of
+            Bronze -> parseBronzeAgeState str
+            _ -> NoAgeState
+
+getAgeStateCode :: Age -> Array (Tuple String String) -> String
+getAgeStateCode a xs = maybe "" id $ lookup (scramble "ageState") xs
+
+parseBronzeAgeState :: String -> AgeState
+parseBronzeAgeState "" = BronzeS { population: Population 2.0, disasterStack: 0 }
+parseBronzeAgeState str =
+  let arr = split "," str
+      population = Population $ getNumber 2.0 $ unsafeIndex arr 1
+      disasterStack = getInt 0 $ unsafeIndex arr 2
+   in BronzeS { population, disasterStack }

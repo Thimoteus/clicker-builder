@@ -173,8 +173,8 @@ h3 {
   }
 }
 
-.upgrade.disabled {
-  cursor: default;
+.disabled {
+  cursor: default !important;
 }
 
 #bottom {
@@ -237,7 +237,7 @@ h3 {
   .messages {
     color: @stone-fg;
   }
-  .upgrade.disabled {
+  .disabled {
     color: lighten(@stone-bg, 50%);
   }
   .viewAdvance {
@@ -257,7 +257,10 @@ h3 {
     padding: 0 5px;
     border-radius: 5px;
     border: 3px solid @stone-fg;
-    &:hover {
+    &.disabled {
+      border: 3px solid @dark-gray;
+    }
+    &:not(.disabled):hover {
       border: 3px solid @bronze-text;
       color: @bronze-fg;
     }
@@ -301,7 +304,7 @@ h3 {
   .messages {
     color: lighten(@bronze-fg, 40%);
   }
-  .upgrade.disabled {
+  .disabled {
     color: darken(@bronze-fg, 25%);
   }
 }

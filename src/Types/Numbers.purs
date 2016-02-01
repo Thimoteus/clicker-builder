@@ -3,6 +3,7 @@ module Types.Numbers where
 import Prelude
 
 import Types.Class
+import Unsafe.Coerce
 
 newtype Clicks = Clicks Number
 newtype ClicksPerSecond = ClicksPerSecond Number
@@ -54,3 +55,20 @@ newtype Population = Population Number
 instance prettyPopulation :: Pretty Population where
   prettify (Population n) = prettify n ++ " Clickonians"
 
+instance serializePopulation :: Serialize Population where
+  serialize (Population n) = serialize n
+
+instance eqPopulation :: Eq Population where
+  eq (Population m) (Population n) = m == n
+
+instance ordPopulation :: Ord Population where
+  compare (Population m) (Population n) = compare m n
+
+instance semiringPopulation :: Semiring Population where
+  one = Population one
+  zero = Population zero
+  mul (Population m) (Population n) = Population (m * n)
+  add (Population m) (Population n) = Population (m + n)
+
+clicksToPop :: Clicks -> Population
+clicksToPop = unsafeCoerce

@@ -1,9 +1,11 @@
 module Lenses where
 
 import Prelude
-import Data.Lens (GetterP(), LensP(), lens, to)
-import Data.Time (Milliseconds())
 import Types
+
+import Data.Lens (GetterP(), LensP(), PrismP(), lens, prism', to)
+import Data.Time (Milliseconds())
+import Data.Maybe (Maybe(..))
 
 clicks :: LensP Clicks Number
 clicks = lens (\ (Clicks n) -> n) (\ _ m -> Clicks m)
@@ -98,3 +100,17 @@ viewLevel = to viewLevel'
     viewLevel' (Poli2 n) = n
     viewLevel' (Science1 n) = n
     viewLevel' (Science2 n) = n
+
+ageState :: LensP State AgeState
+ageState = lens _.ageState (_ { ageState = _ })
+
+bronzeState :: PrismP AgeState BronzeSRec
+bronzeState = prism' BronzeS f where
+  f (BronzeS x) = Just x
+  f _ = Nothing
+
+bronzePop :: LensP BronzeSRec Population
+bronzePop = lens _.population (_ { population = _ })
+
+bronzeStack :: LensP BronzeSRec Int
+bronzeStack = lens _.disasterStack (_ { disasterStack = _ })

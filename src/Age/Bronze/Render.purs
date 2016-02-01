@@ -3,11 +3,13 @@ module Age.Bronze.Render where
 import Prelude hiding (div)
 import Types
 import Util
+import Lenses
 
 import Render.Side
+import Age.Bronze
 
 import Halogen (Render())
-import Halogen.HTML.Indexed (div, div_, text, br_, span, p)
+import Halogen.HTML.Indexed (div, text, br_, span)
 
 side :: Render State Action
 side state =
@@ -21,13 +23,13 @@ side state =
     , sideLabel "Tribal click power:"
     , text $ prettify state.cps , br_
     , sideLabel "Population:"
-    , text $ prettify $ population state
+    , text $ prettify $ unsafeBronze pop state
     , br_ ,br_
     , theButton
     ]
 
-population :: State -> Population
-population _ = Population 10.0
+pop :: UnsafeBronze => State -> Population
+pop = _.population <<< getBronzeState
 
 upgradesComponent :: Render State Action
 upgradesComponent state =
