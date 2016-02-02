@@ -34,7 +34,7 @@ import Lenses
 import Upgrades
 
 -- | Used in `main` in lieu of an initial state.
-getSavedState :: forall eff. Eff ( now :: Now, console :: CONSOLE, webStorage :: WebStorage | eff ) State
+getSavedState :: ∀ eff. Eff ( now :: Now, console :: CONSOLE, webStorage :: WebStorage | eff ) State
 getSavedState = do
   arr <- zip storageKeys <<< catMaybes <$> sequence (getItem localStorage <$> storageKeys)
   currentTime <- nowEpochMilliseconds
@@ -57,11 +57,10 @@ getSavedState = do
          , burst: _burst
          , now: currentTime
          , view: UpgradesTab
-         , suffering: false
          }
 
 -- | abstraction of a function that helps parse strings to state values
-stateValueMaker :: forall a. (State -> a) -> (String -> a) -> String -> Array (Tuple String String) -> a
+stateValueMaker :: ∀ a. (State -> a) -> (String -> a) -> String -> Array (Tuple String String) -> a
 stateValueMaker default parser key arr =
   maybe (default initialState) parser $ lookup (scramble key) arr
 
@@ -111,11 +110,11 @@ parseAge = maybe initialState.age id <<< get (getter age) <<< unscramble
     age _ = Left unit
 
 -- | saves every value we care about to localstorage
-saveState :: forall eff. State -> Eff ( webStorage :: WebStorage | eff ) Unit
+saveState :: ∀ eff. State -> Eff ( webStorage :: WebStorage | eff ) Unit
 saveState = traverse_ saveSingleState <<< stateTuples
 
 -- | saves a single value to localstorage
-saveSingleState :: forall eff. Tuple String String -> Eff ( webStorage :: WebStorage | eff ) Unit
+saveSingleState :: ∀ eff. Tuple String String -> Eff ( webStorage :: WebStorage | eff ) Unit
 saveSingleState = uncurry (setItem localStorage)
 
 -- | turns a State value into a traversable structure
@@ -128,7 +127,7 @@ stateTuples state = [ makeTuple "currentClicks" state.currentClicks
                     , makeTuple "ageState" state.ageState
                     ]
   where
-    makeTuple :: forall a. (Serialize a) => String -> a -> Tuple String String
+    makeTuple :: ∀ a. (Serialize a) => String -> a -> Tuple String String
     makeTuple key v = bimap scramble (scramble <<< serialize) $ Tuple key v
 
 -- | used to calculate how many clicks to add to currentclicks and totalclicks

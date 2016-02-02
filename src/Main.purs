@@ -37,6 +37,7 @@ import Age.Stone.Eval as Stone
 import Age.Bronze as Bronze
 import Age.Bronze.Eval as Bronze
 import Age.Bronze.Render as Bronze
+import Disaster.Bronze as Bronze
 
 interface :: Component State Action (Aff AppEffects)
 interface = component render eval
@@ -202,7 +203,11 @@ eval (Buy upgrade next) = next <$ do
   modify case currentState.age of
               Stone -> Stone.buyUpgrade upgrade
               _ -> Stone.buyUpgrade upgrade --FIXME
-eval (Suffer disaster next) = next <$ modify (suffer disaster)
+eval (Suffer disaster next) = next <$ do
+  currentAge <- gets _.age
+  modify case currentAge of
+              Bronze -> Bronze.suffer disaster
+              _ -> id
 eval (Autoclick next) = next <$ do
   savedTime <- gets _.now
   savedCPS <- gets _.cps
@@ -231,8 +236,6 @@ eval (Advance next) = next <$ do
   modify case currentAge of
               Stone -> Stone.advance
               _ -> Stone.advance --FIXME
-  t <- gets _.suffering
-  liftEff' $ log $ show t
 
 main :: Eff AppEffects Unit
 main = runAff throwException (const $ pure unit) do

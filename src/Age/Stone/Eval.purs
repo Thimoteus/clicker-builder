@@ -8,7 +8,7 @@ import Prelude
 import Types
 import Lenses
 import Age
-import Disaster
+import Disaster.Bronze
 
 import Data.Lens ((+~), (^.), set)
 

@@ -49,7 +49,6 @@ type State = { currentClicks :: Clicks
              , message :: String
              , now :: Milliseconds
              , view :: Tab
-             , suffering :: Boolean
              }
 
 type AppEffects = HalogenEffects ( webStorage :: WebStorage
@@ -81,7 +80,6 @@ initialState = { currentClicks: Clicks 0.0
                , message: welcomeMessage
                , now: zero
                , view: UpgradesTab
-               , suffering: false
                }
 
 welcomeMessage :: String
