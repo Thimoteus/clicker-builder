@@ -13,7 +13,7 @@ import Upgrades (burstFromUpgrades, cpsFromUpgrades)
 import Math (abs)
 
 import Control.Monad.Eff (Eff())
-import Control.Monad.Eff.Console (CONSOLE(), print, log)
+import Control.Monad.Eff.Console (CONSOLE())
 
 import Browser.WebStorage (WebStorage(), getItem, localStorage, setItem)
 
@@ -46,7 +46,6 @@ getSavedState = do
       _cps = cpsFromUpgrades _age _upgrades
       _burst = burstFromUpgrades _age _upgrades
       _cc = calculateTimeDifferential (_now - currentTime) _cps
-  print $ getScrambledNumber 2.0 "10.0"
   pure $ { currentClicks: _currentClicks + _cc
          , totalClicks: _totalClicks + _cc
          , upgrades: _upgrades

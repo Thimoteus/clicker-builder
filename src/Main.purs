@@ -222,14 +222,6 @@ eval (Autoclick next) = next <$ do
               Stone -> Stone.autoclick currentTime
               Bronze -> Bronze.autoclick currentTime
               _ -> Stone.autoclick currentTime
-  -- savedTime <- gets _.now
-  -- savedCPS <- gets _.cps
-  -- currentTime <- liftEff' nowEpochMilliseconds
-  -- let delta = currentTime - savedTime
-      -- summand = calculateTimeDifferential delta savedCPS
-  -- modify $ (currentClicks +~ summand)
-       -- <<< (totalClicks +~ summand)
-       -- <<< (now .~ currentTime)
 eval (Reset next) = next <$ do
   modify resetState
   liftEff' resetSave
@@ -256,5 +248,5 @@ main = runAff throwException (const $ pure unit) do
   app <- runUI interface savedState
   onLoad $ appendToBody app.node
   schedule [ Tuple 100 $ app.driver $ action Autoclick ]
-           -- , Tuple 15000 $ app.driver $ action Autosave ]
+           , Tuple 15000 $ app.driver $ action Autosave ]
 

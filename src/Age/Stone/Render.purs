@@ -108,6 +108,6 @@ advanceComponent state =
 showAdvanceButton :: String -> ComponentHTML Action
 showAdvanceButton extraClass =
   div [ mkClass $ "advanceButton" ++ extraClass ]
-      [ div [ onClick $ input_ Advance ] -- (if null extraClass then [ onClick $ input_ Advance ] else [])
+      [ div (if null extraClass then [ onClick $ input_ Advance ] else [])
         [ text "Advance" ]
       ]
