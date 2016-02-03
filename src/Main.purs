@@ -247,6 +247,6 @@ main = runAff throwException (const $ pure unit) do
   savedState <- liftEff getSavedState
   app <- runUI interface savedState
   onLoad $ appendToBody app.node
-  schedule [ Tuple 100 $ app.driver $ action Autoclick ]
+  schedule [ Tuple 100 $ app.driver $ action Autoclick
            , Tuple 15000 $ app.driver $ action Autosave ]
 
