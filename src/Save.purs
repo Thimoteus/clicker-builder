@@ -5,6 +5,11 @@ module Save
   ) where
 
 import Prelude
+import Util
+import Types
+import Lenses (totalClicksNumber, currentClicksNumber, upgrades)
+import Upgrades (burstFromUpgrades, cpsFromUpgrades)
+
 import Math (abs)
 
 import Control.Monad.Eff (Eff())
@@ -12,27 +17,23 @@ import Control.Monad.Eff.Console (CONSOLE())
 
 import Browser.WebStorage (WebStorage(), getItem, localStorage, setItem)
 
+import Data.String (split)
 import Data.Bifunctor (bimap)
-import Data.Array (catMaybes, zip)
-import Data.Maybe (maybe)
+import Data.Array (catMaybes, zip, (!!))
+import Data.Maybe (maybe, fromMaybe)
 import Data.Either (Either(..))
-import Data.Tuple (Tuple(..), uncurry, lookup)
+import Data.Tuple (Tuple(..), uncurry, lookup, fst, snd)
 import Data.Traversable (sequence)
 import Data.Foldable (traverse_)
 import Data.Foreign (Foreign())
 import Data.Foreign.Class (read)
-import Data.Foreign.Lens (PartialGetter(), json, number, get, getter)
+import Data.Foreign.Lens (PartialGetter(), json, number, int, get, getter)
 import Data.Lens (view, (^.))
 import Data.Date (Now(), nowEpochMilliseconds)
 import Data.Time(Milliseconds(..))
 
-import Util
-import Types
-import Lenses
-import Upgrades
-
 -- | Used in `main` in lieu of an initial state.
-getSavedState :: forall eff. Eff ( now :: Now, console :: CONSOLE, webStorage :: WebStorage | eff ) State
+getSavedState :: ∀ eff. Eff ( now :: Now, console :: CONSOLE, webStorage :: WebStorage | eff ) State
 getSavedState = do
   arr <- zip storageKeys <<< catMaybes <$> sequence (getItem localStorage <$> storageKeys)
   currentTime <- nowEpochMilliseconds
@@ -40,6 +41,7 @@ getSavedState = do
       _currentClicks = stateValueMaker _.currentClicks parseCurrentClicks "currentClicks" arr
       _totalClicks = stateValueMaker _.totalClicks parseTotalClicks "totalClicks" arr
       _age = stateValueMaker _.age parseAge "age" arr
+      _ageState = getAgeState _age arr
       _now = stateValueMaker _.now parseNow "now" arr
       _cps = cpsFromUpgrades _age _upgrades
       _burst = burstFromUpgrades _age _upgrades
@@ -48,6 +50,7 @@ getSavedState = do
          , totalClicks: _totalClicks + _cc
          , upgrades: _upgrades
          , age: _age
+         , ageState: _ageState
          , message: welcomeMessage
          , cps: _cps
          , burst: _burst
@@ -56,34 +59,43 @@ getSavedState = do
          }
 
 -- | abstraction of a function that helps parse strings to state values
-stateValueMaker :: forall a. (State -> a) -> (String -> a) -> String -> Array (Tuple String String) -> a
+stateValueMaker :: ∀ a. (State -> a) -> (String -> a) -> String -> Array (Tuple String String) -> a
 stateValueMaker default parser key arr =
   maybe (default initialState) parser $ lookup (scramble key) arr
 
 -- | localstorage keys of all saved values
 storageKeys :: Array String
-storageKeys = map scramble ["totalClicks", "currentClicks", "age", "upgrades", "now"]
+storageKeys = map scramble ["totalClicks", "currentClicks", "age", "upgrades", "now", "ageState" ]
 
 parseCurrentClicks :: String -> Clicks
-parseCurrentClicks = Clicks <<< getNumber (initialState ^. currentClicksNumber)
+parseCurrentClicks = Clicks <<< getScrambledNumber (initialState ^. currentClicksNumber)
 
 parseTotalClicks :: String -> Clicks
-parseTotalClicks = Clicks <<< getNumber (initialState ^. totalClicksNumber)
+parseTotalClicks = Clicks <<< getScrambledNumber (initialState ^. totalClicksNumber)
 
 parseUpgrades :: String -> Upgrades
-parseUpgrades = maybe initialState.upgrades id <<< get (json <<< ups) <<< unscramble
+parseUpgrades = fromMaybe initialState.upgrades <<< get (json <<< ups) <<< unscramble
   where
     ups :: PartialGetter Upgrades Foreign
     ups = getter read
 
 parseNow :: String -> Milliseconds
-parseNow = Milliseconds <<< getNumber zero
+parseNow = Milliseconds <<< getScrambledNumber zero
+
+getScrambledNumber :: Number -> String -> Number
+getScrambledNumber default = getNumber default <<< unscramble
 
 getNumber :: Number -> String -> Number
-getNumber default = maybe default id <<< get (json <<< number) <<< unscramble
+getNumber default = fromMaybe default <<< get (json <<< number)
+
+getScrambledInt :: Int -> String -> Int
+getScrambledInt default = getInt default <<< unscramble
+
+getInt :: Int -> String -> Int
+getInt default = fromMaybe default <<< get (json <<< int)
 
 parseAge :: String -> Age
-parseAge = maybe initialState.age id <<< get (getter age) <<< unscramble
+parseAge = fromMaybe initialState.age <<< get (getter age) <<< unscramble
   where
     age :: String -> Either Unit Age
     age "Stone" = Right Stone
@@ -103,11 +115,11 @@ parseAge = maybe initialState.age id <<< get (getter age) <<< unscramble
     age _ = Left unit
 
 -- | saves every value we care about to localstorage
-saveState :: forall eff. State -> Eff ( webStorage :: WebStorage | eff ) Unit
+saveState :: ∀ eff. State -> Eff ( webStorage :: WebStorage | eff ) Unit
 saveState = traverse_ saveSingleState <<< stateTuples
 
 -- | saves a single value to localstorage
-saveSingleState :: forall eff. Tuple String String -> Eff ( webStorage :: WebStorage | eff ) Unit
+saveSingleState :: ∀ eff. Tuple String String -> Eff ( webStorage :: WebStorage | eff ) Unit
 saveSingleState = uncurry (setItem localStorage)
 
 -- | turns a State value into a traversable structure
@@ -117,10 +129,11 @@ stateTuples state = [ makeTuple "currentClicks" state.currentClicks
                     , makeTuple "upgrades" state.upgrades
                     , makeTuple "age" state.age
                     , makeTuple "now" state.now
+                    , makeTuple "ageState" state.ageState
                     ]
   where
-    makeTuple :: forall a. (Serialize a) => String -> a -> Tuple String String
-    makeTuple key = bimap scramble (scramble <<< serialize) <<< Tuple key
+    makeTuple :: ∀ a. (Serialize a) => String -> a -> Tuple String String
+    makeTuple key v = bimap scramble (scramble <<< serialize) $ Tuple key v
 
 -- | used to calculate how many clicks to add to currentclicks and totalclicks
 -- | after user has been away for a certain amount of time
@@ -137,3 +150,27 @@ calculateTimeDifferential delta (ClicksPerSecond c) = Clicks (f delta)
     | daysMS t < 1.0 = clickDebt * 0.6
     | otherwise = clickDebt * 0.5
 
+-- | main function for extracting the correct AgeState from the serialized info,
+-- | given some age.
+getAgeState :: Age -> Array (Tuple String String) -> AgeState
+getAgeState a xs = as where
+  str = getAgeStateCode xs
+  as = case a of
+            Bronze -> parseBronzeAgeState str
+            _ -> NoAgeState
+
+-- | extracts the value associated with the ageState key, with an empty string
+-- | in case of failure
+getAgeStateCode :: Array (Tuple String String) -> String
+getAgeStateCode = fromMaybe "" <<< lookup (scramble "ageState")
+
+parseBronzeAgeState :: String -> AgeState
+parseBronzeAgeState "" = BronzeS { population: Population 2.0
+                                 , disasterStack: 0
+                                 , stackRemoval: 1 }
+parseBronzeAgeState str =
+  let arr = split "," $ unscramble str
+      population = Population $ getNumber 100.0 $ fromMaybe "2.0" $ arr !! 0
+      disasterStack = getInt 0 $ fromMaybe "0" $ arr !! 1
+      stackRemoval = getInt 1 $ fromMaybe "1" $ arr !! 2
+   in BronzeS { population, disasterStack, stackRemoval }

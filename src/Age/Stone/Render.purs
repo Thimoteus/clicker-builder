@@ -10,46 +10,41 @@ import Lenses
 import Population
 import Util
 
+import Render.Side
+
 import Age.Stone.Upgrades
+import Age.Stone.Advance
 
 import Data.Lens (LensP(), (^.))
+import Data.String (fromCharArray, null)
+import Data.Array (replicate)
 
 import Halogen (Render())
-import Halogen.HTML.Indexed (div, div_, text, br_, a, i, span)
-import Halogen.HTML.Properties.Indexed (I(), IProp(),id_, href, title)
-import Halogen.HTML.Events.Indexed (onMouseDown, input_)
+import Halogen.Component (ComponentHTML())
+import Halogen.HTML.Indexed (div, div_, text, br_, span, p, p_)
+import Halogen.HTML.Properties.Indexed (I(), IProp(), title)
+import Halogen.HTML.Events.Indexed (onClick, onMouseDown, input_)
 
 side :: Render State Action
 side state =
   div_
     [ text "Current clicks:" , br_
-    , span [ mkClass "current-clicks bold" ] [ text $ prettify state.currentClicks ], br_
-    , text "Total clicks:" , br_
+    , span [ mkClass "current-clicks bold" ] [ text $ prettify state.currentClicks ]
+    , sideLabel "Total clicks:"
     , text $ prettify state.totalClicks, br_
-    , text "My click power:" , br_
+    , sideLabel "My click power:"
     , text $ prettify state.burst , br_
-    , text "Tribal click power:" , br_
+    , sideLabel "Tribal click power:"
     , text $ prettify state.cps , br_
-    , text "Population:" , br_
+    , sideLabel "Population:"
     , text $ prettify $ population state
     , br_ ,br_
-    , div
-      [ id_ "clicker-wrapper" ]
-      [ div
-        [ onMouseDown $ input_ Click
-        , id_ "the-button"
-        ]
-        [ a
-          [ href "#" ]
-          [ i [ mkClass "fa fa-hand-pointer-o" ] [] ]
-        ]
-      ]
+    , theButton
     ]
 
 upgradesComponent :: Render State Action
 upgradesComponent state =
-  div_
-    [ div [ mkClass "upgrades" ]
+  div [ mkClass "upgrades" ]
       [ upgradeButton misc1 state
       , upgradeButton misc2 state
       , upgradeButton tech1 state
@@ -61,7 +56,6 @@ upgradesComponent state =
       , upgradeButton science1 state
       , upgradeButton science2 state
       ]
-    ]
 
 upgradeButton :: LensP Upgrades Upgrade -> Render State Action
 upgradeButton uplens state =
@@ -88,9 +82,32 @@ upgradeProps uplens state =
 
 advanceComponent :: Render State Action
 advanceComponent state =
-  div_
-    [ div [ mkClass "advance" ]
-      [ div [ onMouseDown $ input_ Advance ]
+  div [ mkClass "viewAdvance" ]
+    [ span [ mkClass "dropCap" ] [ text """You must discover how to smelt bronze and attain enough
+    language proficiency. The following shows a rough estimate of how close you
+    are to advancing to the next age:""" ]
+    , p [ mkClass "advanceBar" ]
+      [ text "0 "
+      , span [ mkClass "advance filled" ] [ text filledBars ]
+      , span [ mkClass "advance unfilled" ] [ text unfilledBars ]
+      , text " 100"
+      ]
+    , showAdvanceButton extraClass
+    , p_ [ text """Warning: advancing a culture is never easy. Be prepared with your
+         clicking finger ... """ ]
+    ]
+      where
+        l = perhalfcentAdvanced state
+        filledBars = fromCharArray $ replicate l '|'
+        unfilledBars = fromCharArray $ replicate (50 - l) '|'
+        extraClass =
+          if l >= 50
+             then ""
+             else " disabled"
+
+showAdvanceButton :: String -> ComponentHTML Action
+showAdvanceButton extraClass =
+  div [ mkClass $ "advanceButton" ++ extraClass ]
+      [ div (if null extraClass then [ onClick $ input_ Advance ] else [])
         [ text "Advance" ]
       ]
-    ]

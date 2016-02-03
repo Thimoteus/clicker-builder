@@ -2,14 +2,13 @@ module Main where
 
 import Prelude hiding (div, top, bottom)
 import Types
-import Lenses
-import Save
-import Reset
-import Disaster
-import Age
-import Util
+import Lenses (tab, message)
+import Save (getSavedState, saveState)
+import Reset (resetSave, resetState)
+import Age (ageDescription)
+import Util (schedule, mkClass, renderParagraphs)
 
-import Data.Lens ((+~), set, (.~))
+import Data.Lens (set)
 import Data.Tuple (Tuple(..))
 import Data.String (null)
 import Data.Functor ((<$))
@@ -32,8 +31,11 @@ import Halogen.HTML.Indexed (div, div_, h1, h3_, h3, text, br_, a, span, p_, img
 import Halogen.HTML.Events.Indexed (onMouseDown, input_)
 import Halogen.HTML.Properties.Indexed (id_, href, src, alt)
 
-import Age.Stone.Render as Stone
-import Age.Stone.Eval as Stone
+import Age.Stone.Render (advanceComponent, upgradesComponent, side) as Stone
+import Age.Stone.Eval (advance, autoclick, buyUpgrade, evalClick) as Stone
+import Age.Bronze.Eval (autoclick, evalClick) as Bronze
+import Age.Bronze.Render (advanceComponent, populationComponent, upgradesComponent, side, sufferingClass) as Bronze
+import Disaster.Bronze (suffer) as Bronze
 
 interface :: Component State Action (Aff AppEffects)
 interface = component render eval
@@ -41,7 +43,7 @@ interface = component render eval
 render :: Render State Action
 render state =
   div
-    [ id_ "body", mkClass (show state.age) ]
+    [ id_ "body", mkClass $ show state.age ++ " " ++ adjustBody state ]
     [ a
       [ href "https://github.com/thimoteus/clicker-builder"
       , id_ "fork-me" ]
@@ -66,9 +68,7 @@ render state =
     side =
       div
         [ id_ "side" ]
-        [ case state.age of
-               Stone -> Stone.side state
-               _ -> Stone.side state --FIXME
+        [ viewSide state
         , br_
         , span
           [ onMouseDown $ input_ Save
@@ -98,7 +98,7 @@ render state =
                  [ text state.message ]
         ]
     bottom = div [ id_ "bottom" ]
-      [ h3_ [ text "About" ]
+      [ h3_ [ text "The story so far:" ]
       , renderParagraphs $ ageDescription state.age
       , h3_ [ text "Changelog" ]
       , renderParagraphs
@@ -109,6 +109,20 @@ render state =
       , renderParagraphs
         [ "Font: Silkscreen by Jason Kottke.", "Icons: fontawesome by Dave Gandy.", "Ideas and feedback: Himrin." ]
       ]
+
+adjustBody :: State → String
+adjustBody state =
+  case state.age of
+       Stone → ""
+       Bronze → Bronze.sufferingClass state
+       _ → "" -- FIXME
+
+viewSide :: Render State Action
+viewSide state =
+  case state.age of
+       Stone -> Stone.side state
+       Bronze -> Bronze.side state
+       _ -> Stone.side state --FIXME
 
 unlockViewTabs :: Render State Action
 unlockViewTabs state =
@@ -126,7 +140,10 @@ unlockViewTabs state =
       tabByAge :: Age -> Array (ComponentHTML Action)
       tabByAge Stone = []
       tabByAge Bronze = [ divider
-                        , span [ mkClass "tab" ] [ text $ show PopulationTab ]]
+                        , span [ mkClass "tab"
+                               , onMouseDown $ input_ $ View PopulationTab ]
+                               [ text $ show PopulationTab ]
+                        ]
       tabByAge _ = tabByAge Bronze
                 ++ [ divider
                    , span [ mkClass "tab" ] [ text $ show TechTreeTab ]]
@@ -147,20 +164,20 @@ upgradesComponent :: Render State Action
 upgradesComponent state =
   case state.age of
        Stone -> Stone.upgradesComponent state
+       Bronze -> Bronze.upgradesComponent state
        _ -> Stone.upgradesComponent state -- FIXME
 
 populationComponent :: Render State Action
 populationComponent state =
-  div_
-    [ div [ mkClass "population" ]
-      [ text ""
-      ]
-    ]
+  case state.age of
+       Bronze → Bronze.populationComponent state
+       _ -> text ""
 
 advanceComponent :: Render State Action
 advanceComponent state =
   case state.age of
        Stone -> Stone.advanceComponent state
+       Bronze -> Bronze.advanceComponent state
        _ -> Stone.advanceComponent state --FIXME
 
 heroesComponent :: Render State Action
@@ -184,6 +201,7 @@ eval (Click next) = next <$ do
   currentState <- get
   modify case currentState.age of
               Stone -> Stone.evalClick
+              Bronze -> Bronze.evalClick
               _ -> Stone.evalClick --FIXME
 eval (Buy upgrade next) = next <$ do
   modify $ set message ""
@@ -192,16 +210,18 @@ eval (Buy upgrade next) = next <$ do
   modify case currentState.age of
               Stone -> Stone.buyUpgrade upgrade
               _ -> Stone.buyUpgrade upgrade --FIXME
-eval (Suffer disaster next) = next <$ modify (suffer disaster)
+eval (Suffer disaster next) = next <$ do
+  currentAge <- gets _.age
+  modify case currentAge of
+              Bronze -> Bronze.suffer disaster
+              _ -> id
 eval (Autoclick next) = next <$ do
-  savedTime <- gets _.now
-  savedCPS <- gets _.cps
+  currentAge <- gets _.age
   currentTime <- liftEff' nowEpochMilliseconds
-  let delta = currentTime - savedTime
-      summand = calculateTimeDifferential delta savedCPS
-  modify $ (currentClicks +~ summand)
-       <<< (totalClicks +~ summand)
-       <<< (now .~ currentTime)
+  modify case currentAge of
+              Stone -> Stone.autoclick currentTime
+              Bronze -> Bronze.autoclick currentTime
+              _ -> Stone.autoclick currentTime
 eval (Reset next) = next <$ do
   modify resetState
   liftEff' resetSave
@@ -217,14 +237,16 @@ eval (Autosave next) = next <$ do
   liftEff' $ saveState currentState
 eval (View t next) = next <$ modify (set tab t)
 eval (Advance next) = next <$ do
-  currentState <- get
-  modify $ set age $ nextAge currentState.age
+  currentAge <- gets _.age
+  modify case currentAge of
+              Stone -> Stone.advance
+              _ -> Stone.advance --FIXME
 
 main :: Eff AppEffects Unit
 main = runAff throwException (const $ pure unit) do
   savedState <- liftEff getSavedState
   app <- runUI interface savedState
   onLoad $ appendToBody app.node
-  schedule [ Tuple 100 $ app.driver $ action Autoclick
+  schedule [ Tuple 100 $ app.driver $ action Autoclick ]
            , Tuple 15000 $ app.driver $ action Autosave ]
 

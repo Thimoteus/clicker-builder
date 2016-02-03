@@ -170,8 +170,8 @@ h3 {
 .upgrade .level {
   font-size: 0.7em;
 }
-.upgrade.disabled {
-  cursor: default;
+.disabled {
+  cursor: default !important;
 }
 #bottom {
   background: rgba(62, 62, 62, 0.7);
@@ -231,8 +231,64 @@ h3 {
 .Stone .messages {
   color: #e8df28;
 }
-.Stone .upgrade.disabled {
+.Stone .disabled {
   color: #a3a3a3;
+}
+.Stone .viewAdvance {
+  display: flex;
+  flex-flow: column wrap;
+  align-items: center;
+}
+.Stone .viewAdvance:first-letter {
+  font-size: 1.1em;
+  color: #e8df28;
+}
+.Stone .dropCap:first-letter {
+  font-size: 1.2em;
+  color: #ff3e45;
+}
+.Stone .advanceButton {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: default;
+  cursor: pointer;
+  font-weight: bold;
+  font-size: 2em;
+  width: auto;
+  align-self: center;
+  text-align: center;
+  background: rgba(36, 36, 36, 0.4);
+  padding: 0 5px;
+  border-radius: 5px;
+  border: 3px solid #e8df28;
+}
+.Stone .advanceButton.disabled {
+  border: 3px solid #231c16;
+}
+.Stone .advanceButton:not(.disabled):hover {
+  border: 3px solid #c1ac96;
+  color: #CD7F32;
+}
+.Stone .advance {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  cursor: default;
+}
+.Stone .advance.filled {
+  font-size: 1.3em;
+  color: #e8df28;
+}
+.Stone .advance.unfilled {
+  font-size: 0.9em;
+  color: #242424;
 }
 #body.Bronze {
   background: url('bronze-pixel-bg.png');
@@ -257,6 +313,11 @@ h3 {
 .Bronze .messages {
   color: #f5e5d6;
 }
-.Bronze .upgrade.disabled {
+.Bronze .disabled {
   color: #674019;
+}
+.Bronze .disaster {
+  color: #ff3e45;
+  font-weight: bold;
+  font-size: 1.3em;
 }
