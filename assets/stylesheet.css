@@ -316,3 +316,8 @@ h3 {
 .Bronze .disabled {
   color: #674019;
 }
+.Bronze .disaster {
+  color: #ff3e45;
+  font-weight: bold;
+  font-size: 1.3em;
+}

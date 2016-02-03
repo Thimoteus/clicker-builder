@@ -2,14 +2,13 @@ module Main where
 
 import Prelude hiding (div, top, bottom)
 import Types
-import Lenses
-import Save
-import Reset
-import Disaster
-import Age
-import Util
+import Lenses (tab, message)
+import Save (getSavedState, saveState)
+import Reset (resetSave, resetState)
+import Age (ageDescription)
+import Util (schedule, mkClass, renderParagraphs)
 
-import Data.Lens ((+~), set, (.~))
+import Data.Lens (set)
 import Data.Tuple (Tuple(..))
 import Data.String (null)
 import Data.Functor ((<$))
@@ -32,12 +31,11 @@ import Halogen.HTML.Indexed (div, div_, h1, h3_, h3, text, br_, a, span, p_, img
 import Halogen.HTML.Events.Indexed (onMouseDown, input_)
 import Halogen.HTML.Properties.Indexed (id_, href, src, alt)
 
-import Age.Stone.Render as Stone
-import Age.Stone.Eval as Stone
-import Age.Bronze as Bronze
-import Age.Bronze.Eval as Bronze
-import Age.Bronze.Render as Bronze
-import Disaster.Bronze as Bronze
+import Age.Stone.Render (advanceComponent, upgradesComponent, side) as Stone
+import Age.Stone.Eval (advance, autoclick, buyUpgrade, evalClick) as Stone
+import Age.Bronze.Eval (autoclick, evalClick) as Bronze
+import Age.Bronze.Render (advanceComponent, populationComponent, upgradesComponent, side, sufferingClass) as Bronze
+import Disaster.Bronze (suffer) as Bronze
 
 interface :: Component State Action (Aff AppEffects)
 interface = component render eval
@@ -218,14 +216,20 @@ eval (Suffer disaster next) = next <$ do
               Bronze -> Bronze.suffer disaster
               _ -> id
 eval (Autoclick next) = next <$ do
-  savedTime <- gets _.now
-  savedCPS <- gets _.cps
+  currentAge <- gets _.age
   currentTime <- liftEff' nowEpochMilliseconds
-  let delta = currentTime - savedTime
-      summand = calculateTimeDifferential delta savedCPS
-  modify $ (currentClicks +~ summand)
-       <<< (totalClicks +~ summand)
-       <<< (now .~ currentTime)
+  modify case currentAge of
+              Stone -> Stone.autoclick currentTime
+              Bronze -> Bronze.autoclick currentTime
+              _ -> Stone.autoclick currentTime
+  -- savedTime <- gets _.now
+  -- savedCPS <- gets _.cps
+  -- currentTime <- liftEff' nowEpochMilliseconds
+  -- let delta = currentTime - savedTime
+      -- summand = calculateTimeDifferential delta savedCPS
+  -- modify $ (currentClicks +~ summand)
+       -- <<< (totalClicks +~ summand)
+       -- <<< (now .~ currentTime)
 eval (Reset next) = next <$ do
   modify resetState
   liftEff' resetSave

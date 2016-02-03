@@ -18,7 +18,7 @@ import Render.Side
 import Age.Bronze
 
 import Halogen (Render())
-import Halogen.HTML.Indexed (div, text, br_, span)
+import Halogen.HTML.Indexed (div_, div, text, br_, span)
 
 side :: Render State Action
 side state =
@@ -31,14 +31,23 @@ side state =
       , text $ prettify state.burst , br_
       , sideLabel "Tribal click power:"
       , text $ prettify state.cps , br_
-      , sideLabel "Population:"
-      , text $ prettify $ unsafeBronze pop state
-      , br_ ,br_
+      , popOrStacks state
+      , br_, br_
       , theButton
       ]
 
+popOrStacks :: Render State Action
+popOrStacks state
+  | isSuffering state =
+    div [ mkClass "disaster" ]
+        [ sideLabel "Disaster stacks:", text $ prettify $ unsafeBronze stacks state ]
+  | otherwise = div_ [ sideLabel "Population:", text $ prettify $ unsafeBronze pop state ]
+
 pop :: UnsafeBronze ⇒ State → Population
 pop = _.population <<< getBronzeState
+
+stacks :: UnsafeBronze ⇒ State → Int
+stacks = _.disasterStack <<< getBronzeState
 
 upgradesComponent :: Render State Action
 upgradesComponent state =

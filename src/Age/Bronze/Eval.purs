@@ -1,25 +1,24 @@
 module Age.Bronze.Eval
   ( evalClick
+  , autoclick
   ) where
 
 import Prelude
+import Math (log)
+import Util ((^))
 import Lenses
 import Types
 
+import Data.Time (Milliseconds())
 import Data.Maybe (Maybe(..))
 import Data.Lens ((.~), (+~), (-~), (^?))
 
-import Age.Bronze (getBronzeState)
+import Age.Bronze (getBronzeState, isSuffering)
 
 evalClick :: State → State
-evalClick state =
-  if suffering
-     then soothe state
-     else increasePopulation state
-   where
-     suffering = case state.ageState ^? bronzeState <<< bronzeStack of
-                      Just x → x > 0
-                      Nothing → false
+evalClick state
+  | isSuffering state = soothe state
+  | otherwise = increasePopulation state
 
 soothe :: State → State
 soothe state =
@@ -40,3 +39,8 @@ lowerSuffering state = ageState
 increasePopulation :: State → State
 increasePopulation state =
   (ageState <<< bronzeState <<< bronzePop +~ clicksToPop state.burst) state
+
+autoclick :: Milliseconds → State → State
+autoclick ms state = (currentClicks +~ perSecond pop) state where
+  pop = _.population $ unsafeBronze getBronzeState state
+  perSecond (Population n) = Clicks (log (log (n / 10.0 + 1.0)) + 1.0)

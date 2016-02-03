@@ -72,3 +72,6 @@ instance semiringPopulation :: Semiring Population where
 
 clicksToPop :: Clicks -> Population
 clicksToPop = unsafeCoerce
+
+popToClicks :: Population -> Clicks
+popToClicks = unsafeCoerce
