@@ -45,7 +45,7 @@ interface = component render eval
 render :: Render State Action
 render state =
   div
-    [ id_ "body", mkClass $ show state.age ]
+    [ id_ "body", mkClass $ show state.age ++ " " ++ adjustBody state ]
     [ a
       [ href "https://github.com/thimoteus/clicker-builder"
       , id_ "fork-me" ]
@@ -112,6 +112,13 @@ render state =
         [ "Font: Silkscreen by Jason Kottke.", "Icons: fontawesome by Dave Gandy.", "Ideas and feedback: Himrin." ]
       ]
 
+adjustBody :: State → String
+adjustBody state =
+  case state.age of
+       Stone → ""
+       Bronze → Bronze.sufferingClass state
+       _ → "" -- FIXME
+
 viewSide :: Render State Action
 viewSide state =
   case state.age of
@@ -135,7 +142,10 @@ unlockViewTabs state =
       tabByAge :: Age -> Array (ComponentHTML Action)
       tabByAge Stone = []
       tabByAge Bronze = [ divider
-                        , span [ mkClass "tab" ] [ text $ show PopulationTab ]]
+                        , span [ mkClass "tab"
+                               , onMouseDown $ input_ $ View PopulationTab ]
+                               [ text $ show PopulationTab ]
+                        ]
       tabByAge _ = tabByAge Bronze
                 ++ [ divider
                    , span [ mkClass "tab" ] [ text $ show TechTreeTab ]]
@@ -156,21 +166,20 @@ upgradesComponent :: Render State Action
 upgradesComponent state =
   case state.age of
        Stone -> Stone.upgradesComponent state
-       --Bronze -> Bronze.upgradesComponent state
+       Bronze -> Bronze.upgradesComponent state
        _ -> Stone.upgradesComponent state -- FIXME
 
 populationComponent :: Render State Action
 populationComponent state =
-  div_
-    [ div [ mkClass "population" ]
-      [ text ""
-      ]
-    ]
+  case state.age of
+       Bronze → Bronze.populationComponent state
+       _ -> text ""
 
 advanceComponent :: Render State Action
 advanceComponent state =
   case state.age of
        Stone -> Stone.advanceComponent state
+       Bronze -> Bronze.advanceComponent state
        _ -> Stone.advanceComponent state --FIXME
 
 heroesComponent :: Render State Action
@@ -242,6 +251,6 @@ main = runAff throwException (const $ pure unit) do
   savedState <- liftEff getSavedState
   app <- runUI interface savedState
   onLoad $ appendToBody app.node
-  schedule [ Tuple 100 $ app.driver $ action Autoclick
-           , Tuple 15000 $ app.driver $ action Autosave ]
+  schedule [ Tuple 100 $ app.driver $ action Autoclick ]
+           -- , Tuple 15000 $ app.driver $ action Autosave ]
 

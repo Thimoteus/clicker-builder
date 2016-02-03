@@ -21,7 +21,7 @@ import Data.Array (replicate)
 
 import Halogen (Render())
 import Halogen.Component (ComponentHTML())
-import Halogen.HTML.Indexed (div, div_, text, br_, span, p)
+import Halogen.HTML.Indexed (div, div_, text, br_, span, p, p_)
 import Halogen.HTML.Properties.Indexed (I(), IProp(), title)
 import Halogen.HTML.Events.Indexed (onClick, onMouseDown, input_)
 
@@ -93,6 +93,8 @@ advanceComponent state =
       , text " 100"
       ]
     , showAdvanceButton extraClass
+    , p_ [ text """Warning: advancing a culture is never easy. Be prepared with your
+         clicking finger ... """ ]
     ]
       where
         l = perhalfcentAdvanced state
@@ -106,6 +108,6 @@ advanceComponent state =
 showAdvanceButton :: String -> ComponentHTML Action
 showAdvanceButton extraClass =
   div [ mkClass $ "advanceButton" ++ extraClass ]
-      [ div (if null extraClass then [ onClick $ input_ Advance ] else [])
+      [ div [ onClick $ input_ Advance ] -- (if null extraClass then [ onClick $ input_ Advance ] else [])
         [ text "Advance" ]
       ]
