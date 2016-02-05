@@ -53,26 +53,26 @@ instance isForeignUpgrades :: IsForeign Upgrades where
                     }
 
 instance prettifyUpgrade :: Pretty Upgrade where
-  prettify (Misc1 n) = prettify n
-  prettify (Misc2 n) = prettify n
-  prettify (Tech1 n) = prettify n
-  prettify (Tech2 n) = prettify n
-  prettify (Phil1 n) = prettify n
-  prettify (Phil2 n) = prettify n
-  prettify (Poli1 n) = prettify n
-  prettify (Poli2 n) = prettify n
+  prettify (Misc1 n)    = prettify n
+  prettify (Misc2 n)    = prettify n
+  prettify (Tech1 n)    = prettify n
+  prettify (Tech2 n)    = prettify n
+  prettify (Phil1 n)    = prettify n
+  prettify (Phil2 n)    = prettify n
+  prettify (Poli1 n)    = prettify n
+  prettify (Poli2 n)    = prettify n
   prettify (Science1 n) = prettify n
   prettify (Science2 n) = prettify n
 
 instance serializeUpgrade :: Serialize Upgrade where
-  serialize (Misc1 n) = serialize n
-  serialize (Misc2 n) = serialize n
-  serialize (Tech1 n) = serialize n
-  serialize (Tech2 n) = serialize n
-  serialize (Phil1 n) = serialize n
-  serialize (Phil2 n) = serialize n
-  serialize (Poli1 n) = serialize n
-  serialize (Poli2 n) = serialize n
+  serialize (Misc1 n)    = serialize n
+  serialize (Misc2 n)    = serialize n
+  serialize (Tech1 n)    = serialize n
+  serialize (Tech2 n)    = serialize n
+  serialize (Phil1 n)    = serialize n
+  serialize (Phil2 n)    = serialize n
+  serialize (Poli1 n)    = serialize n
+  serialize (Poli2 n)    = serialize n
   serialize (Science1 n) = serialize n
   serialize (Science2 n) = serialize n
 

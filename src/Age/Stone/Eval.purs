@@ -11,7 +11,7 @@ import Lenses
 import Age (nextAge)
 import Save (calculateTimeDifferential)
 
-import Data.Lens ((+~), (^.), (.~), set)
+import Data.Lens ((+~), (^.), (*~), (.~), set)
 import Data.Time (Milliseconds())
 
 import Age.Stone.Upgrades as Upgrades
@@ -39,5 +39,6 @@ advance :: State → State
 advance state = suffer minorQuake
             <<< set ageState (BronzeS { population: Population 10.0, disasterStack: 0, stackRemoval: 1 })
             <<< set age (nextAge state.age)
-            <<< set currentClicks (Clicks 0.0)
+            <<< set upgrades initialUpgrades
+            <<< (currentClicks *~ Clicks 0.3)
               $ state

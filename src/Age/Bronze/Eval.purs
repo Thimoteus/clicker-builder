@@ -12,7 +12,7 @@ import Types
 
 import Data.Time (Milliseconds())
 import Data.Maybe (Maybe(..))
-import Data.Lens ((.~), (+~), (-~), (^?))
+import Data.Lens ((.~), (+~), (-~), (*~), (^?))
 
 import Age.Bronze (getBronzeState, isSuffering)
 
@@ -32,10 +32,11 @@ stopSuffering :: State → State
 stopSuffering = ageState <<< bronzeState <<< bronzeStack .~ 0
 
 lowerSuffering :: State → State
-lowerSuffering state = ageState
-                   <<< bronzeState
-                   <<< bronzeStack -~ (_.stackRemoval $ unsafeBronze getBronzeState state)
-                     $ state
+lowerSuffering state =
+      ageState
+  <<< bronzeState
+  <<< bronzeStack -~ (_.stackRemoval $ unsafeBronze getBronzeState state)
+    $ state
 
 increasePopulation :: State → State
 increasePopulation state =
@@ -47,10 +48,13 @@ autoclick ms state = (currentClicks +~ perSecond pop) state where
   perSecond (Population n) = Clicks (log (log (n / 10.0 + 1.0)) + 1.0)
 
 suffer :: Disaster -> State -> State
-suffer Disaster1 = setSuffering 20
-suffer Disaster2 = setSuffering 50
-suffer Disaster3 = setSuffering 100
+suffer Disaster1 = terrifyPopulation 0.9 <<< setSuffering 20
+suffer Disaster2 = terrifyPopulation 0.6 <<< setSuffering 50
+suffer Disaster3 = terrifyPopulation 0.3 <<< setSuffering 100
 suffer _ = id
+
+terrifyPopulation :: Number -> State -> State
+terrifyPopulation c = cps *~ ClicksPerSecond c
 
 setSuffering :: Int -> State -> State
 setSuffering n = ageState <<< bronzeState <<< bronzeStack .~ n

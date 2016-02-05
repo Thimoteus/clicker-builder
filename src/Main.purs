@@ -103,12 +103,14 @@ render state =
       , renderParagraphs $ ageDescription state.age
       , h3_ [ text "Changelog" ]
       , renderParagraphs
-        [ "Bronze age implemented, population, disasters, graphics" ]
+        [ "Implemented: Bronze age, population, disasters" ]
       , h3_ [ text "Upcoming" ]
-      , p_ [ text "Iron Age, heroes." ]
+      , p_ [ text "Heroic Age, heroes." ]
       , h3_ [ text "Credits" ]
       , renderParagraphs
-        [ "Font: Silkscreen by Jason Kottke.", "Icons: fontawesome by Dave Gandy.", "Ideas and feedback: Himrin." ]
+        [ "Font: Silkscreen by Jason Kottke."
+        , "Icons: fontawesome by Dave Gandy."
+        , "Ideas and feedback: Himrin." ]
       ]
 
 adjustBody :: State → String
