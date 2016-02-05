@@ -3,12 +3,10 @@ module Upgrades
   , burstFromUpgrades
   ) where
 
-import Prelude
-
-import Types
+import Types (Clicks, Upgrades, ClicksPerSecond, Age(Stone))
 
 import Age.Stone.Upgrades as Stone
-import Age.Bronze.Upgrades as Bronze
+--import Age.Bronze.Upgrades as Bronze
 
 cpsFromUpgrades :: Age -> Upgrades -> ClicksPerSecond
 cpsFromUpgrades Stone = Stone.cpsFromUpgrades

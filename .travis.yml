@@ -4,7 +4,7 @@ node_js:
   - stable
 install:
   - npm install purescript pulp bower -g
-  - pulp dep update
+  - bower update
   - npm install
 script:
   - pulp build

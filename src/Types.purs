@@ -13,6 +13,7 @@ module Types
   ) where
 
 import Prelude
+import Util (unscramble)
 
 import Control.Monad.Eff.Console (CONSOLE())
 import Control.Monad.Eff.Random (RANDOM())
@@ -83,5 +84,5 @@ initialState = { currentClicks: Clicks 0.0
                }
 
 welcomeMessage :: String
-welcomeMessage = "" --unscramble "GTWbVUAvnTSkVTq1pvOlozMapzHtpaE0VD=="
+welcomeMessage = unscramble "GTWbVUAvnTSkVTq1pvOlozMapzHtpaE0VD=="
 

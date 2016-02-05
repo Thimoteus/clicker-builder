@@ -2,6 +2,7 @@ module Main where
 
 import Prelude hiding (div, top, bottom)
 import Types
+import Disaster (randomDisaster)
 import Lenses (tab, message)
 import Save (getSavedState, saveState)
 import Reset (resetSave, resetState)
@@ -14,6 +15,7 @@ import Data.String (null)
 import Data.Functor ((<$))
 import Data.Date (nowEpochMilliseconds)
 
+import Control.Bind ((=<<))
 import Control.Monad.Aff (Aff(), runAff, later)
 import Control.Monad.Eff (Eff())
 import Control.Monad.Eff.Class (liftEff)
@@ -23,7 +25,7 @@ import Control.Monad.Eff.Console (log)
 import Halogen
   ( Component(), component
   , Eval(), Render()
-  , runUI, modify, action, get, gets, liftEff', liftAff'
+  , runUI, modify, get, gets, liftEff', liftAff'
   )
 import Halogen.Util (appendToBody, onLoad)
 import Halogen.Component (ComponentHTML())
@@ -33,9 +35,8 @@ import Halogen.HTML.Properties.Indexed (id_, href, src, alt)
 
 import Age.Stone.Render (advanceComponent, upgradesComponent, side) as Stone
 import Age.Stone.Eval (advance, autoclick, buyUpgrade, evalClick) as Stone
-import Age.Bronze.Eval (autoclick, evalClick) as Bronze
+import Age.Bronze.Eval (suffer, autoclick, evalClick) as Bronze
 import Age.Bronze.Render (advanceComponent, populationComponent, upgradesComponent, side, sufferingClass) as Bronze
-import Disaster.Bronze (suffer) as Bronze
 
 interface :: Component State Action (Aff AppEffects)
 interface = component render eval
@@ -247,6 +248,7 @@ main = runAff throwException (const $ pure unit) do
   savedState <- liftEff getSavedState
   app <- runUI interface savedState
   onLoad $ appendToBody app.node
-  schedule [ Tuple 100 $ app.driver $ action Autoclick
-           , Tuple 15000 $ app.driver $ action Autosave ]
+  schedule [ Tuple 100 $ app.driver $ Autoclick unit
+           , Tuple 15000 $ app.driver $ Autosave unit
+           , Tuple 60000 $ (\ x -> app.driver $ Suffer x unit) =<< randomDisaster ]
 

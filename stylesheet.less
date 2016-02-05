@@ -60,7 +60,7 @@ h3 {
 }
 
 .fade {
-  opacity: 0.0 !important;
+  opacity: 0.4 !important;
 }
 
 .transparent-bg {
@@ -92,6 +92,8 @@ h3 {
 }
 
 #main {
+  display: flex;
+  flex-flow: row wrap;
   .transparent-bg();
   margin-left: 5px;
   width: 275px * 2;
@@ -140,11 +142,14 @@ h3 {
   .tab-view();
 }
 
-#view .title {
-  margin-bottom: 5px;
-  padding-bottom: 2px;
-  border-bottom: @border;
-  font-size: 0.9em;
+#view {
+  width: 100%;
+  .title {
+    margin-bottom: 5px;
+    padding-bottom: 2px;
+    border-bottom: @border;
+    font-size: 0.9em;
+  }
 }
 
 .noselect {
@@ -184,6 +189,8 @@ h3 {
 
 .messages {
   .noselect();
+  align-self: flex-end;
+  width: 100%;
   margin-top: 15px;
   font-style: italic;
   opacity: 1;

@@ -11,7 +11,7 @@ import Types
 import Util
 import Lenses
 
-import Data.Maybe (Maybe(..))
+import Data.Maybe (Maybe(..), maybe)
 import Data.Lens ((^?))
 
 import Render.Side
@@ -57,7 +57,7 @@ upgradesComponent state =
 advanceComponent :: Render State Action
 advanceComponent state =
   div [ mkClass $ "advance" ++ sufferingClass state ]
-      [ text "You're not sure what you need to do to advance." ]  
+      [ text "You're not sure what you need to do to advance." ]
 
 populationComponent :: Render State Action
 populationComponent state =
@@ -66,9 +66,7 @@ populationComponent state =
 
 sufferingClass :: State → String
 sufferingClass state =
-  case state.ageState ^? bronzeState <<< bronzeStack of
-       Just x → partitionClass x
-       Nothing → ""
+  maybe "" partitionClass $ state.ageState ^? bronzeState <<< bronzeStack
 
 partitionClass :: Int → String
 partitionClass n
