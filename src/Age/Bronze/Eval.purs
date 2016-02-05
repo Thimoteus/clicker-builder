@@ -1,6 +1,7 @@
 module Age.Bronze.Eval
   ( evalClick
   , autoclick
+  , suffer
   ) where
 
 import Prelude
@@ -44,3 +45,12 @@ autoclick :: Milliseconds → State → State
 autoclick ms state = (currentClicks +~ perSecond pop) state where
   pop = _.population $ unsafeBronze getBronzeState state
   perSecond (Population n) = Clicks (log (log (n / 10.0 + 1.0)) + 1.0)
+
+suffer :: Disaster -> State -> State
+suffer Disaster1 = setSuffering 20
+suffer Disaster2 = setSuffering 50
+suffer Disaster3 = setSuffering 100
+suffer _ = id
+
+setSuffering :: Int -> State -> State
+setSuffering n = ageState <<< bronzeState <<< bronzeStack .~ n

@@ -59,7 +59,7 @@ getSavedState = do
          }
 
 -- | abstraction of a function that helps parse strings to state values
-stateValueMaker :: ∀ a. (State -> a) -> (String -> a) -> String -> Array (Tuple String String) -> a
+stateValueMaker :: ∀ a. (State → a) → (String → a) → String → Array (Tuple String String) → a
 stateValueMaker default parser key arr =
   maybe (default initialState) parser $ lookup (scramble key) arr
 
@@ -67,37 +67,37 @@ stateValueMaker default parser key arr =
 storageKeys :: Array String
 storageKeys = map scramble ["totalClicks", "currentClicks", "age", "upgrades", "now", "ageState" ]
 
-parseCurrentClicks :: String -> Clicks
+parseCurrentClicks :: String → Clicks
 parseCurrentClicks = Clicks <<< getScrambledNumber (initialState ^. currentClicksNumber)
 
-parseTotalClicks :: String -> Clicks
+parseTotalClicks :: String → Clicks
 parseTotalClicks = Clicks <<< getScrambledNumber (initialState ^. totalClicksNumber)
 
-parseUpgrades :: String -> Upgrades
+parseUpgrades :: String → Upgrades
 parseUpgrades = fromMaybe initialState.upgrades <<< get (json <<< ups) <<< unscramble
   where
     ups :: PartialGetter Upgrades Foreign
     ups = getter read
 
-parseNow :: String -> Milliseconds
+parseNow :: String → Milliseconds
 parseNow = Milliseconds <<< getScrambledNumber zero
 
-getScrambledNumber :: Number -> String -> Number
+getScrambledNumber :: Number → String → Number
 getScrambledNumber default = getNumber default <<< unscramble
 
-getNumber :: Number -> String -> Number
+getNumber :: Number → String → Number
 getNumber default = fromMaybe default <<< get (json <<< number)
 
-getScrambledInt :: Int -> String -> Int
+getScrambledInt :: Int → String → Int
 getScrambledInt default = getInt default <<< unscramble
 
-getInt :: Int -> String -> Int
+getInt :: Int → String → Int
 getInt default = fromMaybe default <<< get (json <<< int)
 
-parseAge :: String -> Age
+parseAge :: String → Age
 parseAge = fromMaybe initialState.age <<< get (getter age) <<< unscramble
   where
-    age :: String -> Either Unit Age
+    age :: String → Either Unit Age
     age "Stone" = Right Stone
     age "Bronze" = Right Bronze
     age "Iron" = Right Iron
@@ -115,15 +115,15 @@ parseAge = fromMaybe initialState.age <<< get (getter age) <<< unscramble
     age _ = Left unit
 
 -- | saves every value we care about to localstorage
-saveState :: ∀ eff. State -> Eff ( webStorage :: WebStorage | eff ) Unit
+saveState :: ∀ eff. State → Eff ( webStorage :: WebStorage | eff ) Unit
 saveState = traverse_ saveSingleState <<< stateTuples
 
 -- | saves a single value to localstorage
-saveSingleState :: ∀ eff. Tuple String String -> Eff ( webStorage :: WebStorage | eff ) Unit
+saveSingleState :: ∀ eff. Tuple String String → Eff ( webStorage :: WebStorage | eff ) Unit
 saveSingleState = uncurry (setItem localStorage)
 
 -- | turns a State value into a traversable structure
-stateTuples :: State -> Array (Tuple String String)
+stateTuples :: State → Array (Tuple String String)
 stateTuples state = [ makeTuple "currentClicks" state.currentClicks
                     , makeTuple "totalClicks" state.totalClicks
                     , makeTuple "upgrades" state.upgrades
@@ -132,17 +132,17 @@ stateTuples state = [ makeTuple "currentClicks" state.currentClicks
                     , makeTuple "ageState" state.ageState
                     ]
   where
-    makeTuple :: ∀ a. (Serialize a) => String -> a -> Tuple String String
+    makeTuple :: ∀ a. (Serialize a) => String → a → Tuple String String
     makeTuple key v = bimap scramble (scramble <<< serialize) $ Tuple key v
 
 -- | used to calculate how many clicks to add to currentclicks and totalclicks
 -- | after user has been away for a certain amount of time
-calculateTimeDifferential :: Milliseconds -> ClicksPerSecond -> Clicks
+calculateTimeDifferential :: Milliseconds → ClicksPerSecond → Clicks
 calculateTimeDifferential delta (ClicksPerSecond c) = Clicks (f delta)
   where
   clickDebt :: Number
   clickDebt = c * abs (secondsMS delta)
-  f :: Milliseconds -> Number
+  f :: Milliseconds → Number
   f t
     | minutesMS t < 5.0 = clickDebt
     | hoursMS t < 1.0 = clickDebt * 0.9
@@ -152,19 +152,19 @@ calculateTimeDifferential delta (ClicksPerSecond c) = Clicks (f delta)
 
 -- | main function for extracting the correct AgeState from the serialized info,
 -- | given some age.
-getAgeState :: Age -> Array (Tuple String String) -> AgeState
+getAgeState :: Age → Array (Tuple String String) → AgeState
 getAgeState a xs = as where
   str = getAgeStateCode xs
   as = case a of
-            Bronze -> parseBronzeAgeState str
-            _ -> NoAgeState
+            Bronze → parseBronzeAgeState str
+            _ → NoAgeState
 
 -- | extracts the value associated with the ageState key, with an empty string
 -- | in case of failure
-getAgeStateCode :: Array (Tuple String String) -> String
+getAgeStateCode :: Array (Tuple String String) → String
 getAgeStateCode = fromMaybe "" <<< lookup (scramble "ageState")
 
-parseBronzeAgeState :: String -> AgeState
+parseBronzeAgeState :: String → AgeState
 parseBronzeAgeState "" = BronzeS { population: Population 2.0
                                  , disasterStack: 0
                                  , stackRemoval: 1 }

@@ -6,8 +6,11 @@ import Lenses
 
 import Data.Lens ((.~))
 
-suffer :: Disaster -> State -> State
-suffer d = ageState <<< bronzeState <<< bronzeStack .~ 100
+minorQuake :: Disaster
+minorQuake = Disaster1
 
-earthquake :: Disaster
-earthquake = Disaster1
+medQuake :: Disaster
+medQuake = Disaster2
+
+bigQuake :: Disaster
+bigQuake = Disaster3

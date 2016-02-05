@@ -37,7 +37,7 @@ h3 {
   font-weight: bold;
 }
 .fade {
-  opacity: 0.0 !important;
+  opacity: 0.4 !important;
 }
 .transparent-bg {
   background: rgba(62, 62, 62, 0.7);
@@ -71,6 +71,8 @@ h3 {
   flex-grow: 1;
 }
 #main {
+  display: flex;
+  flex-flow: row wrap;
   background: rgba(62, 62, 62, 0.7);
   box-shadow: 5px 5px 9px black;
   padding: 5px;
@@ -126,6 +128,9 @@ h3 {
   -moz-columns: 2;
   columns: 2;
   overflow: hidden;
+}
+#view {
+  width: 100%;
 }
 #view .title {
   margin-bottom: 5px;
@@ -188,6 +193,8 @@ h3 {
   -ms-user-select: none;
   user-select: none;
   cursor: default;
+  align-self: flex-end;
+  width: 100%;
   margin-top: 15px;
   font-style: italic;
   opacity: 1;
