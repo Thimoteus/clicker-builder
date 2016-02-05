@@ -122,7 +122,7 @@ render state =
       , h3_ [ text "Changelog" ]
       , p_ [ text "First beta!" ]
       , h3_ [ text "Upcoming" ]
-      , p_ [ text "Bronze Age, population, disasters, graphical representation." ]
+      , p_ [ text "Bronze Age, population, disasters" ]
       , h3_ [ text "Credits" ]
       , renderParagraphs
         [ "Font: Silkscreen by Jason Kottke.", "Icons: fontawesome by Dave Gandy.", "Ideas and feedback: Himrin." ]
