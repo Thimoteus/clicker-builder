@@ -75,4 +75,4 @@ instance serializeAgeState :: Serialize AgeState where
                     ]
 
 class UnsafeBronze
-foreign import unsafeBronze :: forall a. (UnsafeBronze ⇒ a) → a
+foreign import unsafeBronze :: forall a. (UnsafeBronze => a) -> a

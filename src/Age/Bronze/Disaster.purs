@@ -2,11 +2,7 @@ module Age.Bronze.Disaster
   ( showDisaster
   ) where
 
-import Prelude
 import Types
-import Lenses
-
-import Data.Lens (set)
 
 showDisaster :: Disaster -> String
 showDisaster Disaster1 = "Earthquake"

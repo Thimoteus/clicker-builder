@@ -1,10 +1,6 @@
 module Disaster.Bronze where
 
-import Prelude
 import Types
-import Lenses
-
-import Data.Lens ((.~))
 
 minorQuake :: Disaster
 minorQuake = Disaster1

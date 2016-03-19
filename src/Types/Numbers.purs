@@ -3,7 +3,6 @@ module Types.Numbers where
 import Prelude
 
 import Types.Class
-import Unsafe.Coerce
 
 newtype Clicks = Clicks Number
 newtype ClicksPerSecond = ClicksPerSecond Number
@@ -69,9 +68,3 @@ instance semiringPopulation :: Semiring Population where
   zero = Population zero
   mul (Population m) (Population n) = Population (m * n)
   add (Population m) (Population n) = Population (m + n)
-
-clicksToPop :: Clicks -> Population
-clicksToPop = unsafeCoerce
-
-popToClicks :: Population -> Clicks
-popToClicks = unsafeCoerce

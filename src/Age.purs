@@ -3,7 +3,6 @@ module Age
   , nextAge
   ) where
 
-import Prelude
 import Types
 
 ageDescription :: Age -> Array String

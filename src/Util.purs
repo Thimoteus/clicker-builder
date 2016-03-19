@@ -18,16 +18,14 @@ import Data.Tuple (Tuple(..))
 import Data.List (List(..))
 import Data.String (toCharArray, fromCharArray)
 import Data.Char (toCharCode, fromCharCode)
-import Data.Foldable (Foldable, foldl)
+import Data.Foldable (class Foldable, foldl)
 import Data.Traversable (traverse)
 import Data.Time (Milliseconds(..))
 
 import Control.Monad.Aff (Aff(), later')
 import Control.Monad.Rec.Class (tailRecM)
 
-infixr 8 ^
-(^) :: Number -> Number -> Number
-(^) = pow
+infixr 8 pow as ^
 
 scramble :: String -> String
 scramble = rot13 <<< encode64 <<< rot13
@@ -114,10 +112,11 @@ gcd m n
 divides :: Int -> Int -> Boolean
 divides m n = n `mod` m == 0
 
-infix 7 ...
-(...) :: Int -> Int -> Array Int
-(...) inf sup | inf <= sup = range inf sup
-              | otherwise = []
+trueRange :: Int -> Int -> Array Int
+trueRange inf sup | inf <= sup = range inf sup
+                  | otherwise = []
+
+infix 7 trueRange as ...
 
 renderParagraphs :: forall p i. Array String -> HTML p i
 renderParagraphs = div_ <<< map (p_ <<< pure <<< text)

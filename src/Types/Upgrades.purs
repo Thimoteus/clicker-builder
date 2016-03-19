@@ -3,7 +3,7 @@ module Types.Upgrades where
 import Prelude
 import Types.Class
 
-import Data.Foreign.Class (IsForeign, readProp)
+import Data.Foreign.Class (class IsForeign, readProp)
 
 data Upgrade = Misc1 Int
              | Misc2 Int

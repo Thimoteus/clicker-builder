@@ -30,12 +30,12 @@ import Halogen
 import Halogen.Util (appendToBody, onLoad)
 import Halogen.Component (ComponentHTML())
 import Halogen.HTML.Indexed (div, div_, h1, h3_, h3, text, br_, a, span, p_, img)
-import Halogen.HTML.Events.Indexed (onMouseDown, input_)
+import Halogen.HTML.Events.Indexed (onClick, input_)
 import Halogen.HTML.Properties.Indexed (id_, href, src, alt)
 
 import Age.Stone.Render (advanceComponent, upgradesComponent, side) as Stone
 import Age.Stone.Eval (advance, autoclick, buyUpgrade, evalClick) as Stone
-import Age.Bronze.Eval (suffer, autoclick, evalClick) as Bronze
+import Age.Bronze.Eval (autoclick, evalClick, buyUpgrade, maybeSuffer) as Bronze
 import Age.Bronze.Render (advanceComponent, populationComponent, upgradesComponent, side, sufferingClass) as Bronze
 
 interface :: Component State Action (Aff AppEffects)
@@ -72,12 +72,12 @@ render state =
         [ viewSide state
         , br_
         , span
-          [ onMouseDown $ input_ Save
+          [ onClick $ input_ Save
           , mkClass "button" ]
           [ text "Save" ]
         , divider
         , span
-          [ onMouseDown $ input_ Reset
+          [ onClick $ input_ Reset
           , mkClass "button" ]
           [ text "Reset" ]
         ]
@@ -132,19 +132,19 @@ unlockViewTabs state =
   h3 [ mkClass "title" ]
   ([ span
     [ mkClass "tab"
-    , onMouseDown $ input_ $ View UpgradesTab ]
+    , onClick $ input_ $ View UpgradesTab ]
     [ text $ show UpgradesTab ]
   , divider
   , span
     [ mkClass "tab"
-    , onMouseDown $ input_ $ View AdvanceTab ]
+    , onClick $ input_ $ View AdvanceTab ]
     [ text $ show AdvanceTab ]] ++ tabByAge state.age)
       where
       tabByAge :: Age -> Array (ComponentHTML Action)
       tabByAge Stone = []
       tabByAge Bronze = [ divider
                         , span [ mkClass "tab"
-                               , onMouseDown $ input_ $ View PopulationTab ]
+                               , onClick $ input_ $ View PopulationTab ]
                                [ text $ show PopulationTab ]
                         ]
       tabByAge _ = tabByAge Bronze
@@ -212,12 +212,14 @@ eval (Buy upgrade next) = next <$ do
   currentState <- get
   modify case currentState.age of
               Stone -> Stone.buyUpgrade upgrade
+              Bronze -> Bronze.buyUpgrade upgrade
               _ -> Stone.buyUpgrade upgrade --FIXME
 eval (Suffer disaster next) = next <$ do
   currentAge <- gets _.age
   modify case currentAge of
-              Bronze -> Bronze.suffer disaster
+              Bronze -> Bronze.maybeSuffer disaster
               _ -> id
+  eval (Suffer disaster next)
 eval (Autoclick next) = next <$ do
   currentAge <- gets _.age
   currentTime <- liftEff' nowEpochMilliseconds

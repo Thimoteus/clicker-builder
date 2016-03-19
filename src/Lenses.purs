@@ -3,9 +3,17 @@ module Lenses where
 import Prelude
 import Types
 
-import Data.Lens (GetterP(), LensP(), PrismP(), lens, prism', to)
+import Data.Lens (GetterP(), LensP(), PrismP(), AnIso(), Iso(), lens, prism', to, iso, withIso)
 import Data.Time (Milliseconds())
 import Data.Maybe (Maybe(..))
+
+import Unsafe.Coerce (unsafeCoerce)
+
+fwd :: ∀ s t a b. AnIso s t a b -> s -> a
+fwd i = withIso i \ x _ -> x
+
+bwd :: ∀ s t a b. AnIso s t a b -> b -> t
+bwd i = withIso i \ _ x -> x
 
 clicks :: LensP Clicks Number
 clicks = lens (\ (Clicks n) -> n) (\ _ m -> Clicks m)
@@ -57,32 +65,87 @@ runUpgrades (Upgrades u) = u
 misc1 :: LensP Upgrades Upgrade
 misc1 = lens (_.misc1 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { misc1 = v }))
 
+misc1P :: PrismP Upgrade Int
+misc1P = prism' Misc1 f where
+  f (Misc1 x) = Just x
+  f _ = Nothing
+
 misc2 :: LensP Upgrades Upgrade
 misc2 = lens (_.misc2 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { misc2 = v }))
+
+misc2P :: PrismP Upgrade Int
+misc2P = prism' Misc2 f where
+  f (Misc2 x) = Just x
+  f _ = Nothing
 
 tech1 :: LensP Upgrades Upgrade
 tech1 = lens (_.tech1 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { tech1 = v }))
 
+tech1P :: PrismP Upgrade Int
+tech1P = prism' Tech1 f where
+  f (Tech1 x) = Just x
+  f _ = Nothing
+
 tech2 :: LensP Upgrades Upgrade
 tech2 = lens (_.tech2 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { tech2 = v }))
+
+tech2P :: PrismP Upgrade Int
+tech2P = prism' Tech2 f where
+  f (Tech2 x) = Just x
+  f _ = Nothing
 
 phil1 :: LensP Upgrades Upgrade
 phil1 = lens (_.phil1 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { phil1 = v }))
 
+phil1P :: PrismP Upgrade Int
+phil1P = prism' Phil1 f where
+  f (Phil1 x) = Just x
+  f _ = Nothing
+
 phil2 :: LensP Upgrades Upgrade
-phil2 = lens (_.phil2 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { phil2 = v }))
+phil2 =
+  lens (_.phil2 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { phil2 = v }))
+
+phil2P :: PrismP Upgrade Int
+phil2P = prism' Phil2 f where
+  f (Phil2 x) = Just x
+  f _ = Nothing
 
 poli1 :: LensP Upgrades Upgrade
-poli1 = lens (_.poli1 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { poli1 = v }))
+poli1 =
+  lens (_.poli1 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { poli1 = v }))
+
+poli1P :: PrismP Upgrade Int
+poli1P = prism' Poli1 f where
+  f (Poli1 x) = Just x
+  f _ = Nothing
 
 poli2 :: LensP Upgrades Upgrade
-poli2 = lens (_.poli2 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { poli2 = v }))
+poli2 =
+  lens (_.poli2 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { poli2 = v }))
+
+poli2P :: PrismP Upgrade Int
+poli2P = prism' Poli2 f where
+  f (Poli2 x) = Just x
+  f _ = Nothing
 
 science1 :: LensP Upgrades Upgrade
-science1 = lens (_.science1 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { science1 = v }))
+science1 =
+  lens (_.science1 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { science1 = v }))
+
+science1P :: PrismP Upgrade Int
+science1P = prism' Science1 f where
+  f (Science1 x) = Just x
+  f _ = Nothing
 
 science2 :: LensP Upgrades Upgrade
-science2 = lens (_.science2 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { science2 = v }))
+science2 =
+  lens (_.science2 <<< runUpgrades) (\ (Upgrades u) v -> Upgrades (u { science2 = v }))
+
+science2P :: PrismP Upgrade Int
+science2P = prism' Science2 f where
+  f (Science2 x) = Just x
+  f _ = Nothing
 
 viewLevel :: GetterP Upgrade Int
 viewLevel = to viewLevel'
@@ -111,3 +174,12 @@ bronzePop = lens _.population (_ { population = _ })
 
 bronzeStack :: LensP BronzeSRec Int
 bronzeStack = lens _.disasterStack (_ { disasterStack = _ })
+
+clicksAsPop :: Iso Clicks Clicks Population Population
+clicksAsPop = iso unsafeCoerce unsafeCoerce
+
+clicksToPop :: Clicks -> Population
+clicksToPop = fwd clicksAsPop
+
+popToClicks :: Population -> Clicks
+popToClicks = bwd clicksAsPop
